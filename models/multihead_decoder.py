@@ -1,7 +1,7 @@
 from torch import nn
 from torch import cat
 import torch
-from encoder import ResNetEncoder
+from .encoder import ResNetEncoder
 
 class SegmentHead(nn.Module):
     def __init__(self, num_labels):
