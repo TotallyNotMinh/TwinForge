@@ -1,0 +1,8 @@
+# VSCode configs
+.vscode
+
+# Data
+data
+
+# Coding agent preferences
+GEMINI.md
