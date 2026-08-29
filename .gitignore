@@ -2,7 +2,8 @@
 .vscode
 
 # Data
-data
+data/depth-dataset
+data/nyu_depth_v2_labeled.mat
 
 # Coding agent preferences
 GEMINI.md
