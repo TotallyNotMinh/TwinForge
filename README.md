@@ -55,6 +55,29 @@ The architecture is intentionally left open so that different approaches can be 
 
 ## Status
 
-🚧 **Early Development**
+    ## Roadmap & High-Level Milestones
 
-TwinForge is currently in the research and prototyping stage.
+    - [ ] **Phase 1: Multi-Task Scene Perception (2D/2.5D)**
+      - [x] Design multi-task neural network architecture (Depth, Semantics, Boundaries)
+      - [ ] Train multi-task model on indoor RGB-D benchmarks (NYU Depth V2)
+      - [ ] Jointly predict metric depth, semantic segmentation, and object boundaries from single RGB frames
+
+    - [ ] **Phase 2: Single-View 3D Object & Scene Lifting**
+      - [ ] Unproject 2.5D predictions (depth + intrinsics) into metric 3D point clouds
+      - [ ] Segment individual objects into independent 3D point clusters
+      - [ ] Estimate initial 3D bounding boxes and spatial poses for segmented objects
+
+    - [ ] **Phase 3: Multi-View Temporal Fusion & Video Tracking**
+      - [ ] Estimate camera trajectory across video frames (Visual Odometry / SLAM integration)
+      - [ ] Fuse multi-frame point clouds and semantic predictions into a globally consistent scene representation
+      - [ ] Track and merge object instances across temporal viewpoints
+
+    - [ ] **Phase 4: Structured Mesh Generation & Geometry Processing**
+      - [ ] Reconstruct watertight, lightweight polygonal meshes from fused point clouds
+      - [ ] Perform CAD-like geometric simplification and plane/primitive fitting
+      - [ ] Extract and project high-fidelity textures onto reconstructed object meshes
+
+    - [ ] **Phase 5: Editable Digital Twin & Scene Export**
+      - [ ] Structure the environment as an interactive scene graph (individual objects, hierarchies, transforms)
+      - [ ] Export scenes to standard 3D formats (USD, glTF/GLB, OBJ)
+      - [ ] Enable object manipulation (moving, swapping, modifying properties) within game engines and 3D DCC tools (Blender, Unity, Unreal Engine)
