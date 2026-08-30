@@ -1,10 +1,15 @@
-from data.dataset import NYUv2Dataset
-
 import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
 import torch
 import numpy as np
 
+import sys
+from pathlib import Path
+
+# Add project root (one level up from scripts/) to sys.path
+sys.path.append(str(Path(__file__).resolve().parent.parent))
+
+from data.dataset import NYUv2Dataset
 
 # Number of NYUv2 classes
 num_classes = 40
@@ -52,15 +57,17 @@ def denormalize(tensor):
 # Load dataset
 dataset = NYUv2Dataset(
     "data/nyu_depth_v2_labeled.mat",
+    "data/classMapping40.mat",
     split="train"
 )
 
 # Get sample
-image, depth, label = dataset[326]
+image, depth, label, boundary = dataset[126]
 
 print("Image shape:", image.shape)
 print("Depth shape:", depth.shape)
 print("Label shape:", label.shape)
+print("Boundary shape:", boundary.shape)
 print("Classes present:", label.unique())
 
 
@@ -77,13 +84,14 @@ depth_map = depth.squeeze().numpy()
 # [H, W]
 label_map = label.numpy()
 
+boundary_map = boundary.squeeze().numpy()
 
 # --------------------------------
 # Plot
 # --------------------------------
 
 fig, axes = plt.subplots(
-    1, 3,
+    1, 4,
     figsize=(15, 5)
 )
 
@@ -113,6 +121,18 @@ im = axes[2].imshow(
 
 axes[2].set_title("Segmentation Label")
 axes[2].axis("off")
+
+# Boundary
+im = axes[3].imshow(
+    boundary_map,
+    cmap=cmap,
+    norm=norm,
+    interpolation="nearest"
+)
+
+axes[3].set_title("Boundary Map")
+axes[3].axis("off")
+
 
 
 plt.tight_layout()
