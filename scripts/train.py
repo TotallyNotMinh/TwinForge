@@ -10,7 +10,7 @@ def train():
     W_DEPTH = 0.6
     W_BOUND = 0.2
     EPOCHS = 100
-    BATCH_SIZE = 64
+    BATCH_SIZE = 32
     NUM_CLASSES = 41
 
     crit_seg = SegmentLoss()
