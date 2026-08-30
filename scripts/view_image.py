@@ -9,7 +9,7 @@ from pathlib import Path
 # Add project root (one level up from scripts/) to sys.path
 sys.path.append(str(Path(__file__).resolve().parent.parent))
 
-from data.dataset import NYUv2Dataset
+from data import NYUv2Dataset
 
 # Number of NYUv2 classes
 num_classes = 40
