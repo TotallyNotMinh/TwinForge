@@ -7,3 +7,6 @@ data/nyu_depth_v2_labeled.mat
 
 # Coding agent preferences
 GEMINI.md
+
+# pycache
+*/__pycache__
