@@ -1,6 +1,7 @@
 from torch import nn
 from torch import cat
 import torch
+import torch.nn.functional as F
 from .encoder import ResNetEncoder
 
 class SegmentHead(nn.Module):
@@ -123,18 +124,19 @@ class MultiHeadDecoder(nn.Module):
         bottleneck = encoded_features["f5"]
 
         up1 = self.bot(bottleneck)        
-        up1 = self.up(up1)
+        up1 = F.interpolate(up1, size=encoded_features["f4"].shape[2:], mode="bilinear", align_corners=False)
 
         up2 = self.dec1(cat([up1, encoded_features["f4"]], dim=1))
-        up2 = self.up(up2)
+        up2 = F.interpolate(up2, size=encoded_features["f3"].shape[2:], mode="bilinear", align_corners=False)
 
         up3 = self.dec2(cat([up2, encoded_features["f3"]], dim=1))
-        up3 = self.up(up3)
+        up3 = F.interpolate(up3, size=encoded_features["f2"].shape[2:], mode="bilinear", align_corners=False)
 
         up4 = self.dec3(cat([up3, encoded_features["f2"]], dim=1))
-        up4 = self.up(up4)
+        up4 = F.interpolate(up4, size=encoded_features["f1"].shape[2:], mode="bilinear", align_corners=False)
 
         up5 = self.dec4(cat([up4, encoded_features["f1"]], dim=1))
+        # Upsample up5 to the original input resolution (2x of stem f1)
         up5 = self.up(up5)
 
         segment_logits = self.segment_head(up5)

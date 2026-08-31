@@ -56,11 +56,14 @@ class NYUv2Dataset(Dataset):
         self.augment = augment
         self.augmentation = NYUv2Augmentation()
 
-        data = h5py.File(self.data_path, "r")
-        self.images = data["images"]
-        self.train_size = int(0.8 * len(self.images))
-        self.val_size = len(self.images) - self.train_size
+        with h5py.File(self.data_path, "r") as f:
+            self.images = np.array(f["images"])
+            self.depths = np.array(f["depths"])
+            self.labels = np.array(f["labels"])   
 
+            self.train_size = int(0.8 * len(self.images))
+            self.val_size = len(self.images) - self.train_size
+            
         generator = torch.Generator().manual_seed(42)
 
         indices = torch.randperm(len(self.images), generator=generator)
@@ -73,21 +76,18 @@ class NYUv2Dataset(Dataset):
         return self.train_size if self.split == "train" else self.val_size
 
     def __getitem__(self, idx):
-        if self.data is None:
-            self.data = h5py.File(self.data_path, "r")
-            
         idx = self.indices[idx]
 
         image = torch.from_numpy(
-            self.data["images"][idx]
+            self.images[idx]
         ).float() / 255.0
 
         depth = torch.from_numpy(
-            self.data["depths"][idx]
+            self.depths[idx]
         ).float()
 
         raw_label = torch.from_numpy(
-            self.data["labels"][idx]
+            self.labels[idx]
         ).long()
 
         if self.augment:
