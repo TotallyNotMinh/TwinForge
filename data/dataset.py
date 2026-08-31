@@ -29,7 +29,7 @@ def get_boundary_map(label: torch.Tensor, kernel_size: int = 3) -> torch.Tensor:
 
 class NYUv2Dataset(Dataset):
 
-    def __init__(self, data_path, class_map_path, split, augment=True, resize=(640, 320)):
+    def __init__(self, data_path, class_map_path, split, augment=True, resize=(640, 480)):
         self.data_path = data_path
         self.class_map_path = class_map_path
         self.data = None

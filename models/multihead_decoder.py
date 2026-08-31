@@ -28,7 +28,9 @@ class DepthHead(nn.Module):
             nn.Conv2d(64, 1, kernel_size=3, padding=1))
         
     def forward(self, x):
-        return self.out(x)
+        x = self.out(x)
+        return torch.clamp(x, min=1e-3, max=10.0)
+
 
 
 class BoundaryHead(nn.Module):

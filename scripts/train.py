@@ -19,7 +19,7 @@ def train():
     NUM_CLASSES = 41
     patience = 10
     epochs_without_improvement = 0
-    resize = (640, 320)
+    resize = (640, 480)
     encoder_lr = 1e-4
     decoder_lr = 1e-3
 
@@ -40,13 +40,13 @@ def train():
     val_loader = DataLoader(val_dataset, batch_size=BATCH_SIZE, shuffle=False, num_workers=4, pin_memory=True)
 
 
-    model = TwinForge(NUM_CLASSES).to(device)
+    model = TwinForge(NUM_CLASSES, freeze=False).to(device)
 
     optimizer = torch.optim.AdamW([
         {"params": model.encoder.parameters(), "lr": encoder_lr},
         {"params": model.decoder.parameters(), "lr": decoder_lr},
-    ], weight_decay=1e-2)    
-    scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=EPOCHS, eta_min=1e-6)
+    ], weight_decay=1e-4)    
+    scheduler = torch.optim.lr_scheduler.CosineAnnealingWarmRestarts(optimizer=optimizer, T_0=10, T_mult=2, eta_min=1e-6)
     scaler = torch.amp.GradScaler('cuda', enabled=(device == "cuda"))
 
     val_losses = []
@@ -77,7 +77,7 @@ def train():
                 pred_seg, pred_depth, pred_bound = model(images)
 
                 seg_loss = crit_seg(pred_seg, labels)
-                depth_loss = crit_depth(pred_depth, depths)
+                depth_loss = crit_depth(pred_depth, depths, pred_bound)
                 bound_loss = crit_bound(pred_bound, boundaries)
 
                 tol_loss = (W_SEG * seg_loss) + (W_DEPTH * depth_loss) + (W_BOUND * bound_loss) 
