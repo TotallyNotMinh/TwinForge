@@ -139,7 +139,7 @@ def train():
                     pred_seg, pred_depth, pred_bound = model(images)
 
                     seg_loss = crit_seg(pred_seg, labels)
-                    depth_loss = crit_depth(pred_depth, depths)
+                    depth_loss = crit_depth(pred_depth, depths, pred_bound)
                     bound_loss = crit_bound(pred_bound, boundaries)
 
                     tol_loss = (W_SEG * seg_loss) + (W_DEPTH * depth_loss) + (W_BOUND * bound_loss) 
