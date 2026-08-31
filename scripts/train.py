@@ -1,3 +1,7 @@
+import sys
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+
 import torch
 from torch.utils.data import DataLoader
 import os
@@ -6,9 +10,9 @@ from losses import SegmentLoss, DepthLoss, BoundaryLoss
 from models import TwinForge
 
 def train():
-    W_SEG = 0.2
+    W_SEG = 0.1
     W_DEPTH = 0.6
-    W_BOUND = 0.2
+    W_BOUND = 0.3
     EPOCHS = 100
     BATCH_SIZE = 32
     NUM_CLASSES = 41

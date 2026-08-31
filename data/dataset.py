@@ -7,6 +7,7 @@ import scipy.io
 import numpy as np
 import torchvision.transforms.functional as TF
 from torchvision.transforms import InterpolationMode
+from .augment import NYUv2Augmentation
 
 def get_boundary_map(label: torch.Tensor, kernel_size: int = 3) -> torch.Tensor:
     if label.dim() == 2:
@@ -52,6 +53,8 @@ class NYUv2Dataset(Dataset):
         # Disable augment on val/test
         if self.split != "train":
             augment = False
+        self.augment = augment
+        self.augmentation = NYUv2Augmentation()
 
         data = h5py.File(self.data_path, "r")
         self.images = data["images"]
@@ -70,7 +73,9 @@ class NYUv2Dataset(Dataset):
         return self.train_size if self.split == "train" else self.val_size
 
     def __getitem__(self, idx):
-
+        if self.data is None:
+            self.data = h5py.File(self.data_path, "r")
+            
         idx = self.indices[idx]
 
         image = torch.from_numpy(
