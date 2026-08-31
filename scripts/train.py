@@ -14,7 +14,7 @@ def train():
     W_DEPTH = 0.6
     W_BOUND = 0.3
     EPOCHS = 100
-    BATCH_SIZE = 32
+    BATCH_SIZE = 16
     NUM_CLASSES = 41
     patience = 10
     epochs_without_improvement = 0
