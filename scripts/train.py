@@ -8,6 +8,7 @@ import os
 from data import NYUv2Dataset
 from losses import SegmentLoss, DepthLoss, BoundaryLoss
 from models import TwinForge
+from metrics import MultiTaskMetrics
 
 def train():
     W_SEG = 0.1
@@ -18,7 +19,9 @@ def train():
     NUM_CLASSES = 41
     patience = 10
     epochs_without_improvement = 0
-
+    resize = (640, 320)
+    encoder_lr = 1e-4
+    decoder_lr = 1e-3
 
     crit_seg = SegmentLoss()
     crit_depth = DepthLoss()
@@ -30,8 +33,8 @@ def train():
     class_map_path = "data/classMapping40.mat"
     checkpoint_dir = "checkpoints/"
 
-    train_dataset = NYUv2Dataset(data_path=dataset_path, class_map_path=class_map_path, split="train")
-    val_dataset = NYUv2Dataset(data_path=dataset_path, class_map_path=class_map_path, split="val")
+    train_dataset = NYUv2Dataset(data_path=dataset_path, class_map_path=class_map_path, split="train", resize=resize)
+    val_dataset = NYUv2Dataset(data_path=dataset_path, class_map_path=class_map_path, split="val", resize=resize)
 
     train_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=4, pin_memory=True)
     val_loader = DataLoader(val_dataset, batch_size=BATCH_SIZE, shuffle=False, num_workers=4, pin_memory=True)
@@ -39,14 +42,18 @@ def train():
 
     model = TwinForge(NUM_CLASSES).to(device)
 
-
-    optimizer = torch.optim.AdamW(model.parameters(), lr=1e-3)
+    optimizer = torch.optim.AdamW([
+        {"params": model.encoder.parameters(), "lr": encoder_lr},
+        {"params": model.decoder.parameters(), "lr": decoder_lr},
+    ], weight_decay=1e-2)    
     scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=EPOCHS, eta_min=1e-6)
     scaler = torch.amp.GradScaler('cuda', enabled=(device == "cuda"))
 
     val_losses = []
     train_losses = []
     best_val_loss = float("inf")
+
+    metrics = MultiTaskMetrics(num_classes=NUM_CLASSES)
 
     for epoch in range(EPOCHS + 1):
         print(f"Epoch {epoch}")
@@ -93,6 +100,30 @@ def train():
         # Validation loop
         running_val_loss = 0.0
 
+        total_depth = {
+            "rmse": 0.0,
+            "abs_rel": 0.0,
+            "delta1": 0.0,
+            "delta2": 0.0,
+            "delta3": 0.0,
+        }
+
+        total_seg = {
+            "miou": 0.0,
+            "dice": 0.0,
+            "pixel_acc": 0.0,
+        }
+
+        total_bound = {
+            "f1": 0.0,
+            "precision": 0.0,
+            "recall": 0.0,
+        }
+
+        num_batches = 0
+
+        model.eval()
+
         with torch.no_grad():
             for images, depths, labels, boundaries in val_loader:
                 images = images.to(device)
@@ -113,17 +144,70 @@ def train():
 
                     tol_loss = (W_SEG * seg_loss) + (W_DEPTH * depth_loss) + (W_BOUND * bound_loss) 
 
+                result = metrics.compute(
+                    pred_seg,
+                    pred_depth,
+                    pred_bound,
+                    labels,
+                    depths,
+                    boundaries
+                )
+
+                for key in total_depth:
+                    total_depth[key] += result["depth"][key]
+
+                for key in total_seg:
+                    total_seg[key] += result["segmentation"][key]
+
+                for key in total_bound:
+                    total_bound[key] += result["boundary"][key]
+
+                num_batches += 1
+
                 running_val_loss += tol_loss.item()
 
             avg_val_loss = running_val_loss / len(val_loader)
 
-            print(
-            f"(Val) Seg: {seg_loss.item():.4f} | "
-            f"(Val) Depth: {depth_loss.item():.4f} | "
-            f"(Val) Bound: {bound_loss.item():.4f}"
-            )
-            
+            # print(
+            # f"(Val) Seg: {seg_loss.item():.4f} | "
+            # f"(Val) Depth: {depth_loss.item():.4f} | "
+            # f"(Val) Bound: {bound_loss.item():.4f}"
+            # )
+
+        for key in total_depth:
+            total_depth[key] /= num_batches
+
+        for key in total_seg:
+            total_seg[key] /= num_batches
+
+        for key in total_bound:
+            total_bound[key] /= num_batches
+
+
         print(f"Epoch [{epoch:02d}/{EPOCHS:02d}] | Train Loss: {avg_train_loss:.4f} | Val Loss: {avg_val_loss:.4f} | LR: {scheduler.get_last_lr()[0]:.6f}")
+
+        print(
+            f"Depth | "
+            f"RMSE: {total_depth['rmse']:.4f} | "
+            f"AbsRel: {total_depth['abs_rel']:.4f} | "
+            f"δ1: {total_depth['delta1']:.4f} | "
+            f"δ2: {total_depth['delta2']:.4f} | "
+            f"δ3: {total_depth['delta3']:.4f}"
+        )
+
+        print(
+            f"Seg   | "
+            f"mIoU: {total_seg['miou']:.4f} | "
+            f"Dice: {total_seg['dice']:.4f} | "
+            f"Pixel Acc: {total_seg['pixel_acc']:.4f}"
+        )
+
+        print(
+            f"Bound | "
+            f"F1: {total_bound['f1']:.4f} | "
+            f"Precision: {total_bound['precision']:.4f} | "
+            f"Recall: {total_bound['recall']:.4f}"
+)
 
 
         # --- Save Best Checkpoint ---

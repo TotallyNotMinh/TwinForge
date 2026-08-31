@@ -42,7 +42,7 @@ dataset = NYUv2Dataset(
     split="val"
 )
 
-image, depth, label, boundary = dataset[6]
+image, depth, label, boundary = dataset[7]
 
 print("Image shape:", image.shape)
 print("Depth shape:", depth.shape)
