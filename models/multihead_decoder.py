@@ -7,8 +7,12 @@ class SegmentHead(nn.Module):
     def __init__(self, num_labels):
         super().__init__()
 
-        self.out = nn.Conv2d(64, num_labels, kernel_size=3, padding=1)
-        
+        self.out = nn.Sequential(
+            nn.Conv2d(64, 64, kernel_size=3, padding=1), 
+            nn.ReLU(),
+            nn.Dropout2d(0.1),
+            nn.Conv2d(64, num_labels, kernel_size=3, padding=1))
+                
     def forward(self, x):
         return self.out(x)
 
@@ -17,7 +21,11 @@ class DepthHead(nn.Module):
     def __init__(self):
         super().__init__()
 
-        self.out = nn.Conv2d(64, 1, kernel_size=3, padding=1)
+        self.out = nn.Sequential(
+            nn.Conv2d(64, 64, kernel_size=3, padding=1), 
+            nn.ReLU(),
+            nn.Dropout2d(0.1),
+            nn.Conv2d(64, 1, kernel_size=3, padding=1))
         
     def forward(self, x):
         return self.out(x)
@@ -27,7 +35,11 @@ class BoundaryHead(nn.Module):
     def __init__(self):
         super().__init__()
 
-        self.out = nn.Conv2d(64, 1, kernel_size=3, padding=1)
+        self.out = nn.Sequential(
+            nn.Conv2d(64, 64, kernel_size=3, padding=1), 
+            nn.ReLU(),
+            nn.Dropout2d(0.1),
+            nn.Conv2d(64, 1, kernel_size=3, padding=1))
         
     def forward(self, x):
         return self.out(x)
