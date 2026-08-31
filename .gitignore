@@ -12,3 +12,6 @@ GEMINI.md
 
 # pycache
 */__pycache__
+
+# Checkpoints
+checkpoints/
