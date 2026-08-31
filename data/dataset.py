@@ -5,6 +5,8 @@ from torchvision import transforms
 import torch.nn.functional as F
 import scipy.io
 import numpy as np
+import torchvision.transforms.functional as TF
+from torchvision.transforms import InterpolationMode
 
 def get_boundary_map(label: torch.Tensor, kernel_size: int = 3) -> torch.Tensor:
     if label.dim() == 2:
@@ -68,41 +70,57 @@ class NYUv2Dataset(Dataset):
         return self.train_size if self.split == "train" else self.val_size
 
     def __getitem__(self, idx):
-        if self.data == None: data = h5py.File(self.data_path, "r") 
+
         idx = self.indices[idx]
 
-        image = torch.from_numpy(data["images"][idx])
-        depth = torch.from_numpy(data["depths"][idx])
-        raw_label = torch.from_numpy(data["labels"][idx])
+        image = torch.from_numpy(
+            self.data["images"][idx]
+        ).float() / 255.0
 
-        image = image.float() / 255.0
-        image = self.rgb_transform(image)
+        depth = torch.from_numpy(
+            self.data["depths"][idx]
+        ).float()
 
-        # F.interpolate() expects image-like tensors in (N, C, H, W) format:
-        # Add dimensions for interpolate
-        # [H, W] -> [1, 1, H, W]
-        raw_label = raw_label.unsqueeze(0).unsqueeze(0)
+        raw_label = torch.from_numpy(
+            self.data["labels"][idx]
+        ).long()
+
+        if self.augment:
+            image, depth, raw_label = self.augmentation(
+                image,
+                depth,
+                raw_label
+            )
+
+        image = TF.resize(
+            image,
+            self.resize,
+            interpolation=InterpolationMode.BILINEAR
+        )
+
         depth = depth.unsqueeze(0).unsqueeze(0)
+
+        depth = F.interpolate(
+            depth,
+            size=self.resize,
+            mode="bilinear",
+            align_corners=False
+        ).squeeze(0).squeeze(0)
+
+        raw_label = raw_label.unsqueeze(0).unsqueeze(0)
 
         raw_label = F.interpolate(
             raw_label.float(),
             size=self.resize,
             mode="nearest"
-        )
+        ).squeeze(0).squeeze(0).long()
 
-        depth = F.interpolate(
-            depth.float(),
-            size=self.resize,
-            mode="bilinear"
-        )
+        label = self.class_map[raw_label]
 
-        # [1, 1, H, W] -> [H, W]
-        raw_label = raw_label.squeeze(0).squeeze(0).long()
-        depth = depth.squeeze(0).squeeze(0)
+        boundary = get_boundary_map(label).float()
 
-        label = self.class_map[raw_label] 
+        image = self.rgb_transform(image)
 
-        boundary = get_boundary_map(label)
         return image, depth, label, boundary
     
 if __name__ == "__main__":
