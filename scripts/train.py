@@ -11,9 +11,9 @@ from models import TwinForge
 from metrics import MultiTaskMetrics
 
 def train():
-    W_SEG = 0.1
-    W_DEPTH = 0.6
-    W_BOUND = 0.3
+    W_SEG = 0.4
+    W_DEPTH = 0.5
+    W_BOUND = 0.2
     EPOCHS = 100
     BATCH_SIZE = 12
     NUM_CLASSES = 41
