@@ -4,6 +4,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 import torch
 from torch.utils.data import DataLoader
+from tqdm import tqdm
 import os
 from data import NYUv2Dataset
 from losses import SegmentLoss, DepthLoss, BoundaryLoss
@@ -15,11 +16,11 @@ def train():
     W_DEPTH = 0.5
     W_BOUND = 0.2
     EPOCHS = 150
-    BATCH_SIZE = 10
+    BATCH_SIZE = 12
     NUM_CLASSES = 41
     patience = 40
     epochs_without_improvement = 0
-    resize = (640, 480)
+    resize = (320, 240)
     encoder_lr = 1e-4
     decoder_lr = 1e-3
 
@@ -36,8 +37,8 @@ def train():
     train_dataset = NYUv2Dataset(data_path=dataset_path, class_map_path=class_map_path, split="train", resize=resize)
     val_dataset = NYUv2Dataset(data_path=dataset_path, class_map_path=class_map_path, split="val", resize=resize)
 
-    train_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=4, pin_memory=True)
-    val_loader = DataLoader(val_dataset, batch_size=BATCH_SIZE, shuffle=False, num_workers=4, pin_memory=True)
+    train_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=2, pin_memory=True)
+    val_loader = DataLoader(val_dataset, batch_size=BATCH_SIZE, shuffle=False, num_workers=2, pin_memory=True)
 
 
     model = TwinForge(NUM_CLASSES, freeze=False).to(device)
@@ -71,7 +72,8 @@ def train():
         running_train_loss = 0.0
 
         # Train loop
-        for images, depths, labels, boundaries in train_loader:
+        train_pbar = tqdm(train_loader, desc=f"Epoch [{epoch:02d}/{EPOCHS:02d}] (Train)", leave=False)
+        for images, depths, labels, boundaries in train_pbar:
             images = images.to(device)
             depths = depths.unsqueeze(1).float().to(device)
             labels = labels.long().to(device)
@@ -97,12 +99,7 @@ def train():
             scaler.update()
 
             running_train_loss += tol_loss.item()
-
-            # print(
-            # f"(Train) Seg: {seg_loss.item():.4f} | "
-            # f"(Train) Depth: {depth_loss.item():.4f} | "
-            # f"(Train) Bound: {bound_loss.item():.4f}"
-            # )
+            train_pbar.set_postfix({"loss": f"{tol_loss.item():.4f}"})
 
         scheduler.step()
         avg_train_loss = running_train_loss / len(train_loader)
@@ -134,8 +131,9 @@ def train():
 
         model.eval()
 
+        val_pbar = tqdm(val_loader, desc=f"Epoch [{epoch:02d}/{EPOCHS:02d}] (Val)  ", leave=False)
         with torch.no_grad():
-            for images, depths, labels, boundaries in val_loader:
+            for images, depths, labels, boundaries in val_pbar:
                 images = images.to(device)
                 depths = depths.unsqueeze(1).float().to(device)
                 labels = labels.long().to(device)
@@ -175,6 +173,8 @@ def train():
                 num_batches += 1
 
                 running_val_loss += tol_loss.item()
+                val_pbar.set_postfix({"val_loss": f"{tol_loss.item():.4f}"})
+
 
             avg_val_loss = running_val_loss / len(val_loader)
 
