@@ -14,10 +14,10 @@ def train():
     W_SEG = 0.4
     W_DEPTH = 0.5
     W_BOUND = 0.2
-    EPOCHS = 100
-    BATCH_SIZE = 12
+    EPOCHS = 150
+    BATCH_SIZE = 1
     NUM_CLASSES = 41
-    patience = 10
+    patience = 40
     epochs_without_improvement = 0
     resize = (640, 480)
     encoder_lr = 1e-4
@@ -42,6 +42,17 @@ def train():
 
     model = TwinForge(NUM_CLASSES, freeze=False).to(device)
 
+    # Load checkpoint:
+    checkpoint_path = os.path.join(checkpoint_dir, "best_model.pth")
+    try:
+        device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+        checkpoint = torch.load(checkpoint_path, map_location=device)        
+        model.load_state_dict(checkpoint) 
+        print("Successfully loaded model weights.")
+        
+    except FileNotFoundError:
+        print("No checkpoint available.")
+    
     optimizer = torch.optim.AdamW([
         {"params": model.encoder.parameters(), "lr": encoder_lr},
         {"params": model.decoder.parameters(), "lr": decoder_lr},
@@ -56,7 +67,6 @@ def train():
     metrics = MultiTaskMetrics(num_classes=NUM_CLASSES)
 
     for epoch in range(EPOCHS + 1):
-        print(f"Epoch {epoch}")
         model.train(True)
         running_train_loss = 0.0
 
