@@ -57,7 +57,7 @@ def train():
         {"params": model.encoder.parameters(), "lr": encoder_lr},
         {"params": model.decoder.parameters(), "lr": decoder_lr},
     ], weight_decay=1e-4)    
-    scheduler = torch.optim.lr_scheduler.CosineAnnealingWarmRestarts(optimizer=optimizer, T_0=10, T_mult=2, eta_min=1e-6)
+    scheduler = torch.optim.lr_scheduler.CosineAnnealingWarmRestarts(optimizer=optimizer, T_0=20, T_mult=2, eta_min=1e-6)
     scaler = torch.amp.GradScaler('cuda', enabled=(device == "cuda"))
 
     val_losses = []
