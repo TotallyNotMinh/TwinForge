@@ -81,11 +81,11 @@ def train():
 
             running_train_loss += tol_loss.item()
 
-            print(
-            f"(Train) Seg: {seg_loss.item():.4f} | "
-            f"(Train) Depth: {depth_loss.item():.4f} | "
-            f"(Train) Bound: {bound_loss.item():.4f}"
-            )
+            # print(
+            # f"(Train) Seg: {seg_loss.item():.4f} | "
+            # f"(Train) Depth: {depth_loss.item():.4f} | "
+            # f"(Train) Bound: {bound_loss.item():.4f}"
+            # )
 
         scheduler.step()
         avg_train_loss = running_train_loss / len(train_loader)
