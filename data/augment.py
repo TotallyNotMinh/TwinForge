@@ -18,12 +18,12 @@ class NYUv2Augmentation:
         if label_is_2d:
             label = label.unsqueeze(0)
 
-        if random.random() < 0.5:
+        if random.random() < 0.7:
             image = TF.hflip(image)
             depth = TF.hflip(depth)
             label = TF.hflip(label)
 
-        if random.random() < 0.3:
+        if random.random() < 0.5:
             angle = random.uniform(-5.0, 5.0)
             image = TF.rotate(
                 image,
@@ -41,25 +41,25 @@ class NYUv2Augmentation:
                 interpolation=InterpolationMode.NEAREST
             )
 
-        if random.random() < 0.3:
+        if random.random() < 0.5:
             image = TF.adjust_brightness(
                 image,
                 random.uniform(0.8, 1.2)
             )
 
-        if random.random() < 0.3:
+        if random.random() < 0.5:
             image = TF.adjust_contrast(
                 image,
                 random.uniform(0.8, 1.2)
             )
 
-        if random.random() < 0.3:
+        if random.random() < 0.5:
             image = TF.adjust_saturation(
                 image,
                 random.uniform(0.8, 1.2)
             )
 
-        if random.random() < 0.1:
+        if random.random() < 0.3:
             image = TF.adjust_hue(
                 image,
                 random.uniform(-0.05, 0.05)
@@ -80,7 +80,7 @@ class NYUv2Augmentation:
             noise = torch.randn_like(depth) * 0.005
             depth = torch.clamp(depth + noise, min=0.0)
 
-        if random.random() < 0.5:
+        if random.random() < 0.6:
             i, j, h, w = RandomResizedCrop.get_params(image, scale=(0.75, 1.25), ratio=[0.9, 1.1])
             output_size = (image.shape[-2], image.shape[-1]) # (H, W)
 

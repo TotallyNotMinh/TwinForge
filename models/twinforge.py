@@ -1,6 +1,13 @@
+import sys
+from pathlib import Path
+
+# Add project root
+sys.path.append(str(Path(__file__).resolve().parent.parent))
+
 from torch import nn
-from .encoder import ResNetEncoder
-from .multihead_decoder import MultiHeadDecoder
+from models.encoder import ResNetEncoder
+from models.multihead_decoder import MultiHeadDecoder
+from torchinfo import summary
 
 class TwinForge(nn.Module):
     def __init__(self, num_labels, pretrained=True, freeze=True):
@@ -13,3 +20,7 @@ class TwinForge(nn.Module):
         features = self.encoder(x)
         segment_logits, depth_logits, edge_logits = self.decoder(features)
         return segment_logits, depth_logits, edge_logits
+
+if __name__ == "__main__":
+    model = TwinForge(41, freeze=False)
+    summary(model, input_size=(1, 3, 288, 384))
