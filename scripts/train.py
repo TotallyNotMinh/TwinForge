@@ -14,7 +14,7 @@ from metrics import MultiTaskMetrics
 def train():
     # ============== Hyperparams ==============
     EPOCHS = 150
-    BATCH_SIZE = 12
+    BATCH_SIZE = 10
     NUM_CLASSES = 41
     patience = 25
     epochs_without_improvement = 0
