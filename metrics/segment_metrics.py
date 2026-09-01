@@ -10,7 +10,7 @@ class SegmentationMetrics:
         ious = []
         dices = []
 
-        for cls in range(num_classes):
+        for cls in range(1, num_classes): # Exclude unlabeled class (0)
 
             pred_cls = pred == cls
             target_cls = target == cls
@@ -35,8 +35,9 @@ class SegmentationMetrics:
                 dices.append(dice)
 
         # Pixel accuracy
+        valid = target > 0
         pixel_accuracy = (
-            (pred == target).float().mean()
+            (pred[valid] == target[valid]).float().mean()
         )
 
         miou = torch.stack(ious).mean()
