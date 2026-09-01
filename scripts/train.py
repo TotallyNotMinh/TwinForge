@@ -14,11 +14,11 @@ from metrics import MultiTaskMetrics
 def train():
     # ============== Hyperparams ==============
     EPOCHS = 150
-    BATCH_SIZE = 1
+    BATCH_SIZE = 12
     NUM_CLASSES = 41
-    patience = 40
+    patience = 25
     epochs_without_improvement = 0
-    resize = (320, 240)
+    resize = (640, 480)
     encoder_lr = 1e-4
     decoder_lr = 1e-3
     kendall_lr = 1e-3
