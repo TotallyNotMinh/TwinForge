@@ -81,7 +81,7 @@ class NYUv2Augmentation:
             depth = torch.clamp(depth + noise, min=0.0)
 
         if random.random() < 0.6:
-            i, j, h, w = RandomResizedCrop.get_params(image, scale=(0.75, 1.25), ratio=[0.9, 1.1])
+            i, j, h, w = RandomResizedCrop.get_params(image, scale=(0.75, 1), ratio=[0.9, 1.1])
             output_size = (image.shape[-2], image.shape[-1]) # (H, W)
 
             image = TF.resized_crop(image, i, j, h, w, size=output_size, interpolation=InterpolationMode.BILINEAR)
