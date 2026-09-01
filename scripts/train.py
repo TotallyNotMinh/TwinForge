@@ -10,19 +10,108 @@ from data import NYUv2Dataset
 from losses import SegmentLoss, DepthLoss, BoundaryLoss, KendallMultiTaskLoss
 from models import TwinForge
 from metrics import MultiTaskMetrics
+import argparse
 
+parser = argparse.ArgumentParser()
+parser.add_argument("--batch-size", type=int, default=8, help="Batch size for training")
+parser.add_argument("--checkpoint-path", type=str, default=None, help="Path to checkpoint")
+
+args = parser.parse_args()
+
+def save_checkpoint(checkpoint_dir, checkpoint_name, epoch, model, kendall_loss, optimizer, scheduler, best_depth_delta1, best_seg_miou, best_bound_f1, epochs_without_improvement, scaler):
+    os.makedirs(checkpoint_dir, exist_ok=True)
+    checkpoint_save_path = os.path.join(checkpoint_dir, checkpoint_name)
+    checkpoint = {
+        "epoch": epoch,
+
+        # Model
+        "model_state_dict": model.state_dict(),
+
+        # Kendall uncertainty parameters
+        "kendall_state_dict": kendall_loss.state_dict(),
+        "kendall_log_vars": kendall_loss.log_vars.detach().cpu(),
+
+        # Optimizer / scheduler
+        "optimizer_state_dict": optimizer.state_dict(),
+        "scheduler_state_dict": scheduler.state_dict(),
+
+        # Best metrics
+        "best_depth_delta1": best_depth_delta1,
+        "best_seg_miou": best_seg_miou,
+        "best_bound_f1": best_bound_f1,
+
+        # Early stopping
+        "epochs_without_improvement": epochs_without_improvement
+    }
+    
+    if scaler is not None:
+        checkpoint["scaler_state_dict"] = scaler.state_dict()
+
+    torch.save(checkpoint, checkpoint_save_path)
+
+
+def load_checkpoint(checkpoint_path, device, model, optimizer, scheduler, scaler, kendall_loss):
+    if checkpoint_path == None:
+        print("No checkpoint detected")
+        return 0, 0.0, 0.0, 0.0, 0  # Default values
+    
+    else:
+        checkpoint = torch.load(
+            checkpoint_path,
+            map_location=device
+        )
+
+        model.load_state_dict(checkpoint["model_state_dict"])
+
+        optimizer.load_state_dict(checkpoint["optimizer_state_dict"])
+
+        scheduler.load_state_dict(checkpoint["scheduler_state_dict"])
+
+        kendall_loss.load_state_dict(checkpoint["kendall_state_dict"])
+
+        if scaler is not None and "scaler_state_dict" in checkpoint:
+            scaler.load_state_dict(
+                checkpoint["scaler_state_dict"]
+            )
+
+        start_epoch = checkpoint["epoch"] + 1
+
+        best_depth_delta1 = checkpoint["best_depth_delta1"]
+        best_seg_miou = checkpoint["best_seg_miou"]
+        best_bound_f1 = checkpoint["best_bound_f1"]
+
+        epochs_without_improvement = checkpoint["epochs_without_improvement"]
+
+        print(f"Resume training:")
+        print(f"  Starting epoch:              {start_epoch}")
+        print(f"  Best depth δ1:               {best_depth_delta1:.4f}")
+        print(f"  Best segmentation mIoU:      {best_seg_miou:.4f}")
+        print(f"  Best boundary F1:             {best_bound_f1:.4f}")
+        print(f"  Epochs without improvement:   {epochs_without_improvement}")
+        print(f"  Current LR:                   {optimizer.param_groups[0]['lr']:.8f}")
+        print(f"  Kendall log_vars:             {kendall_loss.log_vars.detach().cpu().tolist()}")
+        print(f"  Kendall weights:              {torch.exp(-kendall_loss.log_vars.detach()).cpu().tolist()}")
+            
+    return start_epoch, best_depth_delta1, best_seg_miou, best_bound_f1, epochs_without_improvement
+    
 def train():
     # ============== Hyperparams ==============
     EPOCHS = 150
-    BATCH_SIZE = 8
+    BATCH_SIZE = args.batch_size
     NUM_CLASSES = 41
     patience = 25
     epochs_without_improvement = 0
-    resize = (640, 480)
+    resize = (288, 384)
     encoder_lr = 1e-4
     decoder_lr = 1e-3
     kendall_lr = 1e-3
     device = "cuda" if torch.cuda.is_available() else "cpu"
+    checkpoint_path = args.checkpoint_path
+    start_epoch = 0
+
+    best_seg_miou = 0
+    best_bound_f1 = 0
+    best_depth_delta1 = 0
 
     # ============== Losses ==============
     crit_seg = SegmentLoss().to(device)
@@ -46,17 +135,6 @@ def train():
 
     model = TwinForge(NUM_CLASSES, freeze=False).to(device)
 
-    # Load checkpoint:
-    checkpoint_path = os.path.join(checkpoint_dir, "best_model.pth")
-    try:
-        device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-        checkpoint = torch.load(checkpoint_path, map_location=device)        
-        model.load_state_dict(checkpoint) 
-        print("Successfully loaded model weights.")
-        
-    except FileNotFoundError:
-        print("No checkpoint available.")
-
     # ============== Optimizer and Schedulers ==============
     
     optimizer = torch.optim.AdamW([
@@ -73,14 +151,13 @@ def train():
 
     scaler = torch.amp.GradScaler('cuda', enabled=(device == "cuda"))
 
-    # ============== Trainng and Validation loop ==============
-    val_losses = []
-    train_losses = []
-    best_val_loss = float("inf")
-
     metrics = MultiTaskMetrics(num_classes=NUM_CLASSES)
 
-    for epoch in range(EPOCHS + 1):
+    # ============== Resume Training ==============
+    start_epoch, best_depth_delta1, best_seg_miou, best_bound_f1, epochs_without_improvement = load_checkpoint(checkpoint_path, device, model, optimizer, scheduler, scaler, kendall_loss)
+
+    # ============== Trainng and Validation loop ==============
+    for epoch in range(start_epoch, EPOCHS + 1):
         model.train(True)
         running_train_loss = 0.0
 
@@ -112,6 +189,7 @@ def train():
             scaler.update()
 
             running_train_loss += tol_loss.item()
+
             train_pbar.set_postfix({"loss": f"{tol_loss.item():.4f}"})
 
         scheduler.step()
@@ -119,6 +197,10 @@ def train():
 
         # ============== Validation loop ==============
         running_val_loss = 0.0
+
+        running_seg_loss = 0.0
+        running_depth_loss = 0.0
+        running_boundary_loss = 0.0
 
         total_depth = {
             "rmse": 0.0,
@@ -186,16 +268,18 @@ def train():
                 num_batches += 1
 
                 running_val_loss += tol_loss.item()
+
+                running_boundary_loss += bound_loss
+                running_depth_loss += depth_loss
+                running_seg_loss += seg_loss
                 val_pbar.set_postfix({"val_loss": f"{tol_loss.item():.4f}"})
 
 
             avg_val_loss = running_val_loss / len(val_loader)
 
-            # print(
-            # f"(Val) Seg: {seg_loss.item():.4f} | "
-            # f"(Val) Depth: {depth_loss.item():.4f} | "
-            # f"(Val) Bound: {bound_loss.item():.4f}"
-            # )
+            avg_seg_loss = running_seg_loss / len(val_loader)
+            avg_depth_loss = running_depth_loss / len(val_loader)
+            avg_boundary_loss = running_boundary_loss / len(val_loader)
 
         # ============== Log ==============
 
@@ -210,8 +294,11 @@ def train():
 
 
         weights = (0.5 * torch.exp(-kendall_loss.log_vars.detach())).cpu().numpy()
+
         print(f"\n === Epoch [{epoch:02d}/{EPOCHS:02d}] | Train Loss: {avg_train_loss:.4f} | Val Loss: {avg_val_loss:.4f} | LR: {scheduler.get_last_lr()[0]:.6f} === ")
-        print(f"Effective Loss Weights -> Seg: {weights[0]:.3f} | Depth: {weights[1]:.3f} | Bound: {weights[2]:.3f}")
+        print(f"Average Task Losses: Seg: {avg_seg_loss:.3f} | Depth: {avg_depth_loss:.3f} | Bound: {avg_boundary_loss:.3f}")
+        print(f"Kendall Weights -> Seg: {weights[0]:.3f} | Depth: {weights[1]:.3f} | Bound: {weights[2]:.3f}")
+        print(f"Kendall log_vars -> Seg: {kendall_loss.log_vars[0]:.3f} | Depth: {kendall_loss.log_vars[1]:.3f} | Bound: {kendall_loss.log_vars[2]:.3f}")
 
         print(
             f"Depth | "
@@ -236,15 +323,33 @@ def train():
             f"Recall: {total_bound['recall']:.4f}"
 )
 
+        # ============== Save current checkpoint ============== 
+        save_checkpoint(checkpoint_dir, "checkpoint.pth", epoch, model, kendall_loss, optimizer, scheduler, best_depth_delta1, best_seg_miou, best_bound_f1, epochs_without_improvement, scaler)
 
-        # --- Save Best Checkpoint ---
-        if avg_val_loss < best_val_loss:
-            best_val_loss = avg_val_loss
-            save_path = os.path.join(checkpoint_dir, "best_model.pth")
-            torch.save(model.state_dict(), save_path)
-            print(f"--> Saved new best checkpoint to {save_path}")
+        # ============== Save best checkpoint for each task ==============
+        improved = False
+
+        if total_depth['delta1'] > best_depth_delta1:
+            best_depth_delta1 = total_depth['delta1']
+            save_checkpoint(checkpoint_dir, "best_depth.pth", epoch, model, kendall_loss, optimizer, scheduler, best_depth_delta1, best_seg_miou, best_bound_f1, epochs_without_improvement, scaler)
+            print(f"--> Saved new best DEPTH checkpoint.")
+            improved = True
+
+        if total_seg['miou'] > best_seg_miou:
+            best_seg_miou = total_seg['miou'] 
+            save_checkpoint(checkpoint_dir, "best_seg.pth", epoch, model, kendall_loss, optimizer, scheduler, best_depth_delta1, best_seg_miou, best_bound_f1, epochs_without_improvement, scaler)
+            print(f"--> Saved new best SEG checkpoint.")
+            improved = True
+
+
+        if total_bound['f1'] > best_bound_f1:
+            best_bound_f1 = total_bound['f1']
+            save_checkpoint(checkpoint_dir, "best_bound.pth", epoch, model, kendall_loss, optimizer, scheduler, best_depth_delta1, best_seg_miou, best_bound_f1, epochs_without_improvement, scaler)
+            print(f"--> Saved new best BOUND checkpoint.")
+            improved = True
+
+        if improved:
             epochs_without_improvement = 0
-
         else: 
             epochs_without_improvement += 1
             if epochs_without_improvement >= patience: 
