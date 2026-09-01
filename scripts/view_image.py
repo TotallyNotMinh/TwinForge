@@ -58,11 +58,11 @@ def denormalize(tensor):
 dataset = NYUv2Dataset(
     "data/nyu_depth_v2_labeled.mat",
     "data/classMapping40.mat",
-    split="train"
+    split="val"
 )
 
 # Get sample
-image, depth, label, boundary = dataset[126]
+image, depth, label, boundary = dataset[6]
 
 print("Image shape:", image.shape)
 print("Depth shape:", depth.shape)

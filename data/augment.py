@@ -3,7 +3,7 @@ import random
 import torch
 import torchvision.transforms.functional as TF
 from torchvision.transforms import InterpolationMode
-
+from torchvision.transforms import RandomResizedCrop
 
 class NYUv2Augmentation:
 
@@ -79,6 +79,14 @@ class NYUv2Augmentation:
         if random.random() < 0.1:
             noise = torch.randn_like(depth) * 0.005
             depth = torch.clamp(depth + noise, min=0.0)
+
+        if random.random() < 0.5:
+            i, j, h, w = RandomResizedCrop.get_params(image, scale=(0.75, 1.25), ratio=[0.9, 1.1])
+            output_size = (image.shape[-2], image.shape[-1]) # (H, W)
+
+            image = TF.resized_crop(image, i, j, h, w, size=output_size, interpolation=InterpolationMode.BILINEAR)
+            depth = TF.resized_crop(depth, i, j, h, w, size=output_size, interpolation=InterpolationMode.BILINEAR)
+            label = TF.resized_crop(label, i, j, h, w, size=output_size, interpolation=InterpolationMode.NEAREST)
 
         if depth_is_2d:
             depth = depth.squeeze(0)
