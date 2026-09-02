@@ -1,0 +1,2 @@
+grep -E "=== Epoch|Average Task Losses|Kendall Weights|Kendall log_vars|Depth \| |Seg\s+\| |Bound \| |Early stop" checkpoints/{folder name}/log.txt > checkpoints/{folder_name}/log_temp.txt 
+mv checkpoints/{folder_name}/log_temp.txt checkpoints{folder_name}/log.txt
