@@ -24,3 +24,4 @@ class TwinForge(nn.Module):
 if __name__ == "__main__":
     model = TwinForge(41, freeze=False)
     summary(model, input_size=(1, 3, 288, 384))
+    
