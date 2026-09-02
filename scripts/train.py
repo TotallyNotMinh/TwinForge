@@ -141,12 +141,12 @@ def train():
         {"params": model.encoder.parameters(), "lr": encoder_lr},
         {"params": model.decoder.parameters(), "lr": decoder_lr},
         {"params": kendall_loss.parameters(), "lr": kendall_lr, "weight_decay": 0.0}
-    ], weight_decay=1e-4)    
+    ], weight_decay=5e-4)    
 
 
     # Warm up with Linear scheduler then move to Consine Annealing
     linear_scheduler = torch.optim.lr_scheduler.LinearLR(optimizer, start_factor=0.1, end_factor=1.0, total_iters=10)
-    cosine_scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=EPOCHS - 10, eta_min=1e-6)
+    cosine_scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=90, eta_min=1e-6)
     scheduler = torch.optim.lr_scheduler.SequentialLR(optimizer, schedulers=[linear_scheduler, cosine_scheduler], milestones=[10])
 
     scaler = torch.amp.GradScaler('cuda', enabled=(device == "cuda"))
