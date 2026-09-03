@@ -203,7 +203,7 @@ def train():
                 pred_seg, pred_depth, pred_bound = model(images)
 
                 seg_loss = crit_seg(pred_seg, labels) * seg_boost_factor
-                depth_loss = crit_depth(pred_depth, depths, pred_bound)
+                depth_loss = crit_depth(pred_depth, depths, boundaries)
                 bound_loss = crit_bound(pred_bound, boundaries)
 
                 tol_loss = kendall_loss([seg_loss, depth_loss, bound_loss])
@@ -266,7 +266,7 @@ def train():
                     pred_seg, pred_depth, pred_bound = model(images)
 
                     seg_loss = crit_seg(pred_seg, labels) * seg_boost_factor 
-                    depth_loss = crit_depth(pred_depth, depths, pred_bound)
+                    depth_loss = crit_depth(pred_depth, depths, boundaries)
                     bound_loss = crit_bound(pred_bound, boundaries)
 
                     tol_loss = kendall_loss([seg_loss, depth_loss, bound_loss])
