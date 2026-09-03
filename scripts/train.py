@@ -121,6 +121,7 @@ def train():
     device = "cuda" if torch.cuda.is_available() else "cpu"
     checkpoint_path = args.checkpoint_path
     start_epoch = 0
+    seg_boost_factor = 2.0
 
     best_seg_miou = 0
     best_bound_f1 = 0
@@ -163,13 +164,13 @@ def train():
         {"params": model.encoder.parameters(), "lr": encoder_lr},
         {"params": other_decoder_params, "lr": decoder_lr},
         {"params": kendall_loss.parameters(), "lr": kendall_lr, "weight_decay": 0.0},
-        {"params": cross_task_params, "lr": 1e-4 }
-    ], weight_decay=5e-4)    
+        {"params": cross_task_params, "lr": 1e-4 , "weight_decay": 0.0}
+    ], weight_decay=1e-3)    
 
 
     # Warm up with Linear scheduler then move to Consine Annealing
     linear_scheduler = torch.optim.lr_scheduler.LinearLR(optimizer, start_factor=0.1, end_factor=1.0, total_iters=10)
-    cosine_scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=90, eta_min=1e-6)
+    cosine_scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=EPOCHS - 10, eta_min=1e-6)
     scheduler = torch.optim.lr_scheduler.SequentialLR(optimizer, schedulers=[linear_scheduler, cosine_scheduler], milestones=[10])
 
     scaler = torch.amp.GradScaler('cuda', enabled=(device == "cuda"))
@@ -201,7 +202,7 @@ def train():
             with torch.amp.autocast("cuda", enabled=(device == "cuda")):
                 pred_seg, pred_depth, pred_bound = model(images)
 
-                seg_loss = crit_seg(pred_seg, labels)
+                seg_loss = crit_seg(pred_seg, labels) * seg_boost_factor
                 depth_loss = crit_depth(pred_depth, depths, pred_bound)
                 bound_loss = crit_bound(pred_bound, boundaries)
 
@@ -264,7 +265,7 @@ def train():
                 with torch.amp.autocast("cuda", enabled=(device == "cuda")):
                     pred_seg, pred_depth, pred_bound = model(images)
 
-                    seg_loss = crit_seg(pred_seg, labels)
+                    seg_loss = crit_seg(pred_seg, labels) * seg_boost_factor 
                     depth_loss = crit_depth(pred_depth, depths, pred_bound)
                     bound_loss = crit_bound(pred_bound, boundaries)
 

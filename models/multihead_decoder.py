@@ -90,7 +90,9 @@ class SegmentHead(nn.Module):
 
             nn.Conv2d(64, 64, kernel_size=3, padding=1),
             nn.BatchNorm2d(64),
-            nn.ReLU(inplace=True)
+            nn.ReLU(inplace=True),
+
+            nn.Dropout2d(0.2)
         )
 
         self.dec4 = nn.Sequential(
@@ -104,13 +106,15 @@ class SegmentHead(nn.Module):
 
             nn.Conv2d(64, 64, kernel_size=3, padding=1),
             nn.BatchNorm2d(64),
-            nn.ReLU(inplace=True)
+            nn.ReLU(inplace=True),
+
+            nn.Dropout2d(0.2)
         )
 
         self.out = nn.Sequential(
             nn.Conv2d(64, 64, kernel_size=3, padding=1), 
             nn.ReLU(),
-            nn.Dropout2d(0.1),
+            nn.Dropout2d(0.2),
             nn.Conv2d(64, num_labels, kernel_size=3, padding=1))
                 
     def forward_stage1(self, up3, encoded_features): # x is (B, 64, H, W)
@@ -275,7 +279,9 @@ class MultiHeadDecoder(nn.Module):
 
             nn.Conv2d(256, 128, kernel_size=3, padding=1),
             nn.BatchNorm2d(128),
-            nn.ReLU(inplace=True)
+            nn.ReLU(inplace=True),
+
+            nn.Dropout2d(0.1)
         )
 
         self.dec2 = nn.Sequential(
@@ -289,7 +295,9 @@ class MultiHeadDecoder(nn.Module):
 
             nn.Conv2d(128, 64, kernel_size=3, padding=1),
             nn.BatchNorm2d(64),
-            nn.ReLU(inplace=True)
+            nn.ReLU(inplace=True),
+
+            nn.Dropout2d(0.1)
         )
 
         self.depth_head = DepthHead()
