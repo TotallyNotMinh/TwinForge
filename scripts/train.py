@@ -93,7 +93,20 @@ def load_checkpoint(checkpoint_path, device, model, optimizer, scheduler, scaler
         print(f"  Kendall weights:              {torch.exp(-kendall_loss.log_vars.detach()).cpu().tolist()}")
             
     return start_epoch, best_depth_delta1, best_seg_miou, best_bound_f1, epochs_without_improvement
-    
+
+def log_cross_task_weights(model):
+    decoder = model.decoder 
+    heads = {
+        "Seg": decoder.segment_head,
+        "Depth": decoder.depth_head,
+        "Bound": decoder.boundary_head
+    }
+    parts = []
+    for name, head in heads.items():
+        w = head.cross_task_weights.detach().cpu()
+        parts.append(f"{name}: [{w[0]:.4f}, {w[1]:.4f}]")
+    print("Cross-Task Weights -> " + " | ".join(parts))
+
 def train():
     # ============== Hyperparams ==============
     EPOCHS = 150
@@ -137,10 +150,20 @@ def train():
 
     # ============== Optimizer and Schedulers ==============
     
+    cross_task_params = [
+        p for name, p in model.named_parameters()
+        if "cross_task_weights" in name
+    ]
+    other_decoder_params = [
+        p for name, p in model.decoder.named_parameters()
+        if "cross_task_weights" not in name
+    ]
+
     optimizer = torch.optim.AdamW([
         {"params": model.encoder.parameters(), "lr": encoder_lr},
-        {"params": model.decoder.parameters(), "lr": decoder_lr},
-        {"params": kendall_loss.parameters(), "lr": kendall_lr, "weight_decay": 0.0}
+        {"params": other_decoder_params, "lr": decoder_lr},
+        {"params": kendall_loss.parameters(), "lr": kendall_lr, "weight_decay": 0.0},
+        {"params": cross_task_params, "lr": 1e-4 }
     ], weight_decay=5e-4)    
 
 
@@ -299,6 +322,7 @@ def train():
         print(f"Average Task Losses: Seg: {avg_seg_loss:.3f} | Depth: {avg_depth_loss:.3f} | Bound: {avg_boundary_loss:.3f}")
         print(f"Kendall Weights -> Seg: {weights[0]:.3f} | Depth: {weights[1]:.3f} | Bound: {weights[2]:.3f}")
         print(f"Kendall log_vars -> Seg: {kendall_loss.log_vars[0]:.3f} | Depth: {kendall_loss.log_vars[1]:.3f} | Bound: {kendall_loss.log_vars[2]:.3f}")
+        log_cross_task_weights(model)
 
         print(
             f"Depth | "
