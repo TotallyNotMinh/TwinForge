@@ -55,13 +55,13 @@ class MultiHeadDecoder(nn.Module):
         self.up = nn.Upsample(scale_factor=2, mode="bilinear", align_corners=False)
 
         self.bot = nn.Sequential(
-            nn.Conv2d(512, 256, kernel_size=3, padding=1), 
+            nn.Conv2d(2048, 256, kernel_size=3, padding=1), 
             nn.BatchNorm2d(256),
             nn.ReLU(inplace=True)
         )
 
         self.dec1 = nn.Sequential(
-            nn.Conv2d(512, 256, kernel_size=3, padding=1),
+            nn.Conv2d(1280, 256, kernel_size=3, padding=1),
             nn.BatchNorm2d(256),
             nn.ReLU(inplace=True),
 
@@ -75,7 +75,7 @@ class MultiHeadDecoder(nn.Module):
         )
 
         self.dec2 = nn.Sequential(
-            nn.Conv2d(256, 128, kernel_size=3, padding=1),
+            nn.Conv2d(640, 128, kernel_size=3, padding=1),
             nn.BatchNorm2d(128),
             nn.ReLU(inplace=True),
 
@@ -89,7 +89,7 @@ class MultiHeadDecoder(nn.Module):
         )
 
         self.dec3 = nn.Sequential(
-            nn.Conv2d(128, 64, kernel_size=3, padding=1),
+            nn.Conv2d(320, 64, kernel_size=3, padding=1),
             nn.BatchNorm2d(64),
             nn.ReLU(inplace=True),
 
