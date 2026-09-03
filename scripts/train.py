@@ -320,20 +320,20 @@ def train():
         )
 
         # ============== Save current checkpoint ============== 
-        save_checkpoint(checkpoint_dir, "checkpoint.pth", epoch, model, kendall_loss, optimizer, scheduler, best_depth_delta1, best_seg_miou, best_bound_f1, epochs_without_improvement, scaler)
+        save_checkpoint(checkpoint_dir, "checkpoint.pth", epoch, model, kendall_loss, optimizer, scheduler, best_depth_delta1, best_seg_miou, epochs_without_improvement, scaler)
 
         # ============== Save best checkpoint for each task ==============
         improved = False
 
         if total_depth['delta1'] > best_depth_delta1:
             best_depth_delta1 = total_depth['delta1']
-            save_checkpoint(checkpoint_dir, "best_depth.pth", epoch, model, kendall_loss, optimizer, scheduler, best_depth_delta1, best_seg_miou, best_bound_f1, epochs_without_improvement, scaler)
+            save_checkpoint(checkpoint_dir, "best_depth.pth", epoch, model, kendall_loss, optimizer, scheduler, best_depth_delta1, best_seg_miou, epochs_without_improvement, scaler)
             print(f"--> Saved new best DEPTH checkpoint.")
             improved = True
 
         if total_seg['miou'] > best_seg_miou:
             best_seg_miou = total_seg['miou'] 
-            save_checkpoint(checkpoint_dir, "best_seg.pth", epoch, model, kendall_loss, optimizer, scheduler, best_depth_delta1, best_seg_miou, best_bound_f1, epochs_without_improvement, scaler)
+            save_checkpoint(checkpoint_dir, "best_seg.pth", epoch, model, kendall_loss, optimizer, scheduler, best_depth_delta1, best_seg_miou, epochs_without_improvement, scaler)
             print(f"--> Saved new best SEG checkpoint.")
             improved = True
 
