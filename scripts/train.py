@@ -199,7 +199,7 @@ def train():
     optimizer = torch.optim.AdamW([
         {"params": model.encoder.parameters(), "lr": encoder_lr},
         {"params": other_decoder_params, "lr": decoder_lr},
-        {"params": kendall_loss.parameters(), "lr": kendall_lr, "weight_decay": 0.0},
+        {"params": kendall_loss.parameters(), "lr": kendall_lr},
         {"params": cross_task_params, "lr": 1e-4 , "weight_decay": 0.0}
     ], weight_decay=1e-3)    
 
