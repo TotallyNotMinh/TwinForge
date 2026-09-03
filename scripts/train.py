@@ -94,6 +94,40 @@ def load_checkpoint(checkpoint_path, device, model, optimizer, scheduler, scaler
             
     return start_epoch, best_depth_delta1, best_seg_miou, best_bound_f1, epochs_without_improvement
     
+def save_summary(checkpoint_dir, best_records, current_epoch, total_epochs):
+    os.makedirs(checkpoint_dir, exist_ok=True)
+    summary_path = os.path.join(checkpoint_dir, "summary.txt")
+    run_name = os.path.basename(os.path.normpath(checkpoint_dir))
+    
+    lines = []
+    lines.append("=" * 65)
+    lines.append(f"       TwinForge Training Summary: {run_name} (Epoch {current_epoch}/{total_epochs})")
+    lines.append("=" * 65)
+    
+    if "depth_delta1" in best_records and best_records["depth_delta1"][1] is not None:
+        lines.append(f"  • Best Depth δ1:       {best_records['depth_delta1'][0]:.4f} (Epoch {best_records['depth_delta1'][1]})")
+        lines.append(f"  • Best Depth δ2:       {best_records['depth_delta2'][0]:.4f} (Epoch {best_records['depth_delta2'][1]})")
+        lines.append(f"  • Best Depth δ3:       {best_records['depth_delta3'][0]:.4f} (Epoch {best_records['depth_delta3'][1]})")
+        lines.append(f"  • Best Depth RMSE:     {best_records['depth_rmse'][0]:.4f} (Epoch {best_records['depth_rmse'][1]})")
+        lines.append(f"  • Best Depth AbsRel:   {best_records['depth_absrel'][0]:.4f} (Epoch {best_records['depth_absrel'][1]})")
+        
+    if "seg_miou" in best_records and best_records["seg_miou"][1] is not None:
+        lines.append(f"  • Best Seg mIoU:       {best_records['seg_miou'][0]:.4f} (Epoch {best_records['seg_miou'][1]})")
+        lines.append(f"  • Best Seg Dice:       {best_records['seg_dice'][0]:.4f} (Epoch {best_records['seg_dice'][1]})")
+        lines.append(f"  • Best Seg Pixel Acc:  {best_records['seg_pixel_acc'][0]:.4f} (Epoch {best_records['seg_pixel_acc'][1]})")
+
+    if "bound_f1" in best_records and best_records["bound_f1"][1] is not None:
+        lines.append(f"  • Best Bound F1:       {best_records['bound_f1'][0]:.4f} (Epoch {best_records['bound_f1'][1]})")
+        lines.append(f"  • Best Bound Prec:     {best_records['bound_prec'][0]:.4f} (Epoch {best_records['bound_prec'][1]})")
+        lines.append(f"  • Best Bound Recall:   {best_records['bound_recall'][0]:.4f} (Epoch {best_records['bound_recall'][1]})")
+        
+    if "min_val_loss" in best_records and best_records["min_val_loss"][1] is not None:
+        lines.append(f"  • Min Val Loss:        {best_records['min_val_loss'][0]:.4f} (Epoch {best_records['min_val_loss'][1]})")
+    lines.append("=" * 65)
+    
+    with open(summary_path, "w", encoding="utf-8") as f:
+        f.write("\n".join(lines) + "\n")
+
 def train():
     # ============== Hyperparams ==============
     EPOCHS = 150
@@ -112,6 +146,20 @@ def train():
     best_seg_miou = 0
     best_bound_f1 = 0
     best_depth_delta1 = 0
+    best_records = {
+        "depth_delta1": (0.0, None),
+        "depth_delta2": (0.0, None),
+        "depth_delta3": (0.0, None),
+        "depth_rmse": (999.0, None),
+        "depth_absrel": (999.0, None),
+        "seg_miou": (0.0, None),
+        "seg_dice": (0.0, None),
+        "seg_pixel_acc": (0.0, None),
+        "bound_f1": (0.0, None),
+        "bound_prec": (0.0, None),
+        "bound_recall": (0.0, None),
+        "min_val_loss": (999.0, None)
+    }
 
     # ============== Losses ==============
     crit_seg = SegmentLoss().to(device)
@@ -179,7 +227,7 @@ def train():
                 pred_seg, pred_depth, pred_bound = model(images)
 
                 seg_loss = crit_seg(pred_seg, labels)
-                depth_loss = crit_depth(pred_depth, depths, pred_bound)
+                depth_loss = crit_depth(pred_depth, depths, boundaries)
                 bound_loss = crit_bound(pred_bound, boundaries)
 
                 tol_loss = kendall_loss([seg_loss, depth_loss, bound_loss])
@@ -242,7 +290,7 @@ def train():
                     pred_seg, pred_depth, pred_bound = model(images)
 
                     seg_loss = crit_seg(pred_seg, labels)
-                    depth_loss = crit_depth(pred_depth, depths, pred_bound)
+                    depth_loss = crit_depth(pred_depth, depths, boundaries)
                     bound_loss = crit_bound(pred_bound, boundaries)
 
                     tol_loss = kendall_loss([seg_loss, depth_loss, bound_loss])
