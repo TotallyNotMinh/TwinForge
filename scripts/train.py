@@ -91,6 +91,35 @@ def load_checkpoint(checkpoint_path, device, model, optimizer, scheduler, scaler
             
     return start_epoch, best_depth_delta1, best_seg_miou,  epochs_without_improvement
 
+def save_summary(checkpoint_dir, best_records, current_epoch, total_epochs):
+    os.makedirs(checkpoint_dir, exist_ok=True)
+    summary_path = os.path.join(checkpoint_dir, "summary.txt")
+    run_name = os.path.basename(os.path.normpath(checkpoint_dir))
+    
+    lines = []
+    lines.append("=" * 65)
+    lines.append(f"       TwinForge Training Summary: {run_name} (Epoch {current_epoch}/{total_epochs})")
+    lines.append("=" * 65)
+    
+    if "depth_delta1" in best_records and best_records["depth_delta1"][1] is not None:
+        lines.append(f"  • Best Depth δ1:       {best_records['depth_delta1'][0]:.4f} (Epoch {best_records['depth_delta1'][1]})")
+        lines.append(f"  • Best Depth δ2:       {best_records['depth_delta2'][0]:.4f} (Epoch {best_records['depth_delta2'][1]})")
+        lines.append(f"  • Best Depth δ3:       {best_records['depth_delta3'][0]:.4f} (Epoch {best_records['depth_delta3'][1]})")
+        lines.append(f"  • Best Depth RMSE:     {best_records['depth_rmse'][0]:.4f} (Epoch {best_records['depth_rmse'][1]})")
+        lines.append(f"  • Best Depth AbsRel:   {best_records['depth_absrel'][0]:.4f} (Epoch {best_records['depth_absrel'][1]})")
+        
+    if "seg_miou" in best_records and best_records["seg_miou"][1] is not None:
+        lines.append(f"  • Best Seg mIoU:       {best_records['seg_miou'][0]:.4f} (Epoch {best_records['seg_miou'][1]})")
+        lines.append(f"  • Best Seg Dice:       {best_records['seg_dice'][0]:.4f} (Epoch {best_records['seg_dice'][1]})")
+        lines.append(f"  • Best Seg Pixel Acc:  {best_records['seg_pixel_acc'][0]:.4f} (Epoch {best_records['seg_pixel_acc'][1]})")
+        
+    if "min_val_loss" in best_records and best_records["min_val_loss"][1] is not None:
+        lines.append(f"  • Min Val Loss:        {best_records['min_val_loss'][0]:.4f} (Epoch {best_records['min_val_loss'][1]})")
+    lines.append("=" * 65)
+    
+    with open(summary_path, "w", encoding="utf-8") as f:
+        f.write("\n".join(lines) + "\n")
+
 def log_cross_task_weights(model):
     decoder = model.decoder 
     heads = {
@@ -99,8 +128,9 @@ def log_cross_task_weights(model):
     }
     parts = []
     for name, head in heads.items():
-        w = head.cross_task_weights.detach().cpu()
-        parts.append(f"{name}: [{w[0]:.4f}, {w[1]:.4f}]")
+        w = head.cross_task_weights.detach().cpu().tolist()
+        formatted = ", ".join(f"{val:.4f}" for val in w)
+        parts.append(f"{name}: [{formatted}]")
     print("Cross-Task Weights -> " + " | ".join(parts))
 
 def train():
@@ -121,6 +151,18 @@ def train():
 
     best_seg_miou = 0
     best_depth_delta1 = 0
+
+    best_records = {
+        "depth_delta1": (0.0, None),
+        "depth_delta2": (0.0, None),
+        "depth_delta3": (0.0, None),
+        "depth_rmse": (999.0, None),
+        "depth_absrel": (999.0, None),
+        "seg_miou": (0.0, None),
+        "seg_dice": (0.0, None),
+        "seg_pixel_acc": (0.0, None),
+        "min_val_loss": (999.0, None)
+    }
 
     # ============== Losses ==============
     crit_seg = SegmentLoss().to(device)
@@ -336,6 +378,21 @@ def train():
             save_checkpoint(checkpoint_dir, "best_seg.pth", epoch, model, kendall_loss, optimizer, scheduler, best_depth_delta1, best_seg_miou, epochs_without_improvement, scaler)
             print(f"--> Saved new best SEG checkpoint.")
             improved = True
+
+        # Track all-time peak records for summary.txt
+        if total_depth['delta1'] > best_records["depth_delta1"][0]: best_records["depth_delta1"] = (total_depth['delta1'], epoch)
+        if total_depth['delta2'] > best_records["depth_delta2"][0]: best_records["depth_delta2"] = (total_depth['delta2'], epoch)
+        if total_depth['delta3'] > best_records["depth_delta3"][0]: best_records["depth_delta3"] = (total_depth['delta3'], epoch)
+        if total_depth['rmse'] < best_records["depth_rmse"][0]: best_records["depth_rmse"] = (total_depth['rmse'], epoch)
+        if total_depth['abs_rel'] < best_records["depth_absrel"][0]: best_records["depth_absrel"] = (total_depth['abs_rel'], epoch)
+
+        if total_seg['miou'] > best_records["seg_miou"][0]: best_records["seg_miou"] = (total_seg['miou'], epoch)
+        if total_seg['dice'] > best_records["seg_dice"][0]: best_records["seg_dice"] = (total_seg['dice'], epoch)
+        if total_seg['pixel_acc'] > best_records["seg_pixel_acc"][0]: best_records["seg_pixel_acc"] = (total_seg['pixel_acc'], epoch)
+
+        if avg_val_loss < best_records["min_val_loss"][0]: best_records["min_val_loss"] = (avg_val_loss, epoch)
+
+        save_summary(checkpoint_dir, best_records, epoch, EPOCHS)
 
         if improved:
             epochs_without_improvement = 0
