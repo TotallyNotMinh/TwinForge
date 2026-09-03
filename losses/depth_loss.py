@@ -24,8 +24,15 @@ def boundary_guided_depth_grad_loss(pred_depth, gt_depth, boundary_pred, mask=No
     gt_dx = gt_depth[:, :, :, 1:] - gt_depth[:, :, :, :-1]
     gt_dy = gt_depth[:, :, 1:, :] - gt_depth[:, :, :-1, :]
 
-    # Detach boundary predictions so this loss doesn't backprop into the boundary head
-    b = torch.sigmoid(boundary_pred).detach()
+    # Ground truth boundaries are binary [0.0, 1.0] (or predicted logits if passed)
+    if boundary_pred.dtype in (torch.float16, torch.float32, torch.float64):
+        if (boundary_pred < 0.0).any() or (boundary_pred > 1.0).any():
+            b = torch.sigmoid(boundary_pred).detach()
+        else:
+            b = boundary_pred.detach()
+    else:
+        b = boundary_pred.float().detach()
+
     weight_x = (1.0 - b[:, :, :, 1:])
     weight_y = (1.0 - b[:, :, 1:, :])
 
