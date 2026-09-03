@@ -292,7 +292,7 @@ def train():
                     boundaries = boundaries.squeeze(1)
 
                 with torch.amp.autocast("cuda", enabled=(device == "cuda")):
-                    pred_seg, pred_depth, pred_bound = model(images)
+                    pred_seg, pred_depth = model(images)
 
                     seg_loss = crit_seg(pred_seg, labels) * seg_boost_factor 
                     depth_loss = crit_depth(pred_depth, depths, boundaries)
