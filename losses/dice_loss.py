@@ -16,7 +16,10 @@ def multiclass_dice_loss(pred, target, num_classes=41, smooth=1e-6, ignore_index
 
     dice = (2.0 * intersection + smooth) / (denominator + smooth)
     # Exclude class 0
-    return 1.0 - dice[:, 1:].mean()
+    dice_fg = dice[:, 1:]
+    present = target_one_hot[:, 1:].sum(dim=(2, 3)) > 0         
+
+    return 1.0 - (dice_fg * present).sum() / present.sum().clamp_min(1) # Calculate dice score based on classes present in the image not on all 40 classes
 
 
 def binary_dice_loss(pred, target, smooth=1e-6):
