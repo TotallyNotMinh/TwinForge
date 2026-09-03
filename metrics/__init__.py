@@ -1,4 +1,3 @@
-from metrics.boundary_metrics import BoundaryMetrics
 from metrics.depth_metrics import DepthMetrics
 from metrics.segment_metrics import SegmentationMetrics
 
@@ -11,7 +10,6 @@ class MultiTaskMetrics:
         self,
         pred_seg,
         pred_depth,
-        pred_bound,
         labels,
         depths,
         boundaries
@@ -28,13 +26,7 @@ class MultiTaskMetrics:
             self.num_classes
         )
 
-        boundary_metrics = BoundaryMetrics.compute(
-            pred_bound,
-            boundaries
-        )
-
         return {
             "depth": depth_metrics,
             "segmentation": seg_metrics,
-            "boundary": boundary_metrics,
         }

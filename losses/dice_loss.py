@@ -20,20 +20,3 @@ def multiclass_dice_loss(pred, target, num_classes=41, smooth=1e-6, ignore_index
     present = target_one_hot[:, 1:].sum(dim=(2, 3)) > 0         
 
     return 1.0 - (dice_fg * present).sum() / present.sum().clamp_min(1) # Calculate dice score based on classes present in the image not on all 40 classes
-
-
-def binary_dice_loss(pred, target, smooth=1e-6):
-    pred = torch.sigmoid(pred)
-
-    intersection = (pred * target).sum(dim=(1, 2, 3))
-
-    denominator = (
-        pred.sum(dim=(1, 2, 3))
-        + target.sum(dim=(1, 2, 3))
-    )
-
-    dice = (2 * intersection + smooth) / (
-        denominator + smooth
-    )
-
-    return 1 - dice.mean()

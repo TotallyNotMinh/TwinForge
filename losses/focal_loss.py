@@ -34,27 +34,3 @@ class MultiFocalLoss(nn.Module):
 
         return loss.mean()
 
-
-class BinaryFocalLoss(nn.Module):
-    def __init__(self, alpha=0.75, gamma=2.0):
-        super().__init__()
-        self.alpha = alpha
-        self.gamma = gamma
-
-    def forward(self, pred, target):
-        target = target.float()
-
-        bce = F.binary_cross_entropy_with_logits(
-            pred,
-            target,
-            reduction="none"
-        )
-
-        prob = torch.sigmoid(pred)
-        pt = prob * target + (1 - prob) * (1 - target)
-
-        alpha_t = self.alpha * target + (1 - self.alpha) * (1 - target)
-
-        loss = alpha_t * (1 - pt).pow(self.gamma) * bce
-
-        return loss.mean()

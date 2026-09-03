@@ -18,8 +18,8 @@ class TwinForge(nn.Module):
 
     def forward(self, x):
         features = self.encoder(x)
-        segment_logits, depth_logits, edge_logits = self.decoder(features)
-        return segment_logits, depth_logits, edge_logits
+        segment_logits, depth_logits = self.decoder(features)
+        return segment_logits, depth_logits
 
 if __name__ == "__main__":
     model = TwinForge(41, freeze=False)

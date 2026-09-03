@@ -32,21 +32,16 @@ class CrossTaskSEGate(nn.Module):
             )
         self.clamp = nn.Tanh()
         
-    def forward(self, f1, f2, params): 
-        squeeze1 = self.squeeze1(f1) 
-        squeeze1 = squeeze1.flatten(1)
+    def forward(self, feature, params): 
+        squeeze = self.squeeze1(feature) 
+        squeeze = squeeze.flatten(1)
 
-        squeeze2 = self.squeeze2(f2)
-        squeeze2 = squeeze2.flatten(1) 
+        gate = self.mlp1(squeeze) 
+        gate = gate.unsqueeze(-1).unsqueeze(-1)
 
-        gate1 = self.mlp1(squeeze1) 
-        gate1 = gate1.unsqueeze(-1).unsqueeze(-1)
-
-        gate2 = self.mlp2(squeeze2) 
-        gate2 = gate2.unsqueeze(-1).unsqueeze(-1)
-        joint = (params[0] *f1 * gate1) + (params[1] * f2 * gate2)
-        clamped_joint = self.clamp(joint)
-        return self.up(clamped_joint)
+        gated_feature = (params[0] * feature * gate) 
+        clamped_feature = self.clamp(gated_feature)
+        return self.up(clamped_feature)
     
 class SEGate(nn.Module):
     def __init__(self, channels):
@@ -77,7 +72,7 @@ class SegmentHead(nn.Module):
         self.feature_gate1 = SEGate(64)
         self.feature_gate2 = SEGate(64)
         self.cross_task_gate = CrossTaskSEGate(64)
-        self.cross_task_weights  = nn.Parameter(torch.zeros(2))
+        self.cross_task_weights  = nn.Parameter(torch.zeros(1))
 
         self.dec3 = nn.Sequential(
             nn.Conv2d(128, 64, kernel_size=3, padding=1),
@@ -123,14 +118,14 @@ class SegmentHead(nn.Module):
         up4 = F.interpolate(up4, size=encoded_features["f1"].shape[2:], mode="bilinear", align_corners=False)
         return up4
 
-    def forward_stage2(self, up4, encoded_features, cross_features):
+    def forward_stage2(self, up4, encoded_features, cross_feature):
         gated_features1  = self.feature_gate1(encoded_features["f1"])
         up5 = self.dec4(cat([up4, gated_features1], dim=1))
         # Upsample up5 to the original input resolution (2x of stem f1)
         up5 = self.up(up5)
 
-        gated_cross_features = self.cross_task_gate(cross_features[0], cross_features[1], self.cross_task_weights)
-        out = self.out(up5 + gated_cross_features)
+        gated_cross_feature = self.cross_task_gate(cross_feature, self.cross_task_weights)
+        out = self.out(up5 + gated_cross_feature)
         return out
 
 class DepthHead(nn.Module):
@@ -142,7 +137,7 @@ class DepthHead(nn.Module):
         self.feature_gate1 = SEGate(64)
         self.feature_gate2 = SEGate(64)
         self.cross_task_gate = CrossTaskSEGate(64)
-        self.cross_task_weights  = nn.Parameter(torch.zeros(2))
+        self.cross_task_weights  = nn.Parameter(torch.zeros(1))
 
         self.dec3 = nn.Sequential(
             nn.Conv2d(128, 64, kernel_size=3, padding=1),
@@ -184,76 +179,14 @@ class DepthHead(nn.Module):
         up4 = F.interpolate(up4, size=encoded_features["f1"].shape[2:], mode="bilinear", align_corners=False)
         return up4
 
-    def forward_stage2(self, up4, encoded_features, cross_features):
+    def forward_stage2(self, up4, encoded_features, cross_feature):
         gated_features1  = self.feature_gate1(encoded_features["f1"])
         up5 = self.dec4(cat([up4, gated_features1], dim=1))
         # Upsample up5 to the original input resolution (2x of stem f1)
         up5 = self.up(up5)
 
-        gated_cross_features = self.cross_task_gate(cross_features[0], cross_features[1], self.cross_task_weights)
-        out = self.out(up5 + gated_cross_features)
-        return out
-
-
-class BoundaryHead(nn.Module):
-    def __init__(self):
-        super().__init__()
-
-        self.up = nn.Upsample(scale_factor=2, mode="bilinear", align_corners=False)
-
-        self.feature_gate1 = SEGate(64)
-        self.feature_gate2 = SEGate(64)
-        self.cross_task_gate = CrossTaskSEGate(64)
-        self.cross_task_weights  = nn.Parameter(torch.zeros(2))
-
-        self.dec3 = nn.Sequential(
-            nn.Conv2d(128, 64, kernel_size=3, padding=1),
-            nn.BatchNorm2d(64),
-            nn.ReLU(inplace=True),
-
-            nn.Conv2d(64, 64, kernel_size=3, padding=1),
-            nn.BatchNorm2d(64),
-            nn.ReLU(inplace=True),
-
-            nn.Conv2d(64, 64, kernel_size=3, padding=1),
-            nn.BatchNorm2d(64),
-            nn.ReLU(inplace=True)
-        )
-
-        self.dec4 = nn.Sequential(
-            nn.Conv2d(128, 64, kernel_size=3, padding=1),
-            nn.BatchNorm2d(64),
-            nn.ReLU(inplace=True),
-
-            nn.Conv2d(64, 64, kernel_size=3, padding=1),
-            nn.BatchNorm2d(64),
-            nn.ReLU(inplace=True),
-
-            nn.Conv2d(64, 64, kernel_size=3, padding=1),
-            nn.BatchNorm2d(64),
-            nn.ReLU(inplace=True)
-        )
-
-        self.out = nn.Sequential(
-            nn.Conv2d(64, 64, kernel_size=3, padding=1), 
-            nn.ReLU(),
-            nn.Dropout2d(0.1),
-            nn.Conv2d(64, 1, kernel_size=3, padding=1))
-        
-    def forward_stage1(self, up3, encoded_features): # x is (B, 64, H, W)
-        gated_features2 = self.feature_gate2(encoded_features["f2"])
-        up4 = self.dec3(cat([up3, gated_features2], dim=1))
-        up4 = F.interpolate(up4, size=encoded_features["f1"].shape[2:], mode="bilinear", align_corners=False)
-        return up4
-
-    def forward_stage2(self, up4, encoded_features, cross_features):
-        gated_features1  = self.feature_gate1(encoded_features["f1"])
-        up5 = self.dec4(cat([up4, gated_features1], dim=1))
-        # Upsample up5 to the original input resolution (2x of stem f1)
-        up5 = self.up(up5)
-
-        gated_cross_features = self.cross_task_gate(cross_features[0], cross_features[1], self.cross_task_weights)
-        out = self.out(up5 + gated_cross_features)
+        gated_cross_feature = self.cross_task_gate(cross_feature, self.cross_task_weights)
+        out = self.out(up5 + gated_cross_feature)
         return out
 
 class MultiHeadDecoder(nn.Module):
@@ -301,7 +234,6 @@ class MultiHeadDecoder(nn.Module):
         )
 
         self.depth_head = DepthHead()
-        self.boundary_head = BoundaryHead()
         self.segment_head = SegmentHead(num_labels)
 
     def forward(self, encoded_features):
@@ -318,13 +250,11 @@ class MultiHeadDecoder(nn.Module):
 
         segment_logits1 = self.segment_head.forward_stage1(up3, encoded_features)
         depth_logits1 = self.depth_head.forward_stage1(up3, encoded_features)
-        edge_logits1 = self.boundary_head.forward_stage1(up3, encoded_features)
 
-        segment_logits_out = self.segment_head.forward_stage2(segment_logits1, encoded_features, [depth_logits1, edge_logits1])
-        depth_logits_out = self.depth_head.forward_stage2(depth_logits1 , encoded_features, [segment_logits1, edge_logits1])
-        edge_logits_out = self.boundary_head.forward_stage2(edge_logits1, encoded_features, [depth_logits1, segment_logits1])
+        segment_logits_out = self.segment_head.forward_stage2(segment_logits1, encoded_features, depth_logits1)
+        depth_logits_out = self.depth_head.forward_stage2(depth_logits1 , encoded_features, segment_logits1)
 
-        return segment_logits_out, depth_logits_out, edge_logits_out
+        return segment_logits_out, depth_logits_out
 
 
 if __name__ == "__main__":
@@ -334,7 +264,7 @@ if __name__ == "__main__":
 
     features = encoder.forward(image)
     segment, depth, edge = model.forward(features)
-    print(f"Output shape: Segment:{segment.shape}, Edge: {edge.shape}, Depth: {depth.shape}")
+    print(f"Output shape: Segment:{segment.shape}, Depth: {depth.shape}")
     segate = SEGate(3)
     out = segate.forward(image)
     print(out.shape)
