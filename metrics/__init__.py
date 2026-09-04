@@ -1,4 +1,3 @@
-from metrics.boundary_metrics import BoundaryMetrics
 from metrics.depth_metrics import DepthMetrics
 from metrics.segment_metrics import SegmentationMetrics
 
