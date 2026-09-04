@@ -27,13 +27,7 @@ class MultiTaskMetrics:
             self.num_classes
         )
 
-        boundary_metrics = BoundaryMetrics.compute(
-            pred_bound,
-            boundaries
-        )
-
         return {
             "depth": depth_metrics,
             "segmentation": seg_metrics,
-            "boundary": boundary_metrics,
         }
