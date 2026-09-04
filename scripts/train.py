@@ -169,9 +169,9 @@ def train():
     val_loader = DataLoader(val_dataset, batch_size=BATCH_SIZE, shuffle=False, num_workers=4, pin_memory=True)
 
     # ============== Model ==============
-
+    
     model = TwinForge(NUM_CLASSES, NUM_HEADS, tok_dim=TOKEN_DIM, freeze=False).to(device)
-    TwinForge()
+
     # ============== Optimizer and Schedulers ==============
     
     optimizer = torch.optim.AdamW([
