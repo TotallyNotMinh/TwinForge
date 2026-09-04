@@ -31,3 +31,5 @@ class MultiTaskMetrics:
             "depth": depth_metrics,
             "segmentation": seg_metrics,
         }
+
+    
