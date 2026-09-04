@@ -52,7 +52,7 @@ def save_checkpoint(checkpoint_dir, checkpoint_name, epoch, model, kendall_loss,
 def load_checkpoint(checkpoint_path, device, model, optimizer, scheduler, scaler, kendall_loss):
     if checkpoint_path == None:
         print("No checkpoint detected")
-        return 0, 0.0, 0.0, 0.0, 0  # Default values
+        return 0, 0.0, 0.0,  0  # Default values
     
     else:
         checkpoint = torch.load(
