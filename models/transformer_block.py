@@ -5,10 +5,11 @@ class SelfAttention(nn.Module):
     def __init__(self):
         super().__init__()
         self.softmax = nn.Softmax(dim=-1)
+        self.dropout = nn.Dropout(0.1)
 
     def forward(self, query, key, value):
         attention_matrix = torch.matmul(query, key.transpose(-2, -1)) / (query.size(-1) ** 0.5)
-        attention = self.softmax(attention_matrix)
+        attention = self.dropout(self.softmax(attention_matrix))
         return torch.matmul(attention, value)
 
 
@@ -65,10 +66,12 @@ class TransformerBlock(nn.Module):
         self.mhsa = MultiHeadSelfAttention(dim, num_heads)
         self.ffn = FFN(dim)
 
+        self.dropout = nn.Dropout(0.3)
+
     def forward(self, x):
-        x = x + self.mhsa(self.norm1(x))
-        x = x + self.ffn(self.norm2(x))
-        return x
+        x = x + self.dropout(self.mhsa(self.norm1(x)))
+        x = x + self.dropout(self.ffn(self.norm2(x)))
+        return x # Shape (B, tok_num, dim)
 
 if __name__ == "__main__":
     num_token = 12
@@ -76,4 +79,3 @@ if __name__ == "__main__":
     x = torch.rand((1, num_token, dim))
     sa = TransformerBlock(dim, 8)
     print(torch)
-    
