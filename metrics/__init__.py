@@ -10,10 +10,8 @@ class MultiTaskMetrics:
         self,
         pred_seg,
         pred_depth,
-        pred_bound,
         labels,
         depths,
-        boundaries
     ):
 
         depth_metrics = DepthMetrics.compute(
