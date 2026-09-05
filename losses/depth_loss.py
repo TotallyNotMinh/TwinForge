@@ -52,11 +52,45 @@ def boundary_guided_depth_grad_loss(pred_depth, gt_depth, boundary_pred, mask=No
     return loss_x.mean() + loss_y.mean()
 
 
-class DepthLoss(nn.Module):
-    def __init__(self):
+class SILogLoss(nn.Module):
+    """
+    Scale-Invariant Logarithmic (SILog) loss (Eigen et al., DPT, AdaBins).
+    L_silog = alpha * sqrt( 1/N sum(g_i^2) - lambda/N^2 (sum g_i)^2 )
+    where g_i = ln(pred_i) - ln(target_i).
+    """
+    def __init__(self, alpha=10.0, lambda_param=0.85):
         super().__init__()
+        self.alpha = alpha
+        self.lambda_param = lambda_param
+
+    def forward(self, pred, target, mask=None):
+        if mask is None:
+            mask = (target > 0) & (pred > 0)
+        else:
+            mask = mask & (target > 0) & (pred > 0)
+
+        if not mask.any():
+            return torch.tensor(0.0, device=pred.device, requires_grad=True)
+
+        pred_valid = pred[mask].clamp_min(1e-4)
+        target_valid = target[mask].clamp_min(1e-4)
+
+        g = torch.log(pred_valid) - torch.log(target_valid)
+        n = g.numel()
+        dg2 = torch.sum(g ** 2) / n
+        dg_sum = torch.sum(g) / n
+        variance = dg2 - self.lambda_param * (dg_sum ** 2)
+        return self.alpha * torch.sqrt(torch.clamp(variance, min=1e-8))
+
+
+class DepthLoss(nn.Module):
+    def __init__(self, alpha=10.0, lambda_param=0.85):
+        super().__init__()
+        self.silog = SILogLoss(alpha=alpha, lambda_param=lambda_param)
 
     def forward(self, pred, target, bound_pred):
-        mask = (target > 0).float()
-        return 0.5 * boundary_guided_depth_grad_loss(pred, target, bound_pred, mask=mask) + 0.5 * berhu_loss(pred, target)
+        mask = target > 0
+        silog = self.silog(pred, target, mask=mask)
+        grad = boundary_guided_depth_grad_loss(pred, target, bound_pred, mask=mask.float())
+        return silog + 0.5 * grad
     

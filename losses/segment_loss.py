@@ -1,20 +1,37 @@
+import torch
 from torch import nn
-from losses.dice_loss import multiclass_dice_loss
-from losses.focal_loss import MultiFocalLoss
+from losses.lovasz_loss import LovaszSoftmaxLoss
 
 class SegmentLoss(nn.Module):
-    def __init__(self, ignore_index=0):
+    def __init__(self, ignore_index=0, lovasz_weight=0.5):
         super().__init__()
+        self.ignore_index = ignore_index
+        self.lovasz_weight = lovasz_weight
 
-        self.class_pct = [17.3811, 21.3955,  9.0635,  6.2009,  3.7681,  3.3295,  2.6782,  2.1378,
-         2.1623,  2.1201,  1.9332,  2.0844,  1.4385,  1.6721,  1.1108,  1.0195,
-         1.1034,  0.9162,  0.8270,  0.9961,  0.7352,  0.7007,  1.3741,  0.5908,
-         0.5826,  0.4941,  0.3902,  0.3662,  0.3768,  0.3375,  0.3179,  0.2946,
-         0.2790,  0.2654,  0.2669,  0.2770,  0.2544,  0.2303,  1.9691,  1.9088,
-         4.6503]
-        
-        self.criterion = MultiFocalLoss(class_pct=self.class_pct)
+        # NYUv2 40-class empirical training frequencies
+        fg_pcts = torch.tensor([
+            26.17, 11.13,  7.96,  4.26,  4.10,  2.86,  2.45,  2.43,  2.67,  2.33,
+             2.42,  1.62,  1.90,  1.20,  1.50,  1.20,  1.11,  0.97,  1.29,  0.78,
+             1.02,  1.76,  0.65,  0.64,  0.67,  0.45,  0.40,  0.49,  0.50,  0.32,
+             0.37,  0.31,  0.34,  0.29,  0.33,  0.26,  0.25,  2.75,  2.27,  5.60
+        ], dtype=torch.float32)
+
+        # Smooth median-frequency weighting bounded to [0.25, 3.5]
+        med = torch.median(fg_pcts)
+        fg_weights = med / (fg_pcts + 0.1)
+        fg_weights = torch.clamp(fg_weights, min=0.25, max=3.5)
+        fg_weights = fg_weights / fg_weights.mean()
+
+        weights = torch.zeros(41, dtype=torch.float32)
+        weights[1:] = fg_weights
+        weights[0] = 0.0
+
+        self.register_buffer("class_weights", weights)
+        self.ce = nn.CrossEntropyLoss(weight=self.class_weights, ignore_index=ignore_index)
+        self.lovasz = LovaszSoftmaxLoss(ignore_index=ignore_index)
 
     def forward(self, pred, target):
-        return self.criterion(pred, target) + multiclass_dice_loss(pred, target)
+        ce_loss = self.ce(pred, target)
+        lovasz_loss = self.lovasz(pred, target)
+        return ce_loss + self.lovasz_weight * lovasz_loss
     
