@@ -6,6 +6,8 @@ data/depth-dataset
 data/nyu_depth_v2_labeled.mat
 data/toolbox_nyu_depth_v2
 data/data.zip
+data/splits.mat
+data/classMapping40.mat
 
 # Coding agent preferences
 GEMINI.md
