@@ -23,8 +23,8 @@ class NYUv2Augmentation:
             depth = TF.hflip(depth)
             label = TF.hflip(label)
 
-        if random.random() < 0.5:
-            angle = random.uniform(-5.0, 5.0)
+        if random.random() < 0.2:
+            angle = random.uniform(-2.0, 2.0)
             image = TF.rotate(
                 image,
                 angle,
@@ -76,13 +76,16 @@ class NYUv2Augmentation:
                 sigma=random.uniform(0.1, 1.5)
             )
 
-        if random.random() < 0.1:
-            noise = torch.randn_like(depth) * 0.005
-            depth = torch.clamp(depth + noise, min=0.0)
-
-        if random.random() < 0.6:
-            i, j, h, w = RandomResizedCrop.get_params(image, scale=(0.75, 1), ratio=[0.9, 1.1])
-            output_size = (image.shape[-2], image.shape[-1]) # (H, W)
+        # RandomResizedCrop preserving aspect ratio (no perspective distortion)
+        if random.random() < 0.5:
+            h_orig, w_orig = image.shape[-2], image.shape[-1]
+            orig_aspect = w_orig / h_orig
+            i, j, h, w = RandomResizedCrop.get_params(
+                image,
+                scale=(0.8, 1.0),
+                ratio=(orig_aspect, orig_aspect)
+            )
+            output_size = (h_orig, w_orig)
 
             image = TF.resized_crop(image, i, j, h, w, size=output_size, interpolation=InterpolationMode.BILINEAR)
             depth = TF.resized_crop(depth, i, j, h, w, size=output_size, interpolation=InterpolationMode.BILINEAR)
