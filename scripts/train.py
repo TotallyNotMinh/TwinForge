@@ -131,7 +131,7 @@ def train():
     epochs_without_improvement = 0
     resize = (288, 384)
     encoder_lr = 1e-4
-    decoder_lr = 1e-3
+    decoder_lr = 2e-4
     kendall_lr = 1e-3
     device = "cuda" if torch.cuda.is_available() else "cpu"
     checkpoint_path = args.checkpoint_path
@@ -221,6 +221,8 @@ def train():
                 tol_loss = kendall_loss([seg_loss, depth_loss])
 
             scaler.scale(tol_loss).backward()
+            scaler.unscale_(optimizer)
+            torch.nn.utils.clip_grad_norm_((list(model.parameters()) + list(kendall_loss.parameters())), max_norm=1.0)
             scaler.step(optimizer)
             scaler.update()
 
