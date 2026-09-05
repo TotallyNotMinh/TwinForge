@@ -125,7 +125,7 @@ def train():
     EPOCHS = 150
     BATCH_SIZE = args.batch_size
     NUM_CLASSES = 41
-    NUM_HEADS = 4
+    NUM_HEADS = 8
     TOKEN_DIM = 256
     patience = 25
     epochs_without_improvement = 0
