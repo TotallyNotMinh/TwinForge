@@ -1,20 +1,9 @@
 from torch import nn
+import torch.nn.functional as F
 import torch
 
-class SelfAttention(nn.Module):
-    def __init__(self):
-        super().__init__()
-        self.softmax = nn.Softmax(dim=-1)
-        self.dropout = nn.Dropout(0.1)
-
-    def forward(self, query, key, value):
-        attention_matrix = torch.matmul(query, key.transpose(-2, -1)) / (query.size(-1) ** 0.5)
-        attention = self.dropout(self.softmax(attention_matrix))
-        return torch.matmul(attention, value)
-
-
 class MultiHeadSelfAttention(nn.Module):
-    def __init__(self, dim, num_heads):
+    def __init__(self, dim, num_heads, dropout=0.1):
         super().__init__()
 
         assert dim % num_heads == 0
@@ -22,23 +11,29 @@ class MultiHeadSelfAttention(nn.Module):
         self.num_heads = num_heads
         self.dim = dim
         self.head_dim = dim // num_heads
+        self.dropout_p = dropout
 
         self.Wq = nn.Linear(dim, dim)
         self.Wk = nn.Linear(dim, dim)
         self.Wv = nn.Linear(dim, dim)
         self.Wo = nn.Linear(dim, dim)
-        
-        self.attention = SelfAttention()
 
-    def forward(self, x):
-        B, N, C = x.shape
+    def forward(self, x, context=None):
+        if context is None:
+            context = x
 
-        q = self.Wq(x).view(B, N, self.num_heads, self.head_dim).transpose(1, 2) # (B, N_token, n_heads, dim) -> (B, n_heads, N_token, dim), batch matrix multiplication operates on the last two dimensions (N, token, dim)
-        k = self.Wk(x).view(B, N, self.num_heads, self.head_dim).transpose(1, 2)
-        v = self.Wv(x).view(B, N, self.num_heads, self.head_dim).transpose(1, 2)
+        B, N_x, C = x.shape
+        N_ctx = context.shape[1]
 
-        out = self.attention(q, k, v)
-        out = out.transpose(1, 2).contiguous().view(B, N, self.dim)
+        q = self.Wq(x).view(B, N_x, self.num_heads, self.head_dim).transpose(1, 2)
+        k = self.Wk(context).view(B, N_ctx, self.num_heads, self.head_dim).transpose(1, 2)
+        v = self.Wv(context).view(B, N_ctx, self.num_heads, self.head_dim).transpose(1, 2)
+
+        out = F.scaled_dot_product_attention(
+            q, k, v,
+            dropout_p=self.dropout_p if self.training else 0.0
+        )
+        out = out.transpose(1, 2).contiguous().view(B, N_x, self.dim)
         return self.Wo(out)
 
 
@@ -60,6 +55,7 @@ class TransformerBlock(nn.Module):
         self.num_heads = num_heads
         self.dim = dim
 
+        self.norm_context = nn.LayerNorm(normalized_shape=dim)
         self.norm1 = nn.LayerNorm(normalized_shape=dim)
         self.norm2 = nn.LayerNorm(normalized_shape=dim)
 
@@ -68,8 +64,9 @@ class TransformerBlock(nn.Module):
 
         self.dropout = nn.Dropout(0.3)
 
-    def forward(self, x):
-        x = x + self.dropout(self.mhsa(self.norm1(x)))
+    def forward(self, x, context=None):
+        normed_context = self.norm_context(context) if context is not None else None
+        x = x + self.dropout(self.mhsa(self.norm1(x), normed_context))
         x = x + self.dropout(self.ffn(self.norm2(x)))
         return x # Shape (B, tok_num, dim)
 
