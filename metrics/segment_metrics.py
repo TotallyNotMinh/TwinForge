@@ -3,7 +3,7 @@ import torch
 class SegmentationMetrics:
 
     @staticmethod
-    def compute(pred, target, num_classes=40):
+    def compute(pred, target, num_classes=41):
 
         pred = torch.argmax(pred, dim=1)
 
@@ -37,11 +37,11 @@ class SegmentationMetrics:
         # Pixel accuracy
         valid = target > 0
         pixel_accuracy = (
-            (pred[valid] == target[valid]).float().mean()
+            (pred[valid] == target[valid]).float().mean() if valid.any() else torch.tensor(0.0, device=pred.device)
         )
 
-        miou = torch.stack(ious).mean()
-        mean_dice = torch.stack(dices).mean()
+        miou = torch.stack(ious).mean() if len(ious) > 0 else torch.tensor(0.0, device=pred.device)
+        mean_dice = torch.stack(dices).mean() if len(dices) > 0 else torch.tensor(0.0, device=pred.device)
 
         return {
             "miou": miou.item(),

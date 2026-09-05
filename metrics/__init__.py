@@ -3,7 +3,7 @@ from metrics.segment_metrics import SegmentationMetrics
 
 class MultiTaskMetrics:
 
-    def __init__(self, num_classes=40):
+    def __init__(self, num_classes=41):
         self.num_classes = num_classes
 
     def compute(
