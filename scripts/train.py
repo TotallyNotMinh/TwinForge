@@ -126,10 +126,10 @@ def train():
     BATCH_SIZE = args.batch_size
     NUM_CLASSES = 41
     NUM_HEADS = 4
-    TOKEN_DIM = 128
+    TOKEN_DIM = 256
     patience = 25
     epochs_without_improvement = 0
-    resize = (288, 384)
+    resize = (384, 512)
     encoder_lr = 1e-4
     decoder_lr = 2e-4
     kendall_lr = 1e-3
