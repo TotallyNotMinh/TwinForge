@@ -29,9 +29,10 @@ def get_boundary_map(label: torch.Tensor, kernel_size: int = 3) -> torch.Tensor:
 
 class NYUv2Dataset(Dataset):
 
-    def __init__(self, data_path, class_map_path, split, augment=True, resize=(640, 480)):
+    def __init__(self, data_path, class_map_path, split, splits_path="data/splits.mat", augment=True, resize=(480, 640)):
         self.data_path = data_path
         self.class_map_path = class_map_path
+        self.splits_path = splits_path
         self.data = None
 
         mat = scipy.io.loadmat(self.class_map_path)
@@ -59,21 +60,24 @@ class NYUv2Dataset(Dataset):
         with h5py.File(self.data_path, "r") as f:
             self.images = np.array(f["images"])
             self.depths = np.array(f["depths"])
-            self.labels = np.array(f["labels"])   
+            self.labels = np.array(f["labels"])
 
-            self.train_size = int(0.8 * len(self.images))
-            self.val_size = len(self.images) - self.train_size
-            
-        generator = torch.Generator().manual_seed(42)
+        splits_data = scipy.io.loadmat(self.splits_path)
+        train_key = "trainNdxs" if "trainNdxs" in splits_data else "trainNdx"
+        test_key = "testNdxs" if "testNdxs" in splits_data else "testNdx"
 
-        indices = torch.randperm(len(self.images), generator=generator)
+        self.train_indices = torch.from_numpy(splits_data[train_key].squeeze() - 1).long()
+        self.val_indices = torch.from_numpy(splits_data[test_key].squeeze() - 1).long()
 
-        self.train_indices = indices[:self.train_size]
-        self.val_indices = indices[self.train_size:]
-        self.indices = self.train_indices if self.split == "train" else self.val_indices
+        if self.split == "train":
+            self.indices = self.train_indices
+        elif self.split in ["val", "test"]:
+            self.indices = self.val_indices
+        else:
+            raise ValueError(f"Unknown split: {self.split}. Expected 'train', 'val', or 'test'.")
 
     def __len__(self):
-        return self.train_size if self.split == "train" else self.val_size
+        return len(self.indices)
 
     def __getitem__(self, idx):
         idx = self.indices[idx]
@@ -122,11 +126,9 @@ class NYUv2Dataset(Dataset):
 
         label = self.class_map[raw_label]
 
-        boundary = get_boundary_map(label).float()
-
         image = self.rgb_transform(image)
 
-        return image, depth, label, boundary
+        return image, depth, label
     
 if __name__ == "__main__":
     dataset_path = "data/nyu_depth_v2_labeled.mat"

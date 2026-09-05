@@ -1,13 +1,14 @@
 import torch.nn as nn
-from torchvision.models import resnet34, ResNet34_Weights
-
+from torchvision.models import resnet50, ResNet50_Weights
+from torchinfo import summary
+import torch
 
 class ResNetEncoder(nn.Module):
     def __init__(self, pretrained=True, freeze=True):
         super().__init__()
 
-        weights = ResNet34_Weights.DEFAULT if pretrained else None
-        resnet = resnet34(weights=weights)
+        weights = ResNet50_Weights.DEFAULT if pretrained else None
+        resnet = resnet50(weights=weights)
 
         self.stem = nn.Sequential(
             resnet.conv1,
@@ -34,15 +35,16 @@ class ResNetEncoder(nn.Module):
 
         x = self.maxpool(x)
         x = self.layer1(x)
-        features["f2"] = x # 64 channels
+        features["f2"] = x # 256 channels
 
         x = self.layer2(x)
-        features["f3"] = x # 128 channels
+        features["f3"] = x # 512 channels
 
         x = self.layer3(x)
-        features["f4"] = x # 256 channels
+        features["f4"] = x # 1024 channels
 
         x = self.layer4(x)
-        features["f5"] = x # 512 channels
+        features["f5"] = x # 2048 channels
 
         return features
+
