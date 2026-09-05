@@ -44,18 +44,22 @@ class SegmentHead(nn.Module):
 
 
 class DepthHead(nn.Module):
-    def __init__(self, tok_dim):
+    def __init__(self, tok_dim, min_depth=1e-3, max_depth=10.0):
         super().__init__()
+        self.min_depth = min_depth
+        self.max_depth = max_depth
         self.out = nn.Sequential(
             nn.Conv2d(tok_dim * 2 + 64, 128, kernel_size=3, padding=1),
             nn.ReLU(),
             nn.Dropout2d(0.1),
             nn.Conv2d(128, 1, kernel_size=3, padding=1)
         )
+        # Initialize bias so initial predictions start near mean NYUv2 depth (~2.5m)
+        nn.init.constant_(self.out[3].bias, -1.0986)
 
     def forward(self, token, decode_feature, encode_feature):
         x = self.out(torch.concat([token, encode_feature, decode_feature], dim=1)) 
-        return torch.clamp(x, min=1e-3, max=10.0)
+        return self.min_depth + (self.max_depth - self.min_depth) * torch.sigmoid(x)
 
 
 class MultiHeadDecoder(nn.Module):
