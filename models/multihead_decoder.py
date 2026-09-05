@@ -62,11 +62,11 @@ class MultiHeadDecoder(nn.Module):
         self.patch_embedder4 = PatchEmbeder(1024, tok_dim, patch_size=3)
         self.patch_embedder5 = PatchEmbeder(2048, tok_dim, patch_size=3)
 
-        self.pos_embed1 = nn.Parameter(torch.randn(1, 768, tok_dim) * 0.02)
-        self.pos_embed2 = nn.Parameter(torch.randn(1, 432, tok_dim) * 0.02)
-        self.pos_embed3 = nn.Parameter(torch.randn(1, 108, tok_dim) * 0.02)
-        self.pos_embed4 = nn.Parameter(torch.randn(1, 48, tok_dim) * 0.02)
-        self.pos_embed5 = nn.Parameter(torch.randn(1, 12, tok_dim) * 0.02)
+        self.pos_embed1 = nn.Parameter(torch.randn(1, tok_dim, 24, 32) * 0.02)
+        self.pos_embed2 = nn.Parameter(torch.randn(1, tok_dim, 18, 24) * 0.02)
+        self.pos_embed3 = nn.Parameter(torch.randn(1, tok_dim, 9, 12) * 0.02)
+        self.pos_embed4 = nn.Parameter(torch.randn(1, tok_dim, 6, 8) * 0.02)
+        self.pos_embed5 = nn.Parameter(torch.randn(1, tok_dim, 3, 4) * 0.02)
         self.level_embed = nn.Embedding(5, tok_dim)
 
         self.transformer1 = TransformerBlock(tok_dim, num_heads)
@@ -97,7 +97,7 @@ class MultiHeadDecoder(nn.Module):
         )
 
         self.dec5 = nn.Sequential(
-            nn.Conv2d(2048 + 128, 512, kernel_size=1),
+            nn.Conv2d(2048 + tok_dim, 512, kernel_size=1),
             nn.BatchNorm2d(512),
             nn.ReLU(inplace=True),
             nn.Conv2d(512, 512, kernel_size=3, padding=1),
@@ -109,7 +109,7 @@ class MultiHeadDecoder(nn.Module):
         )
 
         self.dec4 = nn.Sequential(
-            nn.Conv2d(1024 * 2 + 128, 256, kernel_size=1),
+            nn.Conv2d(1024 * 2 + tok_dim, 256, kernel_size=1),
             nn.BatchNorm2d(256),
             nn.ReLU(inplace=True),
             nn.Conv2d(256, 256, kernel_size=3, padding=1),
@@ -121,7 +121,7 @@ class MultiHeadDecoder(nn.Module):
         )
 
         self.dec3 = nn.Sequential(
-            nn.Conv2d(512 * 2 + 128, 256, kernel_size=1),
+            nn.Conv2d(512 * 2 + tok_dim, 256, kernel_size=1),
             nn.BatchNorm2d(256),
             nn.ReLU(inplace=True),
             nn.Conv2d(256, 256, kernel_size=3, padding=1),
@@ -130,65 +130,85 @@ class MultiHeadDecoder(nn.Module):
         )
 
         self.dec2 = nn.Sequential(
-            nn.Conv2d(256 * 2 + 128, 128, kernel_size=1),
-            nn.BatchNorm2d(128),
+            nn.Conv2d(256 * 2 + tok_dim, tok_dim, kernel_size=1),
+            nn.BatchNorm2d(tok_dim),
             nn.ReLU(inplace=True),
-            nn.Conv2d(128, 128, kernel_size=3, padding=1),
-            nn.BatchNorm2d(128),
+            nn.Conv2d(tok_dim, tok_dim, kernel_size=3, padding=1),
+            nn.BatchNorm2d(tok_dim),
             nn.ReLU(inplace=True)
         )
 
         self.segment_head = SegmentHead(tok_dim, num_labels)
         self.depth_head = DepthHead(tok_dim)
 
+    def _get_pos_embed(self, pos_param, h, w):
+        if pos_param.shape[-2:] == (h, w):
+            return pos_param
+        return F.interpolate(pos_param, size=(h, w), mode="bicubic", align_corners=False)
+
     def forward(self, features):
         B = features["f1"].shape[0]
 
-        # Feature shapes:
-        # torch.Size([1, 64, 144, 192])
-        # torch.Size([1, 256, 72, 96])
-        # torch.Size([1, 512, 36, 48])
-        # torch.Size([1, 1024, 18, 24])
-        # torch.Size([1, 2048, 9, 12])
+        patch1 = self.patch_embedder1(features["f1"])
+        h1, w1 = patch1.shape[-2:]
+        pe1 = self._get_pos_embed(self.pos_embed1, h1, w1)
+        tok1 = (patch1 + pe1).flatten(2).transpose(1, 2) + self.level_embed.weight[0]
+        l1 = h1 * w1
 
+        patch2 = self.patch_embedder2(features["f2"])
+        h2, w2 = patch2.shape[-2:]
+        pe2 = self._get_pos_embed(self.pos_embed2, h2, w2)
+        tok2 = (patch2 + pe2).flatten(2).transpose(1, 2) + self.level_embed.weight[1]
+        l2 = h2 * w2
 
-        patch1 = self.patch_embedder1(features["f1"]) # torch.Size([1, 128, 24, 32])
-        patch2 = self.patch_embedder2(features["f2"]) # torch.Size([1, 128, 18, 24])
-        patch3 = self.patch_embedder3(features["f3"]) # torch.Size([1, 128, 9, 12])
-        patch4 = self.patch_embedder4(features["f4"]) # torch.Size([1, 128, 6, 8])
-        patch5 = self.patch_embedder5(features["f5"]) # torch.Size([1, 128, 3, 4])
+        patch3 = self.patch_embedder3(features["f3"])
+        h3, w3 = patch3.shape[-2:]
+        pe3 = self._get_pos_embed(self.pos_embed3, h3, w3)
+        tok3 = (patch3 + pe3).flatten(2).transpose(1, 2) + self.level_embed.weight[2]
+        l3 = h3 * w3
 
-        tok1 = self.flatten(patch1).transpose(2, 1) + self.pos_embed1 + self.level_embed.weight[0] # torch.Size([B, 768, 128])
-        tok2 = self.flatten(patch2).transpose(2, 1) + self.pos_embed2 + self.level_embed.weight[1] # torch.Size([B, 432, 128])
-        tok3 = self.flatten(patch3).transpose(2, 1) + self.pos_embed3 + self.level_embed.weight[2] # torch.Size([B, 108, 128])
-        tok4 = self.flatten(patch4).transpose(2, 1) + self.pos_embed4 + self.level_embed.weight[3] # torch.Size([B, 48, 128])
-        tok5 = self.flatten(patch5).transpose(2, 1) + self.pos_embed5 + self.level_embed.weight[4] # torch.Size([B, 12, 128])
+        patch4 = self.patch_embedder4(features["f4"])
+        h4, w4 = patch4.shape[-2:]
+        pe4 = self._get_pos_embed(self.pos_embed4, h4, w4)
+        tok4 = (patch4 + pe4).flatten(2).transpose(1, 2) + self.level_embed.weight[3]
+        l4 = h4 * w4
 
-        trans_output1 = self.transformer1(tok1) # torch.Size([B, 768, 128])
-        trans_output2 = self.transformer2(tok2) # torch.Size([B, 432, 128])
-        trans_output3 = self.transformer3(tok3) # torch.Size([B, 108, 128])
-        trans_output4 = self.transformer4(tok4) # torch.Size([B, 48, 128])
-        trans_output5 = self.transformer5(tok5) # torch.Size([B, 12, 128])
+        patch5 = self.patch_embedder5(features["f5"])
+        h5, w5 = patch5.shape[-2:]
+        pe5 = self._get_pos_embed(self.pos_embed5, h5, w5)
+        tok5 = (patch5 + pe5).flatten(2).transpose(1, 2) + self.level_embed.weight[4]
+        l5 = h5 * w5
 
-        
-        joint_multi_layer_token = torch.concat([trans_output1, trans_output2, trans_output3, trans_output4, trans_output5], dim=-2)
-        # Joint token shapes: torch.Size([B, 1368, 128])
-        
+        trans_output1 = self.transformer1(tok1)
+        trans_output2 = self.transformer2(tok2)
+        trans_output3 = self.transformer3(tok3)
+        trans_output4 = self.transformer4(tok4)
+        trans_output5 = self.transformer5(tok5)
+
+        joint_multi_layer_token = torch.concat([trans_output1, trans_output2, trans_output3, trans_output4, trans_output5], dim=1)
+
         # Self Attention
-        depth_token_self = self.fuse_transformer_depth_self(joint_multi_layer_token) # torch.Size([B, 1368, 128])
-        segment_token_self = self.fuse_transformer_segment_self(joint_multi_layer_token) # torch.Size([B, 1368, 128])
+        depth_token_self = self.fuse_transformer_depth_self(joint_multi_layer_token)
+        segment_token_self = self.fuse_transformer_segment_self(joint_multi_layer_token)
 
         # Cross Attention
         depth_token_cross = self.fuse_transformer_depth_cross(depth_token_self, context=segment_token_self)
         segment_token_cross = self.fuse_transformer_segment_cross(segment_token_self, context=depth_token_self)
 
-        # --- Scale 1 (Tokens 0:768 -> 24x32) from Self-Attention (for Task Heads) ---
-        d1 = depth_token_self[:, 0:768, :].transpose(1, 2).contiguous().view(B, self.tok_dim, 24, 32)
-        s1 = segment_token_self[:, 0:768, :].transpose(1, 2).contiguous().view(B, self.tok_dim, 24, 32)
-        
+        # Dynamic Token Slices
+        s1_idx = 0
+        s2_idx = s1_idx + l1
+        s3_idx = s2_idx + l2
+        s4_idx = s3_idx + l3
+        s5_idx = s4_idx + l4
+
+        # --- Scale 1 from Self-Attention (for Task Heads) ---
+        d1 = depth_token_self[:, s1_idx : s1_idx + l1, :].transpose(1, 2).contiguous().view(B, self.tok_dim, h1, w1)
+        s1 = segment_token_self[:, s1_idx : s1_idx + l1, :].transpose(1, 2).contiguous().view(B, self.tok_dim, h1, w1)
+
         vit_depth_self = F.interpolate(d1, size=features["f1"].shape[-2:], mode="bilinear", align_corners=False)
         vit_segment_self = F.interpolate(s1, size=features["f1"].shape[-2:], mode="bilinear", align_corners=False)
-        
+
         def fuse_tokens(d_tok, s_tok, target_shape):
             d_p = self.fuse_proj_depth(d_tok)
             s_p = self.fuse_proj_segment(s_tok)
@@ -197,24 +217,20 @@ class MultiHeadDecoder(nn.Module):
             return F.interpolate(fused, size=target_shape, mode="bilinear", align_corners=False)
 
         # --- Scales 5 down to 2 from Cross-Attention (for Gated Decoder) ---
-        # Scale 5 (Tokens 1356:1368 -> 3x4)
-        d5 = depth_token_cross[:, 1356:1368, :].transpose(1, 2).contiguous().view(B, self.tok_dim, 3, 4)
-        s5 = segment_token_cross[:, 1356:1368, :].transpose(1, 2).contiguous().view(B, self.tok_dim, 3, 4)
+        d5 = depth_token_cross[:, s5_idx : s5_idx + l5, :].transpose(1, 2).contiguous().view(B, self.tok_dim, h5, w5)
+        s5 = segment_token_cross[:, s5_idx : s5_idx + l5, :].transpose(1, 2).contiguous().view(B, self.tok_dim, h5, w5)
         v5 = fuse_tokens(d5, s5, features["f5"].shape[-2:])
-        
-        # Scale 4 (Tokens 1308:1356 -> 6x8)
-        d4 = depth_token_cross[:, 1308:1356, :].transpose(1, 2).contiguous().view(B, self.tok_dim, 6, 8)
-        s4 = segment_token_cross[:, 1308:1356, :].transpose(1, 2).contiguous().view(B, self.tok_dim, 6, 8)
+
+        d4 = depth_token_cross[:, s4_idx : s4_idx + l4, :].transpose(1, 2).contiguous().view(B, self.tok_dim, h4, w4)
+        s4 = segment_token_cross[:, s4_idx : s4_idx + l4, :].transpose(1, 2).contiguous().view(B, self.tok_dim, h4, w4)
         v4 = fuse_tokens(d4, s4, features["f4"].shape[-2:])
 
-        # Scale 3 (Tokens 1200:1308 -> 9x12)
-        d3 = depth_token_cross[:, 1200:1308, :].transpose(1, 2).contiguous().view(B, self.tok_dim, 9, 12)
-        s3 = segment_token_cross[:, 1200:1308, :].transpose(1, 2).contiguous().view(B, self.tok_dim, 9, 12)
+        d3 = depth_token_cross[:, s3_idx : s3_idx + l3, :].transpose(1, 2).contiguous().view(B, self.tok_dim, h3, w3)
+        s3 = segment_token_cross[:, s3_idx : s3_idx + l3, :].transpose(1, 2).contiguous().view(B, self.tok_dim, h3, w3)
         v3 = fuse_tokens(d3, s3, features["f3"].shape[-2:])
 
-        # Scale 2 (Tokens 768:1200 -> 18x24)
-        d2 = depth_token_cross[:, 768:1200, :].transpose(1, 2).contiguous().view(B, self.tok_dim, 18, 24)
-        s2 = segment_token_cross[:, 768:1200, :].transpose(1, 2).contiguous().view(B, self.tok_dim, 18, 24)
+        d2 = depth_token_cross[:, s2_idx : s2_idx + l2, :].transpose(1, 2).contiguous().view(B, self.tok_dim, h2, w2)
+        s2 = segment_token_cross[:, s2_idx : s2_idx + l2, :].transpose(1, 2).contiguous().view(B, self.tok_dim, h2, w2)
         v2 = fuse_tokens(d2, s2, features["f2"].shape[-2:])
 
         # ---- Decode info from bottleneck up ----

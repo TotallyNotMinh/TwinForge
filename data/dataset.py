@@ -29,7 +29,7 @@ def get_boundary_map(label: torch.Tensor, kernel_size: int = 3) -> torch.Tensor:
 
 class NYUv2Dataset(Dataset):
 
-    def __init__(self, data_path, class_map_path, split, splits_path="data/splits.mat", augment=True, resize=(640, 480)):
+    def __init__(self, data_path, class_map_path, split, splits_path="data/splits.mat", augment=True, resize=(480, 640)):
         self.data_path = data_path
         self.class_map_path = class_map_path
         self.splits_path = splits_path
