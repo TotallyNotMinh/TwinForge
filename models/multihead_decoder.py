@@ -29,9 +29,18 @@ class CrossTaskRefinementBlock(nn.Module):
         s_out = self.segment_cross(segment_token, context=depth_token)
         return d_out, s_out
 
-class SegmentHead(nn.Module):
-    def __init__(self, tok_dim, num_labels):
+class SegmentDecoder(nn.Module):
+    def __init__(self, tok_dim, num_labels, embed_dim=128):
         super().__init__()
+        self.proj3 = nn.Sequential(nn.Conv2d(512 + tok_dim, embed_dim, kernel_size=1), nn.BatchNorm2d(embed_dim), nn.ReLU(inplace=True))
+        self.proj2 = nn.Sequential(nn.Conv2d(256 + tok_dim, embed_dim, kernel_size=1), nn.BatchNorm2d(embed_dim), nn.ReLU(inplace=True))
+
+        self.fuse = nn.Sequential(
+            nn.Conv2d(embed_dim * 4, tok_dim, kernel_size=3, padding=1),
+            nn.BatchNorm2d(tok_dim),
+            nn.ReLU(inplace=True)
+        )
+
         self.out = nn.Sequential(
             nn.Conv2d(tok_dim * 2 + 64, 128, kernel_size=3, padding=1),
             nn.ReLU(),
@@ -39,31 +48,52 @@ class SegmentHead(nn.Module):
             nn.Conv2d(128, num_labels, kernel_size=3, padding=1)
         )
 
-    def forward(self, token, decode_feature, encode_feature):
-        return self.out(torch.concat([token, encode_feature, decode_feature], dim=1)) 
+    def forward(self, vit_segment_self, p5, p4, tokens, features):
+        target_size = features["f1"].shape[-2:]
+
+        p3 = F.interpolate(self.proj3(torch.cat([tokens["s3"], features["f3"]], dim=1)), size=target_size, mode="bilinear", align_corners=False)
+        p2 = F.interpolate(self.proj2(torch.cat([tokens["s2"], features["f2"]], dim=1)), size=target_size, mode="bilinear", align_corners=False)
+
+        fused = self.fuse(torch.cat([p5, p4, p3, p2], dim=1))
+        return self.out(torch.cat([vit_segment_self, fused, features["f1"]], dim=1))
 
 
-class DepthHead(nn.Module):
-    def __init__(self, tok_dim, min_depth=1e-3, max_depth=10.0):
+class DepthDecoder(nn.Module):
+    def __init__(self, tok_dim, min_depth=1e-3, max_depth=10.0, embed_dim=128):
         super().__init__()
         self.min_depth = min_depth
         self.max_depth = max_depth
+
+        self.proj3 = nn.Sequential(nn.Conv2d(512 + tok_dim, embed_dim, kernel_size=1), nn.BatchNorm2d(embed_dim), nn.ReLU(inplace=True))
+        self.proj2 = nn.Sequential(nn.Conv2d(256 + tok_dim, embed_dim, kernel_size=1), nn.BatchNorm2d(embed_dim), nn.ReLU(inplace=True))
+
+        self.fuse = nn.Sequential(
+            nn.Conv2d(embed_dim * 4, tok_dim, kernel_size=3, padding=1),
+            nn.BatchNorm2d(tok_dim),
+            nn.ReLU(inplace=True)
+        )
+
         self.out = nn.Sequential(
             nn.Conv2d(tok_dim * 2 + 64, 128, kernel_size=3, padding=1),
             nn.ReLU(),
             nn.Dropout2d(0.1),
             nn.Conv2d(128, 1, kernel_size=3, padding=1)
         )
-        # Initialize bias so initial predictions start near mean NYUv2 depth (~2.5m)
         nn.init.constant_(self.out[3].bias, -1.0986)
 
-    def forward(self, token, decode_feature, encode_feature):
-        x = self.out(torch.concat([token, encode_feature, decode_feature], dim=1)) 
-        return self.min_depth + (self.max_depth - self.min_depth) * torch.sigmoid(x)
+    def forward(self, vit_depth_self, p5, p4, tokens, features):
+        target_size = features["f1"].shape[-2:]
+
+        p3 = F.interpolate(self.proj3(torch.cat([tokens["d3"], features["f3"]], dim=1)), size=target_size, mode="bilinear", align_corners=False)
+        p2 = F.interpolate(self.proj2(torch.cat([tokens["d2"], features["f2"]], dim=1)), size=target_size, mode="bilinear", align_corners=False)
+
+        fused = self.fuse(torch.cat([p5, p4, p3, p2], dim=1))
+        out = self.out(torch.cat([vit_depth_self, fused, features["f1"]], dim=1))
+        return self.min_depth + (self.max_depth - self.min_depth) * torch.sigmoid(out)
 
 
 class MultiHeadDecoder(nn.Module):
-    def __init__(self, num_labels, tok_dim, num_heads, freeze=False):
+    def __init__(self, num_labels, tok_dim, num_heads, embed_dim=128, freeze=False):
         super().__init__()
 
         self.tok_dim = tok_dim
@@ -102,65 +132,20 @@ class MultiHeadDecoder(nn.Module):
             CrossTaskRefinementBlock(tok_dim, num_heads) for _ in range(2)
         ])
 
-        self.fuse_proj_depth = nn.Sequential(
-            nn.Conv2d(tok_dim, tok_dim, kernel_size=1),
-            nn.BatchNorm2d(tok_dim),
+        # Shared high-level semantic & context decoders (dec5 and dec4)
+        self.shared_proj5 = nn.Sequential(
+            nn.Conv2d(2048 + tok_dim * 2, embed_dim, kernel_size=1),
+            nn.BatchNorm2d(embed_dim),
             nn.ReLU(inplace=True)
         )
-        self.fuse_proj_segment = nn.Sequential(
-            nn.Conv2d(tok_dim, tok_dim, kernel_size=1),
-            nn.BatchNorm2d(tok_dim),
-            nn.ReLU(inplace=True)
-        )
-        self.fuse_gate = nn.Sequential(
-            nn.Conv2d(tok_dim * 2, tok_dim, kernel_size=1),
-            nn.Sigmoid()
-        )
-
-        self.dec5 = nn.Sequential(
-            nn.Conv2d(2048 + tok_dim, 512, kernel_size=1),
-            nn.BatchNorm2d(512),
-            nn.ReLU(inplace=True),
-            nn.Conv2d(512, 512, kernel_size=3, padding=1),
-            nn.BatchNorm2d(512),
-            nn.ReLU(inplace=True),
-            nn.Conv2d(512, 1024, kernel_size=1),
-            nn.BatchNorm2d(1024),
+        self.shared_proj4 = nn.Sequential(
+            nn.Conv2d(1024 + tok_dim * 2, embed_dim, kernel_size=1),
+            nn.BatchNorm2d(embed_dim),
             nn.ReLU(inplace=True)
         )
 
-        self.dec4 = nn.Sequential(
-            nn.Conv2d(1024 * 2 + tok_dim, 256, kernel_size=1),
-            nn.BatchNorm2d(256),
-            nn.ReLU(inplace=True),
-            nn.Conv2d(256, 256, kernel_size=3, padding=1),
-            nn.BatchNorm2d(256),
-            nn.ReLU(inplace=True),
-            nn.Conv2d(256, 512, kernel_size=1),
-            nn.BatchNorm2d(512),
-            nn.ReLU(inplace=True)
-        )
-
-        self.dec3 = nn.Sequential(
-            nn.Conv2d(512 * 2 + tok_dim, 256, kernel_size=1),
-            nn.BatchNorm2d(256),
-            nn.ReLU(inplace=True),
-            nn.Conv2d(256, 256, kernel_size=3, padding=1),
-            nn.BatchNorm2d(256),
-            nn.ReLU(inplace=True)
-        )
-
-        self.dec2 = nn.Sequential(
-            nn.Conv2d(256 * 2 + tok_dim, tok_dim, kernel_size=1),
-            nn.BatchNorm2d(tok_dim),
-            nn.ReLU(inplace=True),
-            nn.Conv2d(tok_dim, tok_dim, kernel_size=3, padding=1),
-            nn.BatchNorm2d(tok_dim),
-            nn.ReLU(inplace=True)
-        )
-
-        self.segment_head = SegmentHead(tok_dim, num_labels)
-        self.depth_head = DepthHead(tok_dim)
+        self.segment_dec = SegmentDecoder(tok_dim, num_labels, embed_dim=embed_dim)
+        self.depth_dec = DepthDecoder(tok_dim, embed_dim=embed_dim)
 
     def _get_pos_embed(self, pos_param, h, w):
         if pos_param.shape[-2:] == (h, w):
@@ -232,45 +217,40 @@ class MultiHeadDecoder(nn.Module):
         vit_depth_self = F.interpolate(d1, size=features["f1"].shape[-2:], mode="bilinear", align_corners=False)
         vit_segment_self = F.interpolate(s1, size=features["f1"].shape[-2:], mode="bilinear", align_corners=False)
 
-        def fuse_tokens(d_tok, s_tok, target_shape):
-            d_p = self.fuse_proj_depth(d_tok)
-            s_p = self.fuse_proj_segment(s_tok)
-            gate = self.fuse_gate(torch.concat([d_p, s_p], dim=1))
-            fused = gate * d_p + (1.0 - gate) * s_p
-            return F.interpolate(fused, size=target_shape, mode="bilinear", align_corners=False)
-
         # --- Scales 5 down to 2 from Cross-Attention (for Gated Decoder) ---
         d5 = depth_token_cross[:, s5_idx : s5_idx + l5, :].transpose(1, 2).contiguous().view(B, self.tok_dim, h5, w5)
         s5 = segment_token_cross[:, s5_idx : s5_idx + l5, :].transpose(1, 2).contiguous().view(B, self.tok_dim, h5, w5)
-        v5 = fuse_tokens(d5, s5, features["f5"].shape[-2:])
 
         d4 = depth_token_cross[:, s4_idx : s4_idx + l4, :].transpose(1, 2).contiguous().view(B, self.tok_dim, h4, w4)
         s4 = segment_token_cross[:, s4_idx : s4_idx + l4, :].transpose(1, 2).contiguous().view(B, self.tok_dim, h4, w4)
-        v4 = fuse_tokens(d4, s4, features["f4"].shape[-2:])
 
         d3 = depth_token_cross[:, s3_idx : s3_idx + l3, :].transpose(1, 2).contiguous().view(B, self.tok_dim, h3, w3)
         s3 = segment_token_cross[:, s3_idx : s3_idx + l3, :].transpose(1, 2).contiguous().view(B, self.tok_dim, h3, w3)
-        v3 = fuse_tokens(d3, s3, features["f3"].shape[-2:])
 
         d2 = depth_token_cross[:, s2_idx : s2_idx + l2, :].transpose(1, 2).contiguous().view(B, self.tok_dim, h2, w2)
         s2 = segment_token_cross[:, s2_idx : s2_idx + l2, :].transpose(1, 2).contiguous().view(B, self.tok_dim, h2, w2)
-        v2 = fuse_tokens(d2, s2, features["f2"].shape[-2:])
 
-        # ---- Decode info from bottleneck up ----
-        dec5 = self.dec5(torch.concat([v5, features["f5"]], dim=1))
+        d5 = F.interpolate(d5, size=features["f5"].shape[-2:], mode="bilinear", align_corners=False)
+        s5 = F.interpolate(s5, size=features["f5"].shape[-2:], mode="bilinear", align_corners=False)
 
-        up_dec5 = F.interpolate(dec5, size=features["f4"].shape[-2:], mode="bilinear", align_corners=False)
-        dec4 = self.dec4(torch.concat([v4, features["f4"], up_dec5], dim=1)) 
+        d4 = F.interpolate(d4, size=features["f4"].shape[-2:], mode="bilinear", align_corners=False)
+        s4 = F.interpolate(s4, size=features["f4"].shape[-2:], mode="bilinear", align_corners=False)
 
-        up_dec4 = F.interpolate(dec4, size=features["f3"].shape[-2:], mode="bilinear", align_corners=False)
-        dec3 = self.dec3(torch.concat([v3, features["f3"], up_dec4], dim=1)) 
+        d3 = F.interpolate(d3, size=features["f3"].shape[-2:], mode="bilinear", align_corners=False)
+        s3 = F.interpolate(s3, size=features["f3"].shape[-2:], mode="bilinear", align_corners=False)
 
-        up_dec3 = F.interpolate(dec3, size=features["f2"].shape[-2:], mode="bilinear", align_corners=False)
-        dec2 = self.dec2(torch.concat([v2, features["f2"], up_dec3], dim=1)) 
+        d2 = F.interpolate(d2, size=features["f2"].shape[-2:], mode="bilinear", align_corners=False)
+        s2 = F.interpolate(s2, size=features["f2"].shape[-2:], mode="bilinear", align_corners=False)
 
-        up_dec2 = F.interpolate(dec2, size=features["f1"].shape[-2:], mode="bilinear", align_corners=False)
-        segment_logits = self.segment_head(vit_segment_self, up_dec2, features["f1"])
-        depth_logits = self.depth_head(vit_depth_self, up_dec2, features["f1"])
+        target_size = features["f1"].shape[-2:]
+        shared_p5 = F.interpolate(self.shared_proj5(torch.cat([d5, s5, features["f5"]], dim=1)), size=target_size, mode="bilinear", align_corners=False)
+        shared_p4 = F.interpolate(self.shared_proj4(torch.cat([d4, s4, features["f4"]], dim=1)), size=target_size, mode="bilinear", align_corners=False)
+
+        depth_tokens = {"d3": d3, "d2": d2}
+        segment_tokens = {"s3": s3, "s2": s2}
+
+        depth_logits = self.depth_dec(vit_depth_self, shared_p5, shared_p4, depth_tokens, features)
+        segment_logits = self.segment_dec(vit_segment_self, shared_p5, shared_p4, segment_tokens, features)
 
         return depth_logits, segment_logits
 
