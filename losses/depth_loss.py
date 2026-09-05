@@ -10,7 +10,7 @@ def berhu_loss(pred, target):
     loss = torch.where(
         diff <= c,
         diff,
-        (diff ** 2 + c ** 2) / (2 * c)
+        (diff ** 2 + c ** 2) / ((2 * c) + 1e-6)
     )
 
     return loss.mean()
