@@ -239,24 +239,8 @@ def train():
         running_seg_loss = 0.0
         running_depth_loss = 0.0
 
-        total_depth = {
-            "rmse": 0.0,
-            "abs_rel": 0.0,
-            "delta1": 0.0,
-            "delta2": 0.0,
-            "delta3": 0.0,
-        }
-
-        total_seg = {
-            "miou": 0.0,
-            "dice": 0.0,
-            "pixel_acc": 0.0,
-        }
-
-        num_batches = 0
-
+        metrics.reset()
         model.eval()
-
         val_pbar = tqdm(val_loader, desc=f"Epoch [{epoch:02d}/{EPOCHS:02d}] (Val)  ", leave=False)
         with torch.no_grad():
             for images, depths, labels, boundaries in val_pbar:
@@ -277,40 +261,26 @@ def train():
 
                     tol_loss = kendall_loss([seg_loss, depth_loss])
 
-                result = metrics.compute(
+                metrics.update(
                     pred_seg,
                     pred_depth,
                     labels,
                     depths,
                 )
 
-                for key in total_depth:
-                    total_depth[key] += result["depth"][key]
-
-                for key in total_seg:
-                    total_seg[key] += result["segmentation"][key]
-
-                num_batches += 1
-
                 running_val_loss += tol_loss.item()
-
-                running_depth_loss += depth_loss
-                running_seg_loss += seg_loss
+                running_depth_loss += depth_loss.item()
+                running_seg_loss += seg_loss.item()
                 val_pbar.set_postfix({"val_loss": f"{tol_loss.item():.4f}"})
 
-
             avg_val_loss = running_val_loss / len(val_loader)
-
             avg_seg_loss = running_seg_loss / len(val_loader)
             avg_depth_loss = running_depth_loss / len(val_loader)
 
         # ============== Log ==============
-
-        for key in total_depth:
-            total_depth[key] /= num_batches
-
-        for key in total_seg:
-            total_seg[key] /= num_batches
+        val_results = metrics.compute()
+        total_depth = val_results["depth"]
+        total_seg = val_results["segmentation"]
 
 
 
