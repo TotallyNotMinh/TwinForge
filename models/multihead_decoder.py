@@ -18,6 +18,17 @@ class PatchEmbeder(nn.Module):
     def forward(self, x):
         return self.embedder(x)
 
+class CrossTaskRefinementBlock(nn.Module):
+    def __init__(self, tok_dim, num_heads):
+        super().__init__()
+        self.depth_cross = TransformerBlock(tok_dim, num_heads)
+        self.segment_cross = TransformerBlock(tok_dim, num_heads)
+
+    def forward(self, depth_token, segment_token):
+        d_out = self.depth_cross(depth_token, context=segment_token)
+        s_out = self.segment_cross(segment_token, context=depth_token)
+        return d_out, s_out
+
 class SegmentHead(nn.Module):
     def __init__(self, tok_dim, num_labels):
         super().__init__()
@@ -69,17 +80,23 @@ class MultiHeadDecoder(nn.Module):
         self.pos_embed5 = nn.Parameter(torch.randn(1, tok_dim, 3, 4) * 0.02)
         self.level_embed = nn.Embedding(5, tok_dim)
 
+        # Asymmetric multi-scale feature transformers:
+        # Scales 1 & 2: 1 block (high-res spatial detail with low compute)
+        # Scale 3: 2 blocks (mid-level part composition)
+        # Scales 4 & 5: 3 blocks (deep global 3D/scene context)
         self.transformer1 = TransformerBlock(tok_dim, num_heads)
         self.transformer2 = TransformerBlock(tok_dim, num_heads)
-        self.transformer3 = TransformerBlock(tok_dim, num_heads)
-        self.transformer4 = TransformerBlock(tok_dim, num_heads)
-        self.transformer5 = TransformerBlock(tok_dim, num_heads)
+        self.transformer3 = nn.Sequential(*[TransformerBlock(tok_dim, num_heads) for _ in range(2)])
+        self.transformer4 = nn.Sequential(*[TransformerBlock(tok_dim, num_heads) for _ in range(3)])
+        self.transformer5 = nn.Sequential(*[TransformerBlock(tok_dim, num_heads) for _ in range(3)])
 
         self.fuse_transformer_depth_self = TransformerBlock(tok_dim, num_heads)
         self.fuse_transformer_segment_self = TransformerBlock(tok_dim, num_heads)
 
-        self.fuse_transformer_depth_cross = TransformerBlock(tok_dim, num_heads)
-        self.fuse_transformer_segment_cross = TransformerBlock(tok_dim, num_heads)
+        # Multi-stage mutual cross-task refinement (2 iterations)
+        self.cross_layers = nn.ModuleList([
+            CrossTaskRefinementBlock(tok_dim, num_heads) for _ in range(2)
+        ])
 
         self.fuse_proj_depth = nn.Sequential(
             nn.Conv2d(tok_dim, tok_dim, kernel_size=1),
@@ -191,9 +208,11 @@ class MultiHeadDecoder(nn.Module):
         depth_token_self = self.fuse_transformer_depth_self(joint_multi_layer_token)
         segment_token_self = self.fuse_transformer_segment_self(joint_multi_layer_token)
 
-        # Cross Attention
-        depth_token_cross = self.fuse_transformer_depth_cross(depth_token_self, context=segment_token_self)
-        segment_token_cross = self.fuse_transformer_segment_cross(segment_token_self, context=depth_token_self)
+        # Multi-stage mutual cross-task refinement
+        depth_token_cross = depth_token_self
+        segment_token_cross = segment_token_self
+        for cross_layer in self.cross_layers:
+            depth_token_cross, segment_token_cross = cross_layer(depth_token_cross, segment_token_cross)
 
         # Dynamic Token Slices
         s1_idx = 0
