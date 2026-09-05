@@ -9,11 +9,13 @@ class KendallMultiTaskLoss(nn.Module):
         self.max_log_var = max_log_var
 
     def forward(self, losses):
+        center = (self.max_log_var + self.min_log_var) / 2.0
+        scale = (self.max_log_var - self.min_log_var) / 2.0
         total = 0.0
 
         for i, loss in enumerate(losses):
-            # Clamp log_vars
-            log_var = torch.clamp(self.log_vars[i], min=self.min_log_var, max=self.max_log_var)
+            # Smoothly bounded log_var preserving continuous non-zero gradient
+            log_var = center + scale * torch.tanh(self.log_vars[i])
             
             total += (
                 0.5 * torch.exp(-log_var) * loss
