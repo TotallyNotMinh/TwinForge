@@ -126,11 +126,9 @@ class NYUv2Dataset(Dataset):
 
         label = self.class_map[raw_label]
 
-        boundary = get_boundary_map(label).float()
-
         image = self.rgb_transform(image)
 
-        return image, depth, label, boundary
+        return image, depth, label
     
 if __name__ == "__main__":
     dataset_path = "data/nyu_depth_v2_labeled.mat"

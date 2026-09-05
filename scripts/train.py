@@ -193,6 +193,9 @@ def train():
     # ============== Resume Training ==============
     start_epoch, best_depth_delta1, best_seg_miou, epochs_without_improvement = load_checkpoint(checkpoint_path, device, model, optimizer, scheduler, scaler, kendall_loss)
 
+    if device == "cuda":
+        torch.backends.cudnn.benchmark = True
+
     # ============== Trainng and Validation loop ==============
     for epoch in range(start_epoch, EPOCHS + 1):
         model.train(True)
@@ -200,15 +203,10 @@ def train():
 
         # ============== Train loop ==============
         train_pbar = tqdm(train_loader, desc=f"Epoch [{epoch:02d}/{EPOCHS:02d}] (Train)", leave=False)
-        for images, depths, labels, boundaries in train_pbar:
-            images = images.to(device)
-            depths = depths.unsqueeze(1).float().to(device)
-            labels = labels.long().to(device)
-            boundaries = boundaries.float().to(device)
-            if boundaries.dim() == 3:
-                boundaries = boundaries.unsqueeze(1)
-            elif boundaries.dim() == 5:
-                boundaries = boundaries.squeeze(1)
+        for images, depths, labels in train_pbar:
+            images = images.to(device, non_blocking=True)
+            depths = depths.unsqueeze(1).float().to(device, non_blocking=True)
+            labels = labels.long().to(device, non_blocking=True)
 
             optimizer.zero_grad()
 
@@ -216,7 +214,7 @@ def train():
                 pred_seg, pred_depth = model(images)
 
                 seg_loss = crit_seg(pred_seg, labels)
-                depth_loss = crit_depth(pred_depth, depths, boundaries)
+                depth_loss = crit_depth(pred_depth, depths, labels)
 
                 tol_loss = kendall_loss([seg_loss, depth_loss])
 
@@ -243,21 +241,16 @@ def train():
         model.eval()
         val_pbar = tqdm(val_loader, desc=f"Epoch [{epoch:02d}/{EPOCHS:02d}] (Val)  ", leave=False)
         with torch.no_grad():
-            for images, depths, labels, boundaries in val_pbar:
-                images = images.to(device)
-                depths = depths.unsqueeze(1).float().to(device)
-                labels = labels.long().to(device)
-                boundaries = boundaries.float().to(device)
-                if boundaries.dim() == 3:
-                    boundaries = boundaries.unsqueeze(1)
-                elif boundaries.dim() == 5:
-                    boundaries = boundaries.squeeze(1)
+            for images, depths, labels in val_pbar:
+                images = images.to(device, non_blocking=True)
+                depths = depths.unsqueeze(1).float().to(device, non_blocking=True)
+                labels = labels.long().to(device, non_blocking=True)
 
                 with torch.amp.autocast("cuda", enabled=(device == "cuda")):
                     pred_seg, pred_depth = model(images)
 
                     seg_loss = crit_seg(pred_seg, labels)
-                    depth_loss = crit_depth(pred_depth, depths, boundaries)
+                    depth_loss = crit_depth(pred_depth, depths, labels)
 
                     tol_loss = kendall_loss([seg_loss, depth_loss])
 
