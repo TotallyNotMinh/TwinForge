@@ -2,7 +2,7 @@ from torch import nn
 import torch
 
 class KendallMultiTaskLoss(nn.Module):
-    def __init__(self, num_tasks=3, min_log_var=-1.0, max_log_var=1.0):
+    def __init__(self, num_tasks=3, min_log_var=-2.0, max_log_var=2.0):
         super().__init__()
         self.log_vars = nn.Parameter(torch.zeros(num_tasks))
         self.min_log_var = min_log_var
