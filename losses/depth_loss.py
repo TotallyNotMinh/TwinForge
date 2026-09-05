@@ -2,8 +2,11 @@ from torch import nn
 import torch
 
 def berhu_loss(pred, target):
+    mask = target > 0
+    if not mask.any():
+        return torch.tensor(0.0, device=pred.device, requires_grad=True)
 
-    diff = torch.abs(pred - target)
+    diff = torch.abs(pred[mask] - target[mask])
 
     c = 0.2 * diff.max().detach()
 
@@ -54,5 +57,6 @@ class DepthLoss(nn.Module):
         super().__init__()
 
     def forward(self, pred, target, bound_pred):
-        return 0.5 * boundary_guided_depth_grad_loss(pred, target, bound_pred) + 0.5 * berhu_loss(pred, target)
+        mask = (target > 0).float()
+        return 0.5 * boundary_guided_depth_grad_loss(pred, target, bound_pred, mask=mask) + 0.5 * berhu_loss(pred, target)
     
