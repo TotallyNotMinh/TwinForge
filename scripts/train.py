@@ -344,15 +344,28 @@ def train():
 
         if total_depth['delta1'] > best_depth_delta1:
             best_depth_delta1 = total_depth['delta1']
+            best_records["depth_delta1"] = (total_depth['delta1'], epoch)
+            best_records["depth_delta2"] = (total_depth['delta2'], epoch)
+            best_records["depth_delta3"] = (total_depth['delta3'], epoch)
+            best_records["depth_rmse"] = (total_depth['rmse'], epoch)
+            best_records["depth_absrel"] = (total_depth['abs_rel'], epoch)
             save_checkpoint(checkpoint_dir, "best_depth.pth", epoch, model, kendall_loss, optimizer, scheduler, best_depth_delta1, best_seg_miou, epochs_without_improvement, scaler)
             print(f"--> Saved new best DEPTH checkpoint.")
             improved = True
 
         if total_seg['miou'] > best_seg_miou:
             best_seg_miou = total_seg['miou'] 
+            best_records["seg_miou"] = (total_seg['miou'], epoch)
+            best_records["seg_dice"] = (total_seg['dice'], epoch)
+            best_records["seg_pixel_acc"] = (total_seg['pixel_acc'], epoch)
             save_checkpoint(checkpoint_dir, "best_seg.pth", epoch, model, kendall_loss, optimizer, scheduler, best_depth_delta1, best_seg_miou, epochs_without_improvement, scaler)
             print(f"--> Saved new best SEG checkpoint.")
             improved = True
+
+        if avg_val_loss < best_records["min_val_loss"][0]:
+            best_records["min_val_loss"] = (avg_val_loss, epoch)
+
+        save_summary(checkpoint_dir, best_records, epoch, EPOCHS)
 
         if improved:
             epochs_without_improvement = 0
