@@ -83,14 +83,41 @@ class SILogLoss(nn.Module):
         return self.alpha * torch.sqrt(torch.clamp(variance, min=1e-8))
 
 
+import torch.nn.functional as F
+
+def get_gpu_boundary_map(label: torch.Tensor, kernel_size: int = 3) -> torch.Tensor:
+    if label.dim() == 2:
+        label = label.unsqueeze(0).unsqueeze(0)
+    elif label.dim() == 3:
+        label = label.unsqueeze(1)
+
+    label_float = label.float()
+    padding = kernel_size // 2
+
+    # Find max and min label in each local patch on GPU
+    max_label = F.max_pool2d(label_float, kernel_size=kernel_size, stride=1, padding=padding)
+    min_label = -F.max_pool2d(-label_float, kernel_size=kernel_size, stride=1, padding=padding)
+    return (max_label != min_label).float()
+
+
 class DepthLoss(nn.Module):
-    def __init__(self, alpha=10.0, lambda_param=0.85):
+    def __init__(self, alpha=10.0, lambda_param=0.85, l1_weight=0.5):
         super().__init__()
         self.silog = SILogLoss(alpha=alpha, lambda_param=lambda_param)
+        self.l1_weight = l1_weight
 
-    def forward(self, pred, target, bound_pred):
+    def forward(self, pred, target, label_or_boundary):
         mask = target > 0
         silog = self.silog(pred, target, mask=mask)
-        grad = boundary_guided_depth_grad_loss(pred, target, bound_pred, mask=mask.float())
-        return silog + 0.5 * grad
+
+        # If integer class labels are passed, extract boundaries rapidly in batch on GPU
+        if label_or_boundary.dtype in (torch.int32, torch.int64):
+            boundary = get_gpu_boundary_map(label_or_boundary)
+        else:
+            boundary = label_or_boundary
+
+        grad = boundary_guided_depth_grad_loss(pred, target, boundary, mask=mask.float())
+        l1 = F.smooth_l1_loss(pred[mask], target[mask])
+
+        return silog + 0.5 * grad + self.l1_weight * l1
     
