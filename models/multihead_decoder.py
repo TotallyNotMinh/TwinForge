@@ -22,28 +22,28 @@ class SegmentHead(nn.Module):
     def __init__(self, tok_dim, num_labels):
         super().__init__()
         self.out = nn.Sequential(
-            nn.Conv2d(tok_dim * 2 + 64, 128, kernel_size=3, padding=1),
+            nn.Conv2d(tok_dim * 3 + 64, 128, kernel_size=3, padding=1),
             nn.ReLU(),
             nn.Dropout2d(0.1),
             nn.Conv2d(128, num_labels, kernel_size=3, padding=1)
         )
 
-    def forward(self, token, decode_feature, encode_feature):
-        return self.out(torch.concat([token, encode_feature, decode_feature], dim=1)) 
+    def forward(self, token, decode_feature, encode_feature, fused_token):
+        return self.out(torch.concat([token, encode_feature, decode_feature, fused_token], dim=1)) 
 
 
 class DepthHead(nn.Module):
     def __init__(self, tok_dim):
         super().__init__()
         self.out = nn.Sequential(
-            nn.Conv2d(tok_dim * 2 + 64, 128, kernel_size=3, padding=1),
+            nn.Conv2d(tok_dim * 3 + 64, 128, kernel_size=3, padding=1),
             nn.ReLU(),
             nn.Dropout2d(0.1),
             nn.Conv2d(128, 1, kernel_size=3, padding=1)
         )
 
-    def forward(self, token, decode_feature, encode_feature):
-        x = self.out(torch.concat([token, encode_feature, decode_feature], dim=1)) 
+    def forward(self, token, decode_feature, encode_feature, fused_token):
+        x = self.out(torch.concat([token, encode_feature, decode_feature, fused_token], dim=1)) 
         return torch.clamp(x, min=1e-3, max=10.0)
 
 
@@ -177,6 +177,14 @@ class MultiHeadDecoder(nn.Module):
         segment_token = self.fuse_transformer_segment(joint_multi_layer_token)
         # Depth/Segment token shapes: torch.Size([1, 1368, 128])
 
+        vit_depth = trans_output1.transpose(1, 2).contiguous().view(B, self.tok_dim, patch1.shape[-2], patch1.shape[-1]) 
+        vit_segment = trans_output1.transpose(1, 2).contiguous().view(B, self.tok_dim, patch1.shape[-2], patch1.shape[-1]) 
+
+        vit_depth = F.interpolate(vit_depth, size=features["f1"].shape[-2:], mode="bilinear", align_corners=False) 
+        vit_segment = F.interpolate(vit_segment, size=features["f1"].shape[-2:], mode="bilinear", align_corners=False) 
+        print(vit_depth.shape)
+        print(vit_segment.shape)
+
         vit_fe1 = trans_output1.transpose(1, 2).contiguous().view(B, self.tok_dim, patch1.shape[-2], patch1.shape[-1])  # (B, tok_dim, 24, 32)
         vit_fe2 = trans_output2.transpose(1, 2).contiguous().view(B, self.tok_dim, patch2.shape[-2], patch2.shape[-1])  # (B, tok_dim, 18, 24)
         vit_fe3 = trans_output3.transpose(1, 2).contiguous().view(B, self.tok_dim, patch3.shape[-2], patch3.shape[-1])  # (B, tok_dim, 9, 12)
@@ -203,12 +211,14 @@ class MultiHeadDecoder(nn.Module):
         dec2 = self.dec2(torch.concat([v2, features["f2"], up_dec3], dim=1)) 
 
         up_dec2 = F.interpolate(dec2, size=features["f1"].shape[-2:], mode="bilinear", align_corners=False)
-        segment_logits = self.segment_head(v1, up_dec2, features["f1"])
-        depth_logits = self.depth_head(v1, up_dec2, features["f1"])
+        segment_logits = self.segment_head(v1, up_dec2, features["f1"], vit_segment)
+        depth_logits = self.depth_head(v1, up_dec2, features["f1"], vit_depth)
 
         return depth_logits, segment_logits
 
 if __name__ == "__main__":
     model = MultiHeadDecoder(tok_dim=128, num_heads=4, num_labels=40)
     im = torch.randn([1, 3, 288, 384])
-    print(model(im))
+    encoder = ResNetEncoder()
+    features = encoder(im)
+    model(features)
