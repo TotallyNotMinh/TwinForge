@@ -43,8 +43,9 @@ def boundary_guided_depth_grad_loss(pred_depth, gt_depth, boundary_pred, mask=No
     loss_y = torch.abs(pred_dy - gt_dy) * weight_y
 
     if mask is not None:
-        mask_x = mask[:, :, :, 1:]
-        mask_y = mask[:, :, 1:, :]
+        mask_bool = mask > 0
+        mask_x = (mask_bool[:, :, :, 1:] & mask_bool[:, :, :, :-1]).float()
+        mask_y = (mask_bool[:, :, 1:, :] & mask_bool[:, :, :-1, :]).float()
         loss_x = loss_x * mask_x
         loss_y = loss_y * mask_y
         return (loss_x.sum() + loss_y.sum()) / (mask_x.sum() + mask_y.sum() + 1e-8)
