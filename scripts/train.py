@@ -11,12 +11,27 @@ from losses import SegmentLoss, DepthLoss
 from models import TwinForge
 from metrics import MultiTaskMetrics
 import argparse
+import random
+import numpy as np
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--batch-size", type=int, default=8, help="Batch size for training")
 parser.add_argument("--checkpoint-path", type=str, default=None, help="Path to checkpoint")
+parser.add_argument("--checkpoint-dir", type=str, default="checkpoints/", help="Directory to save checkpoints")
+parser.add_argument("--seed", type=int, default=42, help="Random seed for reproducibility")
 
 args = parser.parse_args()
+
+def set_seed(seed=42):
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed_all(seed)
+
+def seed_worker(worker_id):
+    worker_seed = torch.initial_seed() % (2**32)
+    np.random.seed(worker_seed)
+    random.seed(worker_seed)
 
 def save_checkpoint(checkpoint_dir, checkpoint_name, epoch, model, optimizer, scheduler, best_depth_delta1, best_seg_miou, epochs_without_improvement, scaler):
     os.makedirs(checkpoint_dir, exist_ok=True)
@@ -113,6 +128,8 @@ def save_summary(checkpoint_dir, best_records, current_epoch, total_epochs):
         f.write("\n".join(lines) + "\n")
 
 def train():
+    set_seed(args.seed)
+
     # ============== Hyperparams ==============
     EPOCHS = 150
     BATCH_SIZE = args.batch_size
@@ -127,6 +144,7 @@ def train():
     depth_weight = 1.0
     device = "cuda" if torch.cuda.is_available() else "cpu"
     checkpoint_path = args.checkpoint_path
+    checkpoint_dir = args.checkpoint_dir
     start_epoch = 0
 
     best_seg_miou = 0
@@ -151,13 +169,29 @@ def train():
 
     dataset_path = "data/nyu_depth_v2_labeled.mat"
     class_map_path = "data/classMapping40.mat"
-    checkpoint_dir = "checkpoints/"
 
     train_dataset = NYUv2Dataset(data_path=dataset_path, class_map_path=class_map_path, split="train", resize=resize)
     val_dataset = NYUv2Dataset(data_path=dataset_path, class_map_path=class_map_path, split="val", resize=resize)
 
-    train_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=4, pin_memory=True)
-    val_loader = DataLoader(val_dataset, batch_size=BATCH_SIZE, shuffle=False, num_workers=4, pin_memory=True)
+    g = torch.Generator()
+    g.manual_seed(args.seed)
+    train_loader = DataLoader(
+        train_dataset,
+        batch_size=BATCH_SIZE,
+        shuffle=True,
+        num_workers=4,
+        pin_memory=True,
+        worker_init_fn=seed_worker,
+        generator=g
+    )
+    val_loader = DataLoader(
+        val_dataset,
+        batch_size=BATCH_SIZE,
+        shuffle=False,
+        num_workers=4,
+        pin_memory=True,
+        worker_init_fn=seed_worker
+    )
 
     # ============== Model ==============
     
