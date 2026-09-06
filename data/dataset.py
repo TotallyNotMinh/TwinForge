@@ -42,13 +42,10 @@ class NYUv2Dataset(Dataset):
         self.class_map = torch.from_numpy(lookup)
 
         self.resize = resize
-        self.rgb_transform = transforms.Compose([
-            transforms.Resize(resize),
-            transforms.Normalize(
-                mean=[0.485, 0.456, 0.406],
-                std=[0.229, 0.224, 0.225]
-            ),
-        ])
+        self.rgb_transform = transforms.Normalize(
+            mean=[0.485, 0.456, 0.406],
+            std=[0.229, 0.224, 0.225]
+        )
 
         self.split = split
         # Disable augment on val/test
@@ -82,17 +79,18 @@ class NYUv2Dataset(Dataset):
     def __getitem__(self, idx):
         idx = self.indices[idx]
 
+        # Invert HDF5 (W, H) storage order into standard PyTorch (C, H, W) format
         image = torch.from_numpy(
             self.images[idx]
-        ).float() / 255.0
+        ).permute(0, 2, 1).float() / 255.0
 
         depth = torch.from_numpy(
             self.depths[idx]
-        ).float()
+        ).transpose(1, 0).float()
 
         raw_label = torch.from_numpy(
             self.labels[idx]
-        ).long()
+        ).transpose(1, 0).long()
 
         if self.augment:
             image, depth, raw_label = self.augmentation(
@@ -132,9 +130,8 @@ class NYUv2Dataset(Dataset):
     
 if __name__ == "__main__":
     dataset_path = "data/nyu_depth_v2_labeled.mat"
-    dataset = NYUv2Dataset(dataset_path, split="train")
-
-    dataset = NYUv2Dataset(dataset_path, split="train")
+    class_map_path = "data/classMapping40.mat"
+    dataset = NYUv2Dataset(dataset_path, class_map_path, split="train")
 
     print("images:", dataset.images.shape)
     print("depths:", dataset.depths.shape)
