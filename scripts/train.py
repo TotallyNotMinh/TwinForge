@@ -138,7 +138,7 @@ def train():
     TOKEN_DIM = 256
     patience = 25
     epochs_without_improvement = 0
-    resize = (384, 512)
+    resize = (480, 640)
     encoder_lr = 1e-4
     decoder_lr = 2e-4
     depth_weight = 1.0
@@ -200,7 +200,7 @@ def train():
     # ============== Optimizer and Schedulers ==============
     
     optimizer = torch.optim.AdamW([
-        {"params": model.encoder.parameters(), "lr": encoder_lr},
+        {"params": model.encoder.parameters(), "lr": encoder_lr, "weight_decay": 5e-3},
         {"params": model.decoder.parameters(), "lr": decoder_lr},
     ], weight_decay=1e-4)    
 
@@ -257,7 +257,6 @@ def train():
 
         # ============== Validation loop ==============
         running_val_loss = 0.0
-
         running_seg_loss = 0.0
         running_depth_loss = 0.0
 
