@@ -19,6 +19,7 @@ parser.add_argument("--batch-size", type=int, default=8, help="Batch size for tr
 parser.add_argument("--checkpoint-path", type=str, default=None, help="Path to checkpoint")
 parser.add_argument("--checkpoint-dir", type=str, default="checkpoints/", help="Directory to save checkpoints")
 parser.add_argument("--seed", type=int, default=42, help="Random seed for reproducibility")
+parser.add_argument("--grad-accum-steps", type=int, default=1, help="Gradient accumulation steps")
 
 args = parser.parse_args()
 
@@ -226,13 +227,14 @@ def train():
         running_train_loss = 0.0
 
         # ============== Train loop ==============
+        accum_steps = args.grad_accum_steps
+        optimizer.zero_grad()  # Reset before loop
+
         train_pbar = tqdm(train_loader, desc=f"Epoch [{epoch:02d}/{EPOCHS:02d}] (Train)", leave=False)
-        for images, depths, labels in train_pbar:
+        for batch_idx, (images, depths, labels) in enumerate(train_pbar):
             images = images.to(device, non_blocking=True)
             depths = depths.unsqueeze(1).float().to(device, non_blocking=True)
             labels = labels.long().to(device, non_blocking=True)
-
-            optimizer.zero_grad()
 
             with torch.amp.autocast("cuda", enabled=(device == "cuda")):
                 pred_seg, pred_depth = model(images)
@@ -241,17 +243,24 @@ def train():
                 depth_loss = crit_depth(pred_depth, depths, labels)
 
                 tol_loss = seg_loss + depth_weight * depth_loss
+                # Scale loss down by accumulation steps
+                loss_to_backward = tol_loss / accum_steps
 
-            scaler.scale(tol_loss).backward()
-            scaler.unscale_(optimizer)
-            torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
-            scaler.step(optimizer)
-            scaler.update()
+            # Backward accumulates gradients into .grad
+            scaler.scale(loss_to_backward).backward()
 
+            # Step optimizer only every accum_steps or on the last batch of the epoch
+            if (batch_idx + 1) % accum_steps == 0 or (batch_idx + 1) == len(train_loader):
+                scaler.unscale_(optimizer)
+                torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
+                scaler.step(optimizer)
+                scaler.update()
+                optimizer.zero_grad()
+
+            # Track full loss for logging (not the divided loss)
             running_train_loss += tol_loss.item()
-
             train_pbar.set_postfix({"loss": f"{tol_loss.item():.4f}"})
-
+            
         scheduler.step()
         avg_train_loss = running_train_loss / len(train_loader)
 
