@@ -39,13 +39,14 @@ class SegmentDecoder(nn.Module):
         self.fuse = nn.Sequential(
             nn.Conv2d(embed_dim * 4, tok_dim, kernel_size=1, bias=False),
             nn.BatchNorm2d(tok_dim),
-            nn.ReLU(inplace=True)
+            nn.ReLU(inplace=True),
+            nn.Dropout2d(0.2)
         )
 
         self.out = nn.Sequential(
             nn.Conv2d(tok_dim * 2, 128, kernel_size=3, padding=1),
             nn.ReLU(inplace=True),
-            nn.Dropout2d(0.1),
+            nn.Dropout2d(0.3),
             nn.Conv2d(128, num_labels, kernel_size=1)
         )
 
@@ -69,7 +70,6 @@ class DepthDecoder(nn.Module):
         self.proj3 = nn.Sequential(nn.Conv2d(512 + tok_dim, embed_dim, kernel_size=1, bias=False), nn.BatchNorm2d(embed_dim), nn.ReLU(inplace=True))
         self.proj2 = nn.Sequential(nn.Conv2d(256 + tok_dim, embed_dim, kernel_size=1, bias=False), nn.BatchNorm2d(embed_dim), nn.ReLU(inplace=True))
 
-        # Industry standard All-MLP linear fusion (1x1 Conv)
         self.fuse = nn.Sequential(
             nn.Conv2d(embed_dim * 4, tok_dim, kernel_size=1, bias=False),
             nn.BatchNorm2d(tok_dim),
@@ -111,17 +111,14 @@ class MultiHeadDecoder(nn.Module):
         self.patch_embedder4 = PatchEmbeder(1024, tok_dim, patch_size=3)
         self.patch_embedder5 = PatchEmbeder(2048, tok_dim, patch_size=3)
 
-        self.pos_embed1 = nn.Parameter(torch.randn(1, tok_dim, 24, 32) * 0.02)
-        self.pos_embed2 = nn.Parameter(torch.randn(1, tok_dim, 18, 24) * 0.02)
-        self.pos_embed3 = nn.Parameter(torch.randn(1, tok_dim, 9, 12) * 0.02)
-        self.pos_embed4 = nn.Parameter(torch.randn(1, tok_dim, 6, 8) * 0.02)
-        self.pos_embed5 = nn.Parameter(torch.randn(1, tok_dim, 3, 4) * 0.02)
+        self.pos_embed1 = nn.Parameter(torch.randn(1, tok_dim, 40, 53) * 0.02)
+        self.pos_embed2 = nn.Parameter(torch.randn(1, tok_dim, 30, 40) * 0.02)
+        self.pos_embed3 = nn.Parameter(torch.randn(1, tok_dim, 15, 20) * 0.02)
+        self.pos_embed4 = nn.Parameter(torch.randn(1, tok_dim, 10, 13) * 0.02)
+        self.pos_embed5 = nn.Parameter(torch.randn(1, tok_dim, 5, 6) * 0.02)
         self.level_embed = nn.Embedding(5, tok_dim)
 
         # Asymmetric multi-scale feature transformers:
-        # Scales 1 & 2: 1 block (high-res spatial detail with low compute)
-        # Scale 3: 2 blocks (mid-level part composition)
-        # Scales 4 & 5: 3 blocks (deep global 3D/scene context)
         self.transformer1 = TransformerBlock(tok_dim, num_heads)
         self.transformer2 = TransformerBlock(tok_dim, num_heads)
         self.transformer3 = nn.Sequential(*[TransformerBlock(tok_dim, num_heads) for _ in range(2)])
@@ -140,13 +137,17 @@ class MultiHeadDecoder(nn.Module):
         self.shared_proj5 = nn.Sequential(
             nn.Conv2d(2048 + tok_dim * 2, embed_dim, kernel_size=1, bias=False),
             nn.BatchNorm2d(embed_dim),
-            nn.ReLU(inplace=True)
+            nn.ReLU(inplace=True),
+            nn.Dropout2d(0.2)
         )
         self.shared_proj4 = nn.Sequential(
             nn.Conv2d(1024 + tok_dim * 2, embed_dim, kernel_size=1, bias=False),
             nn.BatchNorm2d(embed_dim),
-            nn.ReLU(inplace=True)
+            nn.ReLU(inplace=True),
+            nn.Dropout2d(0.2)
         )
+
+        self.positional_dropout = nn.Dropout(0.1)
 
         self.segment_dec = SegmentDecoder(tok_dim, num_labels, embed_dim=embed_dim)
         self.depth_dec = DepthDecoder(tok_dim, embed_dim=embed_dim)
@@ -162,31 +163,31 @@ class MultiHeadDecoder(nn.Module):
         patch1 = self.patch_embedder1(features["f1"])
         h1, w1 = patch1.shape[-2:]
         pe1 = self._get_pos_embed(self.pos_embed1, h1, w1)
-        tok1 = (patch1 + pe1).flatten(2).transpose(1, 2) + self.level_embed.weight[0]
+        tok1 = self.positional_dropout((patch1 + pe1)).flatten(2).transpose(1, 2) + self.level_embed.weight[0]
         l1 = h1 * w1
 
         patch2 = self.patch_embedder2(features["f2"])
         h2, w2 = patch2.shape[-2:]
         pe2 = self._get_pos_embed(self.pos_embed2, h2, w2)
-        tok2 = (patch2 + pe2).flatten(2).transpose(1, 2) + self.level_embed.weight[1]
+        tok2 = self.positional_dropout((patch2 + pe2)).flatten(2).transpose(1, 2) + self.level_embed.weight[1]
         l2 = h2 * w2
 
         patch3 = self.patch_embedder3(features["f3"])
         h3, w3 = patch3.shape[-2:]
         pe3 = self._get_pos_embed(self.pos_embed3, h3, w3)
-        tok3 = (patch3 + pe3).flatten(2).transpose(1, 2) + self.level_embed.weight[2]
+        tok3 = self.positional_dropout((patch3 + pe3)).flatten(2).transpose(1, 2) + self.level_embed.weight[2]
         l3 = h3 * w3
 
         patch4 = self.patch_embedder4(features["f4"])
         h4, w4 = patch4.shape[-2:]
         pe4 = self._get_pos_embed(self.pos_embed4, h4, w4)
-        tok4 = (patch4 + pe4).flatten(2).transpose(1, 2) + self.level_embed.weight[3]
+        tok4 = self.positional_dropout((patch4 + pe4)).flatten(2).transpose(1, 2) + self.level_embed.weight[3]
         l4 = h4 * w4
 
         patch5 = self.patch_embedder5(features["f5"])
         h5, w5 = patch5.shape[-2:]
         pe5 = self._get_pos_embed(self.pos_embed5, h5, w5)
-        tok5 = (patch5 + pe5).flatten(2).transpose(1, 2) + self.level_embed.weight[4]
+        tok5 = self.positional_dropout((patch5 + pe5)).flatten(2).transpose(1, 2) + self.level_embed.weight[4]
         l5 = h5 * w5
 
         trans_output1 = self.transformer1(tok1)
