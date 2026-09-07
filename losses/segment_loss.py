@@ -27,7 +27,7 @@ class SegmentLoss(nn.Module):
         weights[0] = 0.0
 
         self.register_buffer("class_weights", weights)
-        self.ce = nn.CrossEntropyLoss(weight=self.class_weights, ignore_index=ignore_index)
+        self.ce = nn.CrossEntropyLoss(weight=self.class_weights, ignore_index=ignore_index, label_smoothing=0.05)
         self.lovasz = LovaszSoftmaxLoss(ignore_index=ignore_index)
 
     def forward(self, pred, target):
