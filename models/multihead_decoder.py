@@ -97,8 +97,9 @@ class DepthDecoder(nn.Module):
 
 
 class MultiHeadDecoder(nn.Module):
-    def __init__(self, num_labels, tok_dim, num_heads, embed_dim=128, freeze=False):
+    def __init__(self, num_labels, tok_dim, num_heads, size=(384, 512), embed_dim=128, freeze=False):
         super().__init__()
+        (H, W) = size
 
         self.tok_dim = tok_dim
         self.num_heads = num_heads
@@ -111,11 +112,11 @@ class MultiHeadDecoder(nn.Module):
         self.patch_embedder4 = PatchEmbeder(1024, tok_dim, patch_size=3)
         self.patch_embedder5 = PatchEmbeder(2048, tok_dim, patch_size=3)
 
-        self.pos_embed1 = nn.Parameter(torch.randn(1, tok_dim, 40, 53) * 0.02)
-        self.pos_embed2 = nn.Parameter(torch.randn(1, tok_dim, 30, 40) * 0.02)
-        self.pos_embed3 = nn.Parameter(torch.randn(1, tok_dim, 15, 20) * 0.02)
-        self.pos_embed4 = nn.Parameter(torch.randn(1, tok_dim, 10, 13) * 0.02)
-        self.pos_embed5 = nn.Parameter(torch.randn(1, tok_dim, 5, 6) * 0.02)
+        self.pos_embed1 = nn.Parameter(torch.randn(1, tok_dim, H // (2 * 6), W // (2 * 6)) * 0.02)
+        self.pos_embed2 = nn.Parameter(torch.randn(1, tok_dim, H // (4 * 4), W // (4 * 4)) * 0.02)
+        self.pos_embed3 = nn.Parameter(torch.randn(1, tok_dim, H // (8 * 4), W // (8 * 4)) * 0.02)
+        self.pos_embed4 = nn.Parameter(torch.randn(1, tok_dim, H // (16 * 3), W // (16 * 3)) * 0.02)
+        self.pos_embed5 = nn.Parameter(torch.randn(1, tok_dim, H // (32 * 3), W // (32 * 3)) * 0.02)
         self.level_embed = nn.Embedding(5, tok_dim)
 
         # Asymmetric multi-scale feature transformers:
