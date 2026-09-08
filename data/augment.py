@@ -23,8 +23,8 @@ class NYUv2Augmentation:
             depth = TF.hflip(depth)
             label = TF.hflip(label)
 
-        if random.random() < 0.2:
-            angle = random.uniform(-2.0, 2.0)
+        if random.random() < 0.7:
+            angle = random.uniform(-8.0, 8.0)
             image = TF.rotate(
                 image,
                 angle,
@@ -41,25 +41,25 @@ class NYUv2Augmentation:
                 interpolation=InterpolationMode.NEAREST
             )
 
-        if random.random() < 0.5:
+        if random.random() < 0.7:
             image = TF.adjust_brightness(
                 image,
                 random.uniform(0.8, 1.2)
             )
 
-        if random.random() < 0.5:
+        if random.random() < 0.7:
             image = TF.adjust_contrast(
                 image,
                 random.uniform(0.8, 1.2)
             )
 
-        if random.random() < 0.5:
+        if random.random() < 0.7:
             image = TF.adjust_saturation(
                 image,
                 random.uniform(0.8, 1.2)
             )
 
-        if random.random() < 0.3:
+        if random.random() < 0.5:
             image = TF.adjust_hue(
                 image,
                 random.uniform(-0.05, 0.05)
@@ -69,7 +69,7 @@ class NYUv2Augmentation:
             noise = torch.randn_like(image) * 0.02
             image = torch.clamp(image + noise, 0.0, 1.0)
 
-        if random.random() < 0.1:
+        if random.random() < 0.15:
             image = TF.gaussian_blur(
                 image,
                 kernel_size=5,
@@ -77,12 +77,12 @@ class NYUv2Augmentation:
             )
 
         # RandomResizedCrop preserving aspect ratio (no perspective distortion)
-        if random.random() < 0.5:
+        if random.random() < 0.7:
             h_orig, w_orig = image.shape[-2], image.shape[-1]
             orig_aspect = w_orig / h_orig
             i, j, h, w = RandomResizedCrop.get_params(
                 image,
-                scale=(0.8, 1.0),
+                scale=(0.6, 1.0),
                 ratio=(orig_aspect, orig_aspect)
             )
             output_size = (h_orig, w_orig)
