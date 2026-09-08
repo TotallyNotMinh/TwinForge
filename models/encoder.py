@@ -4,7 +4,7 @@ from torchinfo import summary
 import torch
 
 class ResNetEncoder(nn.Module):
-    def __init__(self, pretrained=True, freeze=True):
+    def __init__(self, pretrained=True, freeze=True, freeze_early=True):
         super().__init__()
 
         weights = ResNet50_Weights.DEFAULT if pretrained else None
@@ -26,6 +26,10 @@ class ResNetEncoder(nn.Module):
         if freeze:
             for param in self.parameters():
                 param.requires_grad = False
+        elif freeze_early:
+            for stage in [self.stem, self.layer1, self.layer2]:
+                for param in stage.parameters():
+                    param.requires_grad = False
 
     def forward(self, x):
         features = {}
