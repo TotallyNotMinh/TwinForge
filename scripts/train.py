@@ -139,7 +139,7 @@ def train():
     TOKEN_DIM = 256
     patience = 25
     epochs_without_improvement = 0
-    resize = (480, 640)
+    resize = (384, 512)
     encoder_lr = 1e-4
     decoder_lr = 2e-4
     depth_weight = 1.0
@@ -196,12 +196,13 @@ def train():
 
     # ============== Model ==============
     
-    model = TwinForge(NUM_CLASSES, NUM_HEADS, tok_dim=TOKEN_DIM, freeze=False).to(device)
+    model = TwinForge(NUM_CLASSES, NUM_HEADS, tok_dim=TOKEN_DIM, size=resize, freeze=False).to(device)
 
     # ============== Optimizer and Schedulers ==============
     
+    trainable_encoder = [layer for layer in model.encoder.parameters() if layer.requires_grad]
     optimizer = torch.optim.AdamW([
-        {"params": model.encoder.parameters(), "lr": encoder_lr, "weight_decay": 5e-3},
+        {"params": trainable_encoder, "lr": encoder_lr, "weight_decay": 5e-3},
         {"params": model.decoder.parameters(), "lr": decoder_lr},
     ], weight_decay=1e-4)    
 
