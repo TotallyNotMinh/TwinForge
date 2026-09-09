@@ -113,8 +113,14 @@ def save_summary(checkpoint_dir, best_records, current_epoch, total_epochs):
         lines.append(f"  • Best Depth δ1:       {best_records['depth_delta1'][0]:.4f} (Epoch {best_records['depth_delta1'][1]})")
         lines.append(f"  • Best Depth δ2:       {best_records['depth_delta2'][0]:.4f} (Epoch {best_records['depth_delta2'][1]})")
         lines.append(f"  • Best Depth δ3:       {best_records['depth_delta3'][0]:.4f} (Epoch {best_records['depth_delta3'][1]})")
-        lines.append(f"  • Best Depth RMSE:     {best_records['depth_rmse'][0]:.4f} (Epoch {best_records['depth_rmse'][1]})")
         lines.append(f"  • Best Depth AbsRel:   {best_records['depth_absrel'][0]:.4f} (Epoch {best_records['depth_absrel'][1]})")
+        if "depth_sqrel" in best_records and best_records["depth_sqrel"][1] is not None:
+            lines.append(f"  • Best Depth SqRel:    {best_records['depth_sqrel'][0]:.4f} (Epoch {best_records['depth_sqrel'][1]})")
+        lines.append(f"  • Best Depth RMSE:     {best_records['depth_rmse'][0]:.4f} (Epoch {best_records['depth_rmse'][1]})")
+        if "depth_rmselog" in best_records and best_records["depth_rmselog"][1] is not None:
+            lines.append(f"  • Best Depth RMSElog:  {best_records['depth_rmselog'][0]:.4f} (Epoch {best_records['depth_rmselog'][1]})")
+        if "depth_log10" in best_records and best_records["depth_log10"][1] is not None:
+            lines.append(f"  • Best Depth log10:    {best_records['depth_log10'][0]:.4f} (Epoch {best_records['depth_log10'][1]})")
         
     if "seg_miou" in best_records and best_records["seg_miou"][1] is not None:
         lines.append(f"  • Best Seg mIoU:       {best_records['seg_miou'][0]:.4f} (Epoch {best_records['seg_miou'][1]})")
@@ -154,8 +160,11 @@ def train():
         "depth_delta1": (0.0, None),
         "depth_delta2": (0.0, None),
         "depth_delta3": (0.0, None),
-        "depth_rmse": (999.0, None),
         "depth_absrel": (999.0, None),
+        "depth_sqrel": (999.0, None),
+        "depth_rmse": (999.0, None),
+        "depth_rmselog": (999.0, None),
+        "depth_log10": (999.0, None),
         "seg_miou": (0.0, None),
         "seg_dice": (0.0, None),
         "seg_pixel_acc": (0.0, None),
@@ -172,7 +181,7 @@ def train():
     class_map_path = "data/classMapping40.mat"
 
     train_dataset = NYUv2Dataset(data_path=dataset_path, class_map_path=class_map_path, split="train", resize=resize)
-    val_dataset = NYUv2Dataset(data_path=dataset_path, class_map_path=class_map_path, split="val", resize=resize)
+    val_dataset = NYUv2Dataset(data_path=dataset_path, class_map_path=class_map_path, split="val", resize=resize, return_raw_depth=True)
 
     g = torch.Generator()
     g.manual_seed(args.seed)
@@ -282,8 +291,9 @@ def train():
                 with torch.amp.autocast("cuda", enabled=(device == "cuda")):
                     pred_seg, pred_depth = model(images)
 
+                    depths_loss = F.interpolate(depths, size=resize, mode="bilinear", align_corners=False) if depths.shape[-2:] != resize else depths
                     seg_loss = crit_seg(pred_seg, labels)
-                    depth_loss = crit_depth(pred_depth, depths, labels)
+                    depth_loss = crit_depth(pred_depth, depths_loss, labels)
 
                     tol_loss = seg_loss + depth_weight * depth_loss
 
@@ -317,7 +327,10 @@ def train():
             f"AbsRel: {total_depth['abs_rel']:.4f} | "
             f"δ1: {total_depth['delta1']:.4f} | "
             f"δ2: {total_depth['delta2']:.4f} | "
-            f"δ3: {total_depth['delta3']:.4f}"
+            f"δ3: {total_depth['delta3']:.4f} | "
+            f"SqRel: {total_depth['sq_rel']:.4f} | "
+            f"RMSElog: {total_depth['rmse_log']:.4f} | "
+            f"log10: {total_depth['log10']:.4f}"
         )
 
         print(
@@ -338,8 +351,11 @@ def train():
             best_records["depth_delta1"] = (total_depth['delta1'], epoch)
             best_records["depth_delta2"] = (total_depth['delta2'], epoch)
             best_records["depth_delta3"] = (total_depth['delta3'], epoch)
-            best_records["depth_rmse"] = (total_depth['rmse'], epoch)
             best_records["depth_absrel"] = (total_depth['abs_rel'], epoch)
+            best_records["depth_sqrel"] = (total_depth['sq_rel'], epoch)
+            best_records["depth_rmse"] = (total_depth['rmse'], epoch)
+            best_records["depth_rmselog"] = (total_depth['rmse_log'], epoch)
+            best_records["depth_log10"] = (total_depth['log10'], epoch)
             save_checkpoint(checkpoint_dir, "best_depth.pth", epoch, model, optimizer, scheduler, best_depth_delta1, best_seg_miou, epochs_without_improvement, scaler)
             print(f"--> Saved new best DEPTH checkpoint.")
             improved = True

@@ -29,10 +29,11 @@ def get_boundary_map(label: torch.Tensor, kernel_size: int = 3) -> torch.Tensor:
 
 class NYUv2Dataset(Dataset):
 
-    def __init__(self, data_path, class_map_path, split, splits_path="data/splits.mat", augment=True, resize=(480, 640)):
+    def __init__(self, data_path, class_map_path, split, splits_path="data/splits.mat", augment=True, resize=(480, 640), return_raw_depth=False):
         self.data_path = data_path
         self.class_map_path = class_map_path
         self.splits_path = splits_path
+        self.return_raw_depth = return_raw_depth
         self.data = None
 
         mat = scipy.io.loadmat(self.class_map_path)
@@ -105,14 +106,15 @@ class NYUv2Dataset(Dataset):
             interpolation=InterpolationMode.BILINEAR
         )
 
-        depth = depth.unsqueeze(0).unsqueeze(0)
+        if not self.return_raw_depth:
+            depth = depth.unsqueeze(0).unsqueeze(0)
 
-        depth = F.interpolate(
-            depth,
-            size=self.resize,
-            mode="bilinear",
-            align_corners=False
-        ).squeeze(0).squeeze(0)
+            depth = F.interpolate(
+                depth,
+                size=self.resize,
+                mode="bilinear",
+                align_corners=False
+            ).squeeze(0).squeeze(0)
 
         raw_label = raw_label.unsqueeze(0).unsqueeze(0)
 
