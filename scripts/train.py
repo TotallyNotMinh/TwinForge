@@ -146,7 +146,7 @@ def train():
     TOKEN_DIM = 256
     patience = 25
     epochs_without_improvement = 0
-    resize = (384, 512)
+    resize = (392, 518) # Divisible by 14 as per ViT-S requirement
     encoder_lr = 1e-4
     decoder_lr = 2e-4
     depth_weight = 1.0
@@ -206,7 +206,7 @@ def train():
 
     # ============== Model ==============
     
-    model = TwinForge(NUM_CLASSES, NUM_HEADS, tok_dim=TOKEN_DIM, size=resize, freeze=False).to(device)
+    model = TwinForge(NUM_CLASSES, NUM_HEADS, tok_dim=TOKEN_DIM, size=resize, freeze=True).to(device)
 
     # ============== Optimizer and Schedulers ==============
     

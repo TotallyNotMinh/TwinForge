@@ -5,16 +5,16 @@ from pathlib import Path
 sys.path.append(str(Path(__file__).resolve().parent.parent))
 
 from torch import nn
-from models.encoder import ResNetEncoder
+from models.encoder import DepthAnythingEncoder
 from models.multihead_decoder import MultiHeadDecoder
 from torchinfo import summary
 import torch.nn.functional as F
 
 class TwinForge(nn.Module):
-    def __init__(self, num_labels=41, num_heads=4, tok_dim=256, size=(384, 512), pretrained=True, freeze=False, freeze_early=True):
+    def __init__(self, num_labels=41, num_heads=4, tok_dim=256, size=(384, 512), pretrained=True, freeze=True, freeze_early=False):
         super().__init__()
 
-        self.encoder = ResNetEncoder(pretrained=pretrained, freeze=freeze, freeze_early=freeze_early)
+        self.encoder = DepthAnythingEncoder(pretrained=pretrained, freeze=freeze, freeze_early=freeze_early)
         self.decoder = MultiHeadDecoder(num_labels, tok_dim, num_heads, size=size)
 
     def forward(self, x):
@@ -28,5 +28,5 @@ class TwinForge(nn.Module):
         return segment_logits, depth_logits
 
 if __name__ == "__main__":
-    model = TwinForge(num_labels=41, num_heads=8, tok_dim=256, size=(384, 512), freeze=False)
+    model = TwinForge(num_labels=41, num_heads=8, tok_dim=256, size=(384, 512), freeze=True)
     summary(model, input_size=(1, 3, 288, 384))
