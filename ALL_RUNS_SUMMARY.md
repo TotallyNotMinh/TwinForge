@@ -2,9 +2,6 @@
 
 This document provides an exhaustive, comparative summary of all 14 experimental runs completed in the TwinForge project across its development branches. It details the model architectures, lineage from parent branches, parameter and compute profiles (FLOPs/MACs), loss formulations, training dynamics, and empirical performance across depth estimation, semantic segmentation, and boundary detection on the NYUv2 dataset.
 
-> [!IMPORTANT]
-> **Backbone Fine-Tuning Across Runs:** In Runs 1–13, the ImageNet-pretrained encoder backbone was **never frozen** (`freeze=False` in [`scripts/train.py`](file:///home/totallynotminh/Documents/TwinForge/scripts/train.py)), training 100% of parameters end-to-end using a differential learning rate strategy (`encoder_lr = 1e-4`, `decoder_lr = 1e-3` or `2e-4`). In Run 14 (`vit-increase-regularization`), early encoder stages (`stem`, `layer1`, `layer2`) were frozen to reduce model memorization on the 795-image training set, training only `layer3`, `layer4`, and decoder heads.
-
 ---
 
 ## 1. Master Benchmark & Computational Overview
