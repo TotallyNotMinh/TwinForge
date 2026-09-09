@@ -13,6 +13,7 @@ from metrics import MultiTaskMetrics
 import argparse
 import random
 import numpy as np
+import torch.nn.functional as F
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--batch-size", type=int, default=8, help="Batch size for training")
