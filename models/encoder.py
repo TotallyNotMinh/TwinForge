@@ -28,10 +28,8 @@ class Attention(nn.Module):
         qkv = self.qkv(x).reshape(B, N, 3, self.num_heads, self.head_dim).permute(2, 0, 3, 1, 4)
         q, k, v = qkv.unbind(0)
 
-        attn = (q @ k.transpose(-2, -1)) * self.scale
-        attn = attn.softmax(dim=-1)
-
-        x = (attn @ v).transpose(1, 2).reshape(B, N, C)
+        x = F.scaled_dot_product_attention(q, k, v)
+        x = x.transpose(1, 2).reshape(B, N, C)
         x = self.proj(x)
         return x
 
@@ -86,12 +84,17 @@ class DinoVisionTransformer(nn.Module):
         self.patch_embed = PatchEmbed(patch_size=patch_size, in_chans=3, embed_dim=embed_dim)
         self.blocks = nn.ModuleList([Block(embed_dim, num_heads, mlp_ratio=mlp_ratio) for _ in range(depth)])
         self.norm = nn.LayerNorm(embed_dim, eps=1e-6)
+        self._pos_embed_cache = {}
 
     def interpolate_pos_encoding(self, x: torch.Tensor, w: int, h: int) -> torch.Tensor:
         npatch = x.shape[1] - 1
         N = self.pos_embed.shape[1] - 1
         if npatch == N and w == h:
             return self.pos_embed
+
+        cache_key = (w, h, x.device)
+        if cache_key in self._pos_embed_cache:
+            return self._pos_embed_cache[cache_key]
 
         class_pos_embed = self.pos_embed[:, 0]
         patch_pos_embed = self.pos_embed[:, 1:]
@@ -103,7 +106,9 @@ class DinoVisionTransformer(nn.Module):
         patch_pos_embed = patch_pos_embed.reshape(1, M, M, dim).permute(0, 3, 1, 2)
         patch_pos_embed = F.interpolate(patch_pos_embed, size=(h0, w0), mode="bicubic", align_corners=False)
         patch_pos_embed = patch_pos_embed.permute(0, 2, 3, 1).reshape(1, -1, dim)
-        return torch.cat((class_pos_embed.unsqueeze(0), patch_pos_embed), dim=1)
+        pos_embed = torch.cat((class_pos_embed.unsqueeze(0), patch_pos_embed), dim=1)
+        self._pos_embed_cache[cache_key] = pos_embed
+        return pos_embed
 
     def forward_features(self, x: torch.Tensor, out_indices=(2, 5, 8, 11)):
         B, C, H, W = x.shape
@@ -185,7 +190,11 @@ class DepthAnythingEncoder(nn.Module):
         if pad_h > 0 or pad_w > 0:
             x = F.pad(x, (0, pad_w, 0, pad_h), mode="reflect")
 
-        feats = self.vit.forward_features(x, out_indices=self.out_indices)
+        if self.freeze:
+            with torch.no_grad():
+                feats = self.vit.forward_features(x, out_indices=self.out_indices)
+        else:
+            feats = self.vit.forward_features(x, out_indices=self.out_indices)
 
         # Map tapped stages [2, 5, 8, 11] to standard hierarchical feature levels
         f1 = F.interpolate(self.proj1(feats[0]), size=(H // 2, W // 2), mode="bilinear", align_corners=False)
