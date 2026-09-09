@@ -6,24 +6,25 @@ This document provides an exhaustive, comparative summary of all 14 experimental
 
 ## 1. Master Benchmark & Computational Overview
 
-| # | Run Name | Git Branch | Input Res | Encoder Backbone | Decoder Architecture | Tasks | Total Params | Trainable Params | Mult-Adds (GMac) | Best Depth $\delta_1$ ($\uparrow$) | Best Depth RMSE [m] ($\downarrow$) | Best Seg mIoU ($\uparrow$) | Best Bound F1 ($\uparrow$) | Min Val Loss | Epochs (Trained) |
-|---|:---|:---|:---:|:---|:---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| 1 | **`clamped_kendall`** | `origin/main` | $288 \times 384$ | ResNet34 (Unfrozen) | Shared FPN + Late Heads | Depth, Seg, Bound | 25.48M | 25.48M (100%) | 30.08 | 0.7353 (Ep 120) | 0.6268 (Ep 120) | 0.2731 (Ep 117) | 0.5429 (Ep 111) | 0.4703 (Ep 43) | 146 (0–145) |
-| 2 | **`isolated_depth`** | `depth-only-baseline` | $288 \times 384$ | ResNet34 (Unfrozen) | FPN + Depth Head Only | Depth Only | 25.48M | 25.48M (100%) | 30.08 | 0.7248 (Ep 139) | 0.6470 (Ep 116) | N/A | N/A | 0.4812 (Ep 139) | 151 (0–150) |
-| 3 | **`isolated_seg`** | `segment-only-baseline` | $288 \times 384$ | ResNet34 (Unfrozen) | FPN + Seg Head Only | Seg Only | 25.48M | 25.48M (100%) | 30.08 | N/A | N/A | 0.2754 (Ep 118) | N/A | 1.2111 (Ep 18) | 144 (0–143) |
-| 4 | **`drop_head`** | `drop-boundary-head` | $288 \times 384$ | ResNet34 (Unfrozen) | FPN + CrossTask Gate | Depth, Seg | 25.75M | 25.75M (100%) | 31.04 | 0.7171 (Ep 145) | 0.6600 (Ep 145) | 0.2705 (Ep 135) | N/A | 0.8736 (Ep 41) | 151 (0–150) |
-| 5 | **`earlier_split`** | `earlier-head-branching` | $288 \times 384$ | ResNet34 (Unfrozen) | Early Split at `up3` + SE-Gates | Depth, Seg, Bound | 26.08M | 26.08M (100%) | 40.29 | 0.7213 (Ep 82) | 0.6653 (Ep 79) | 0.2618 (Ep 97) | 0.5472 (Ep 116) | 0.4707 (Ep 40) | 140 (0–139) |
-| 6 | **`feature_share`** | `cross-task-interaction` | $288 \times 384$ | ResNet34 (Unfrozen) | CrossTask SE-Gate Interaction | Depth, Seg, Bound | 26.09M | 26.09M (100%) | 40.29 | 0.7285 (Ep 120) | 0.6536 (Ep 107) | 0.2489 (Ep 108) | **0.5523** (Ep 87) | 0.4733 (Ep 52) | 146 (0–145) |
-| 7 | **`feature_share_with_segmentation_factor`** | `cross-task-interaction` | $288 \times 384$ | ResNet34 (Unfrozen) | CrossTask SE-Gate + $2.0\times$ Seg Loss | Depth, Seg, Bound | 26.09M | 26.09M (100%) | 40.29 | 0.7163 (Ep 119) | 0.6692 (Ep 119) | 0.2887 (Ep 126) | 0.5493 (Ep 80) | 0.7851 (Ep 39) | 151 (0–150) |
-| 8 | **`resnet50_clamped_kendall`** | `resnet50_clamped_kendall` | $288 \times 384$ | ResNet50 (Unfrozen) | Shared FPN + Late Heads | Depth, Seg, Bound | 33.56M | 33.56M (100%) | 33.69 | 0.7186 (Ep 128) | 0.6613 (Ep 116) | 0.2929 (Ep 131) | 0.5473 (Ep 111) | **0.4599** (Ep 31) | 151 (0–150) |
-| 9 | **`vit`** | `vit-approach` | $384 \times 512$ | ResNet50 (Unfrozen) | ViT Patch + Cross-Attn + All-MLP | Depth, Seg | 45.42M | 45.42M (100%) | 38.52 | 0.6696 (Ep 148) | 0.7498 (Ep 104) | 0.3220 (Ep 76) | N/A | 2.1266 (Ep 16) | 151 (0–150) |
-| 10 | **`vit_fixed_weight`** | `vit-fixed-weighting` | $384 \times 512$ | ResNet50 (Unfrozen) | ViT Patch + Cross-Attn + All-MLP | Depth, Seg | 45.42M | 45.42M (100%) | 38.52 | 0.6702 (Ep 120) | 0.7457 (Ep 141) | 0.3142 (Ep 73) | N/A | 5.2342 (Ep 20) | 146 (0–145, Early Stop) |
-| 11 | **`vit-orientation-fixed`** | `vit-fixed-weighting` | $384 \times 512$ | ResNet50 (Unfrozen) | ViT Patch + Cross-Attn (Fixed Orientation) | Depth, Seg | 46.04M | 46.04M (100%) | 38.52 | **0.7596** (Ep 121) | **0.6108** (Ep 121) | 0.4005 (Ep 70) | N/A | 4.3281 (Ep 25) | 141 (0–140) |
-| 12 | **`vit-isolated-depth`** | `vit-isolated-depth` | $384 \times 512$ | ResNet50 (Unfrozen) | ViT Patch + Cross-Attn (Depth Only) | Depth Only | 46.04M | 46.04M (100%) | 38.52 | 0.7572 (Ep 119) | 0.6136 (Ep 119) | N/A | N/A | 2.2341 (Ep 119) | 145 (0–144) |
-| 13 | **`vit-full-res`** | `main` | $480 \times 640$ | ResNet50 (Unfrozen) | ViT Full Res + Spatial Dropout + All-MLP | Depth, Seg | 46.04M | 46.04M (100%) | 60.20 | 0.7477 (Ep 128) | 0.6312 (Ep 107) | 0.4081 (Ep 136) | N/A | 4.7163 (Ep 128) | 151 (0–150) |
-| 14 | **`vit-increase-regularization`** | `main` | $384 \times 512$ | ResNet50 (Frozen stem..L2) | ViT Patch + Multi-scale Regs + Strong Aug | Depth, Seg | 45.68M | 44.24M (96.8%) | 38.52 | 0.7496 (Ep 139) | 0.6282 (Ep 106) | **0.4126** (Ep 131) | N/A | 4.6680 (Ep 128) | 151 (0–150) |
+| # | Run Name | Git Branch | Input Res | Encoder Backbone | Decoder Architecture | Tasks | Total Params | Trainable Params | Mult-Adds (GMac) | Best Depth $\delta_1$ ($\uparrow$) | Best Depth RMSE [m] ($\downarrow$) | Eigen Protocol Depth $\delta_1$ / RMSE [m] | Best Seg mIoU ($\uparrow$) | Best Bound F1 ($\uparrow$) | Min Val Loss | Epochs (Trained) |
+|---|:---|:---|:---:|:---|:---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| 1 | **`clamped_kendall`** | `origin/main` | $288 \times 384$ | ResNet34 (Unfrozen) | Shared FPN + Late Heads | Depth, Seg, Bound | 25.48M | 25.48M (100%) | 30.08 | 0.7353 (Ep 120) | 0.6268 (Ep 120) | 0.5104 / 0.9347m | 0.2731 (Ep 117) | 0.5429 (Ep 111) | 0.4703 (Ep 43) | 146 (0–145) |
+| 2 | **`isolated_depth`** | `depth-only-baseline` | $288 \times 384$ | ResNet34 (Unfrozen) | FPN + Depth Head Only | Depth Only | 25.48M | 25.48M (100%) | 30.08 | 0.7248 (Ep 139) | 0.6470 (Ep 116) | *Checkpoint not available* | N/A | N/A | 0.4812 (Ep 139) | 151 (0–150) |
+| 3 | **`isolated_seg`** | `segment-only-baseline` | $288 \times 384$ | ResNet34 (Unfrozen) | FPN + Seg Head Only | Seg Only | 25.48M | 25.48M (100%) | 30.08 | N/A | N/A | *Checkpoint not available* | 0.2754 (Ep 118) | N/A | 1.2111 (Ep 18) | 144 (0–143) |
+| 4 | **`drop_head`** | `drop-boundary-head` | $288 \times 384$ | ResNet34 (Unfrozen) | FPN + CrossTask Gate | Depth, Seg | 25.75M | 25.75M (100%) | 31.04 | 0.7171 (Ep 145) | 0.6600 (Ep 145) | *Checkpoint not available* | 0.2705 (Ep 135) | N/A | 0.8736 (Ep 41) | 151 (0–150) |
+| 5 | **`earlier_split`** | `earlier-head-branching` | $288 \times 384$ | ResNet34 (Unfrozen) | Early Split at `up3` + SE-Gates | Depth, Seg, Bound | 26.08M | 26.08M (100%) | 40.29 | 0.7213 (Ep 82) | 0.6653 (Ep 79) | 0.5101 / 0.9261m | 0.2618 (Ep 97) | 0.5472 (Ep 116) | 0.4707 (Ep 40) | 140 (0–139) |
+| 6 | **`feature_share`** | `cross-task-interaction` | $288 \times 384$ | ResNet34 (Unfrozen) | CrossTask SE-Gate Interaction | Depth, Seg, Bound | 26.09M | 26.09M (100%) | 40.29 | 0.7285 (Ep 120) | 0.6536 (Ep 107) | 0.5027 / 0.9594m | 0.2489 (Ep 108) | **0.5523** (Ep 87) | 0.4733 (Ep 52) | 146 (0–145) |
+| 7 | **`feature_share_with_segmentation_factor`** | `cross-task-interaction` | $288 \times 384$ | ResNet34 (Unfrozen) | CrossTask SE-Gate + $2.0\times$ Seg Loss | Depth, Seg, Bound | 26.09M | 26.09M (100%) | 40.29 | 0.7163 (Ep 119) | 0.6692 (Ep 119) | 0.4923 / 0.9685m | 0.2887 (Ep 126) | 0.5493 (Ep 80) | 0.7851 (Ep 39) | 151 (0–150) |
+| 8 | **`resnet50_clamped_kendall`** | `resnet50_clamped_kendall` | $288 \times 384$ | ResNet50 (Unfrozen) | Shared FPN + Late Heads | Depth, Seg, Bound | 33.56M | 33.56M (100%) | 33.69 | 0.7186 (Ep 128) | 0.6613 (Ep 116) | *Checkpoint not available* | 0.2929 (Ep 131) | 0.5473 (Ep 111) | **0.4599** (Ep 31) | 151 (0–150) |
+| 9 | **`vit`** | `vit-approach` | $384 \times 512$ | ResNet50 (Unfrozen) | ViT Patch + Cross-Attn + All-MLP | Depth, Seg | 45.42M | 45.42M (100%) | 38.52 | 0.6696 (Ep 148) | 0.7498 (Ep 104) | *Checkpoint not available* | 0.3220 (Ep 76) | N/A | 2.1266 (Ep 16) | 151 (0–150) |
+| 10 | **`vit_fixed_weight`** | `vit-fixed-weighting` | $384 \times 512$ | ResNet50 (Unfrozen) | ViT Patch + Cross-Attn + All-MLP | Depth, Seg | 45.42M | 45.42M (100%) | 38.52 | 0.6702 (Ep 120) | 0.7457 (Ep 141) | *Checkpoint not available* | 0.3142 (Ep 73) | N/A | 5.2342 (Ep 20) | 146 (0–145, Early Stop) |
+| 11 | **`vit-orientation-fixed`** | `vit-fixed-weighting` | $384 \times 512$ | ResNet50 (Unfrozen) | ViT Patch + Cross-Attn (Fixed Orientation) | Depth, Seg | 46.04M | 46.04M (100%) | 38.52 | **0.7596** (Ep 121) | **0.6108** (Ep 121) | **0.7593** / **0.5478m** | 0.4005 (Ep 70) | N/A | 4.3281 (Ep 25) | 141 (0–140) |
+| 12 | **`vit-isolated-depth`** | `vit-isolated-depth` | $384 \times 512$ | ResNet50 (Unfrozen) | ViT Patch + Cross-Attn (Depth Only) | Depth Only | 46.04M | 46.04M (100%) | 38.52 | 0.7572 (Ep 119) | 0.6136 (Ep 119) | *Checkpoint not available* | N/A | N/A | 2.2341 (Ep 119) | 145 (0–144) |
+| 13 | **`vit-full-res`** | `main` | $480 \times 640$ | ResNet50 (Unfrozen) | ViT Full Res + Spatial Dropout + All-MLP | Depth, Seg | 46.04M | 46.04M (100%) | 60.20 | 0.7477 (Ep 128) | 0.6312 (Ep 107) | *Checkpoint not available* | 0.4081 (Ep 136) | N/A | 4.7163 (Ep 128) | 151 (0–150) |
+| 14 | **`vit-increase-regularization`** | `main` | $384 \times 512$ | ResNet50 (Frozen stem..L2) | ViT Patch + Multi-scale Regs + Strong Aug | Depth, Seg | 45.68M | 44.24M (96.8%) | 38.52 | 0.7496 (Ep 139) | 0.6282 (Ep 106) | *Checkpoint not available* | **0.4126** (Ep 131) | N/A | 4.6680 (Ep 128) | 151 (0–150) |
 
 *Note: Runs 1–13 used full end-to-end training (`freeze=False`). Run 14 froze the stem and layers 1–2 of ResNet50 to control memorization. Mult-Adds (Multiply-Accumulate operations) were benchmarked via `torchinfo` with batch size 1 at the respective training input resolutions.*
+*Eigen Protocol Benchmark: Standard evaluation using Eigen crop [45:471, 41:601] against raw 480x640 ground truth depth on the 654 validation images. Evaluated on all checkpoints physically present on disk; checkpoints for runs 2–4, 8–10, and 12–14 were not retained in local storage.*
 
 ---
 
@@ -88,6 +89,7 @@ graph TD
   * **Depth:** $\delta_1 = 0.7353$ (Ep 120), $\delta_2 = 0.9372$ (Ep 110), $\delta_3 = 0.9861$ (Ep 95), $\text{RMSE} = 0.6268$m (Ep 120), $\text{AbsRel} = 0.1765$ (Ep 112).
   * **Seg:** $\text{mIoU} = 0.2731$ (Ep 117), $\text{Dice} = 0.3836$ (Ep 117), $\text{Pixel Acc} = 0.6361$ (Ep 145).
   * **Bound:** $\text{F1} = 0.5429$ (Ep 111), $\text{Prec} = 0.4510$, $\text{Recall} = 0.7900$ (Ep 17).
+  * **Eigen Protocol Benchmark (Raw 480x640 Depth + Eigen Crop):** $\delta_1 = 0.5104$, $\text{RMSE} = 0.9347\text{m}$, $\text{AbsRel} = 0.2858$, $\text{mIoU} = 0.1561$.
 * **Key Takeaway:** Provided strong depth estimation baselines for ResNet models ($\delta_1 = 0.7353$, $\text{RMSE} = 0.6268$m). Joint boundary supervision served as an essential structural prior.
 
 ---
@@ -137,6 +139,7 @@ graph TD
   * **Depth:** $\delta_1 = 0.7213$ (Ep 82), $\text{RMSE} = 0.6653$m (Ep 79).
   * **Seg:** $\text{mIoU} = 0.2618$ (Ep 97), $\text{Dice} = 0.3735$ (Ep 95).
   * **Bound:** $\text{F1} = 0.5472$ (Ep 116).
+  * **Eigen Protocol Benchmark (Raw 480x640 Depth + Eigen Crop):** $\delta_1 = 0.5101$, $\text{RMSE} = 0.9261\text{m}$, $\text{AbsRel} = 0.2825$, $\text{mIoU} = 0.1520$.
 * **Key Takeaway:** Early branching was counterproductive. Seg mIoU dropped to $0.2618$ while compute surged by +10.2 GMac.
 
 ---
@@ -149,6 +152,7 @@ graph TD
   * **Depth:** $\delta_1 = 0.7285$ (Ep 120), $\text{RMSE} = 0.6536$m (Ep 107).
   * **Seg:** $\text{mIoU} = 0.2489$ (Ep 108), $\text{Dice} = 0.3561$ (Ep 108).
   * **Bound:** $\text{F1} = \mathbf{0.5523}$ (Ep 87).
+  * **Eigen Protocol Benchmark (Raw 480x640 Depth + Eigen Crop):** $\delta_1 = 0.5027$, $\text{RMSE} = 0.9594\text{m}$, $\text{AbsRel} = 0.2936$, $\text{mIoU} = 0.1568$.
 * **Key Takeaway:** Boundary and depth gradients dominated the gates, suppressing segmentation gradients and dropping mIoU to $0.2489$.
 
 ---
@@ -161,6 +165,7 @@ graph TD
   * **Depth:** $\delta_1 = 0.7163$ (Ep 119), $\text{RMSE} = 0.6692$m (Ep 119).
   * **Seg:** $\text{mIoU} = 0.2887$ (Ep 126), $\text{Dice} = 0.4000$ (Ep 126), $\text{Pixel Acc} = 0.6899$ (Ep 146).
   * **Bound:** $\text{F1} = 0.5493$ (Ep 80).
+  * **Eigen Protocol Benchmark (Raw 480x640 Depth + Eigen Crop):** $\delta_1 = 0.4923$, $\text{RMSE} = 0.9685\text{m}$, $\text{AbsRel} = 0.3032$, $\text{mIoU} = 0.1658$.
 * **Key Takeaway:** $2\times$ segmentation loss scaling recovered segmentation performance ($0.2489 \rightarrow 0.2887$, +16.0% relative).
 
 ---
@@ -220,6 +225,7 @@ graph TD
 * **Best Scores:**
   * **Depth:** $\delta_1 = \mathbf{0.7596}$ (Ep 121), $\delta_2 = \mathbf{0.9507}$ (Ep 121), $\delta_3 = \mathbf{0.9899}$ (Ep 121), $\text{RMSE} = \mathbf{0.6108}$m (Ep 121), $\text{AbsRel} = \mathbf{0.1655}$ (Ep 139).
   * **Seg:** $\text{mIoU} = 0.4005$ (Ep 70), $\text{Dice} = 0.5497$ (Ep 70), $\text{Pixel Acc} = 0.6867$ (Ep 129).
+  * **Eigen Protocol Benchmark (Raw 480x640 Depth + Eigen Crop):** $\delta_1 = \mathbf{0.7593}$ (Ep 121), $\text{RMSE} = \mathbf{0.5478}\text{m}$ (Ep 121), $\text{AbsRel} = 0.1688$, $\text{mIoU} = 0.3957$ (Ep 121) / $\mathbf{0.4005}$ (Ep 70).
 * **Key Takeaway:** **The single most impactful update in the repository.** Correcting spatial orientation caused metrics to leap across the board:
   * Depth $\delta_1$ jumped from $0.6702 \rightarrow \mathbf{0.7596}$ (+0.0894), setting the **all-time project record for Depth Estimation**.
   * Depth RMSE dropped from $0.7457\text{m} \rightarrow \mathbf{0.6108}\text{m}$ (a 13.5 cm improvement).
