@@ -16,4 +16,5 @@ GEMINI.md
 */__pycache__
 
 # Checkpoints
-checkpoints/
+*.pth
+*.zip

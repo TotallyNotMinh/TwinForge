@@ -28,5 +28,5 @@ class TwinForge(nn.Module):
         return segment_logits, depth_logits
 
 if __name__ == "__main__":
-    model = TwinForge(num_labels=41, num_heads=8, tok_dim=256, size=(288, 384), freeze=False)
+    model = TwinForge(num_labels=41, num_heads=8, tok_dim=256, size=(384, 512), freeze=False)
     summary(model, input_size=(1, 3, 288, 384))

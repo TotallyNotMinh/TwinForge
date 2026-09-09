@@ -24,7 +24,7 @@ class NYUv2Augmentation:
             label = TF.hflip(label)
 
         if random.random() < 0.7:
-            angle = random.uniform(-8.0, 8.0)
+            angle = random.uniform(-3.0, 3.0)
             image = TF.rotate(
                 image,
                 angle,
