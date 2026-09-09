@@ -1,0 +1,16 @@
+=================================================================
+       TwinForge Training Summary: clampled_kendall (146 Epochs)
+=================================================================
+  • Best Depth δ1:       0.7353 (Epoch 120)
+  • Best Depth δ2:       0.9372 (Epoch 110)
+  • Best Depth δ3:       0.9861 (Epoch 95)
+  • Best Depth RMSE:     0.6268 (Epoch 120)
+  • Best Depth AbsRel:   0.1765 (Epoch 112)
+  • Best Seg mIoU:       0.2731 (Epoch 117)
+  • Best Seg Dice:       0.3836 (Epoch 117)
+  • Best Seg Pixel Acc:  0.6361 (Epoch 145)
+  • Best Bound F1:       0.5429 (Epoch 111)
+  • Best Bound Prec:     0.4510 (Epoch 62)
+  • Best Bound Recall:   0.7900 (Epoch 17)
+  • Min Val Loss:        0.4703 (Epoch 43)
+=================================================================

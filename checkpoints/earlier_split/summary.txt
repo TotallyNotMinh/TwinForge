@@ -1,0 +1,16 @@
+=================================================================
+       TwinForge Training Summary: earlier_split (142 Epochs)
+=================================================================
+  • Best Depth δ1:       0.7213 (Epoch 82)
+  • Best Depth δ2:       0.9316 (Epoch 67)
+  • Best Depth δ3:       0.9823 (Epoch 100)
+  • Best Depth RMSE:     0.6653 (Epoch 79)
+  • Best Depth AbsRel:   0.1849 (Epoch 100)
+  • Best Seg mIoU:       0.2618 (Epoch 97)
+  • Best Seg Dice:       0.3735 (Epoch 95)
+  • Best Seg Pixel Acc:  0.6295 (Epoch 95)
+  • Best Bound F1:       0.5472 (Epoch 116)
+  • Best Bound Prec:     0.4652 (Epoch 66)
+  • Best Bound Recall:   0.7596 (Epoch 8)
+  • Min Val Loss:        0.4707 (Epoch 40)
+=================================================================

@@ -1,0 +1,784 @@
+ === Epoch [00/150] | Train Loss: 9.0943 | Val Loss: 8.1093 | LR: 0.000019 === 
+Validation Task Losses: Seg: 3.968 | Depth: 4.141 (depth_weight: 1.0)
+Depth | RMSE: 1.1651 | AbsRel: 0.3687 | δ1: 0.4410 | δ2: 0.7422 | δ3: 0.8969
+Seg   | mIoU: 0.0098 | Dice: 0.0161 | Pixel Acc: 0.2569
+--> Saved new best DEPTH checkpoint.
+--> Saved new best SEG checkpoint.
+
+ === Epoch [01/150] | Train Loss: 7.8789 | Val Loss: 7.4515 | LR: 0.000028 === 
+Validation Task Losses: Seg: 3.767 | Depth: 3.685 (depth_weight: 1.0)
+Depth | RMSE: 1.0252 | AbsRel: 0.3130 | δ1: 0.4995 | δ2: 0.8041 | δ3: 0.9324
+Seg   | mIoU: 0.0233 | Dice: 0.0396 | Pixel Acc: 0.2811
+--> Saved new best DEPTH checkpoint.
+--> Saved new best SEG checkpoint.
+
+ === Epoch [02/150] | Train Loss: 7.1835 | Val Loss: 7.1391 | LR: 0.000037 === 
+Validation Task Losses: Seg: 3.560 | Depth: 3.579 (depth_weight: 1.0)
+Depth | RMSE: 1.0005 | AbsRel: 0.2730 | δ1: 0.4975 | δ2: 0.8121 | δ3: 0.9453
+Seg   | mIoU: 0.0467 | Dice: 0.0801 | Pixel Acc: 0.3068
+--> Saved new best SEG checkpoint.
+
+ === Epoch [03/150] | Train Loss: 6.5473 | Val Loss: 6.7405 | LR: 0.000046 === 
+Validation Task Losses: Seg: 3.206 | Depth: 3.535 (depth_weight: 1.0)
+Depth | RMSE: 1.0223 | AbsRel: 0.3409 | δ1: 0.4978 | δ2: 0.8011 | δ3: 0.9296
+Seg   | mIoU: 0.0831 | Dice: 0.1402 | Pixel Acc: 0.3549
+--> Saved new best SEG checkpoint.
+
+ === Epoch [04/150] | Train Loss: 6.0090 | Val Loss: 6.3688 | LR: 0.000055 === 
+Validation Task Losses: Seg: 2.916 | Depth: 3.453 (depth_weight: 1.0)
+Depth | RMSE: 0.9487 | AbsRel: 0.2621 | δ1: 0.5297 | δ2: 0.8331 | δ3: 0.9498
+Seg   | mIoU: 0.1116 | Dice: 0.1830 | Pixel Acc: 0.4029
+--> Saved new best DEPTH checkpoint.
+--> Saved new best SEG checkpoint.
+
+ === Epoch [05/150] | Train Loss: 5.5427 | Val Loss: 6.1006 | LR: 0.000064 === 
+Validation Task Losses: Seg: 2.755 | Depth: 3.346 (depth_weight: 1.0)
+Depth | RMSE: 0.9315 | AbsRel: 0.2985 | δ1: 0.5336 | δ2: 0.8307 | δ3: 0.9450
+Seg   | mIoU: 0.1353 | Dice: 0.2183 | Pixel Acc: 0.4108
+--> Saved new best DEPTH checkpoint.
+--> Saved new best SEG checkpoint.
+
+ === Epoch [06/150] | Train Loss: 5.1481 | Val Loss: 5.8122 | LR: 0.000073 === 
+Validation Task Losses: Seg: 2.573 | Depth: 3.239 (depth_weight: 1.0)
+Depth | RMSE: 0.9084 | AbsRel: 0.2957 | δ1: 0.5522 | δ2: 0.8418 | δ3: 0.9480
+Seg   | mIoU: 0.1799 | Dice: 0.2822 | Pixel Acc: 0.4688
+--> Saved new best DEPTH checkpoint.
+--> Saved new best SEG checkpoint.
+
+ === Epoch [07/150] | Train Loss: 4.8244 | Val Loss: 5.6432 | LR: 0.000082 === 
+Validation Task Losses: Seg: 2.423 | Depth: 3.221 (depth_weight: 1.0)
+Depth | RMSE: 0.8859 | AbsRel: 0.2659 | δ1: 0.5661 | δ2: 0.8550 | δ3: 0.9581
+Seg   | mIoU: 0.2000 | Dice: 0.3133 | Pixel Acc: 0.4866
+--> Saved new best DEPTH checkpoint.
+--> Saved new best SEG checkpoint.
+
+ === Epoch [08/150] | Train Loss: 4.4516 | Val Loss: 5.5176 | LR: 0.000091 === 
+Validation Task Losses: Seg: 2.388 | Depth: 3.129 (depth_weight: 1.0)
+Depth | RMSE: 0.8772 | AbsRel: 0.2646 | δ1: 0.5730 | δ2: 0.8637 | δ3: 0.9592
+Seg   | mIoU: 0.2094 | Dice: 0.3253 | Pixel Acc: 0.5004
+--> Saved new best DEPTH checkpoint.
+--> Saved new best SEG checkpoint.
+
+ === Epoch [09/150] | Train Loss: 4.1545 | Val Loss: 5.4890 | LR: 0.000100 === 
+Validation Task Losses: Seg: 2.406 | Depth: 3.083 (depth_weight: 1.0)
+Depth | RMSE: 0.8614 | AbsRel: 0.2561 | δ1: 0.5888 | δ2: 0.8684 | δ3: 0.9611
+Seg   | mIoU: 0.2209 | Dice: 0.3439 | Pixel Acc: 0.5076
+--> Saved new best DEPTH checkpoint.
+--> Saved new best SEG checkpoint.
+
+ === Epoch [10/150] | Train Loss: 3.9061 | Val Loss: 5.4856 | LR: 0.000100 === 
+Validation Task Losses: Seg: 2.394 | Depth: 3.092 (depth_weight: 1.0)
+Depth | RMSE: 0.8670 | AbsRel: 0.2583 | δ1: 0.5805 | δ2: 0.8674 | δ3: 0.9629
+Seg   | mIoU: 0.2459 | Dice: 0.3747 | Pixel Acc: 0.5184
+--> Saved new best SEG checkpoint.
+
+ === Epoch [11/150] | Train Loss: 3.6795 | Val Loss: 5.3714 | LR: 0.000100 === 
+Validation Task Losses: Seg: 2.297 | Depth: 3.074 (depth_weight: 1.0)
+Depth | RMSE: 0.8582 | AbsRel: 0.2533 | δ1: 0.5929 | δ2: 0.8703 | δ3: 0.9618
+Seg   | mIoU: 0.2461 | Dice: 0.3783 | Pixel Acc: 0.5004
+--> Saved new best DEPTH checkpoint.
+--> Saved new best SEG checkpoint.
+
+ === Epoch [12/150] | Train Loss: 3.4287 | Val Loss: 5.2889 | LR: 0.000100 === 
+Validation Task Losses: Seg: 2.263 | Depth: 3.026 (depth_weight: 1.0)
+Depth | RMSE: 0.8637 | AbsRel: 0.2301 | δ1: 0.5851 | δ2: 0.8753 | δ3: 0.9690
+Seg   | mIoU: 0.2610 | Dice: 0.3932 | Pixel Acc: 0.5442
+--> Saved new best SEG checkpoint.
+
+ === Epoch [13/150] | Train Loss: 3.3091 | Val Loss: 5.3078 | LR: 0.000100 === 
+Validation Task Losses: Seg: 2.307 | Depth: 3.000 (depth_weight: 1.0)
+Depth | RMSE: 0.8386 | AbsRel: 0.2508 | δ1: 0.5996 | δ2: 0.8733 | δ3: 0.9651
+Seg   | mIoU: 0.2594 | Dice: 0.3936 | Pixel Acc: 0.5574
+--> Saved new best DEPTH checkpoint.
+
+ === Epoch [14/150] | Train Loss: 3.1245 | Val Loss: 5.3271 | LR: 0.000100 === 
+Validation Task Losses: Seg: 2.296 | Depth: 3.031 (depth_weight: 1.0)
+Depth | RMSE: 0.8770 | AbsRel: 0.2774 | δ1: 0.5743 | δ2: 0.8582 | δ3: 0.9595
+Seg   | mIoU: 0.2573 | Dice: 0.3894 | Pixel Acc: 0.5538
+
+ === Epoch [15/150] | Train Loss: 2.9653 | Val Loss: 5.3411 | LR: 0.000100 === 
+Validation Task Losses: Seg: 2.363 | Depth: 2.978 (depth_weight: 1.0)
+Depth | RMSE: 0.8226 | AbsRel: 0.2404 | δ1: 0.6105 | δ2: 0.8819 | δ3: 0.9684
+Seg   | mIoU: 0.2813 | Dice: 0.4212 | Pixel Acc: 0.5721
+--> Saved new best DEPTH checkpoint.
+--> Saved new best SEG checkpoint.
+
+ === Epoch [16/150] | Train Loss: 2.9072 | Val Loss: 5.2811 | LR: 0.000099 === 
+Validation Task Losses: Seg: 2.366 | Depth: 2.915 (depth_weight: 1.0)
+Depth | RMSE: 0.8148 | AbsRel: 0.2321 | δ1: 0.6135 | δ2: 0.8866 | δ3: 0.9713
+Seg   | mIoU: 0.2624 | Dice: 0.3962 | Pixel Acc: 0.5452
+--> Saved new best DEPTH checkpoint.
+
+ === Epoch [17/150] | Train Loss: 2.7602 | Val Loss: 5.3406 | LR: 0.000099 === 
+Validation Task Losses: Seg: 2.375 | Depth: 2.966 (depth_weight: 1.0)
+Depth | RMSE: 0.8380 | AbsRel: 0.2259 | δ1: 0.6074 | δ2: 0.8851 | δ3: 0.9706
+Seg   | mIoU: 0.2777 | Dice: 0.4158 | Pixel Acc: 0.5736
+
+ === Epoch [18/150] | Train Loss: 2.7219 | Val Loss: 5.5903 | LR: 0.000099 === 
+Validation Task Losses: Seg: 2.624 | Depth: 2.966 (depth_weight: 1.0)
+Depth | RMSE: 0.8273 | AbsRel: 0.2429 | δ1: 0.6066 | δ2: 0.8834 | δ3: 0.9694
+Seg   | mIoU: 0.2605 | Dice: 0.3926 | Pixel Acc: 0.5368
+
+ === Epoch [19/150] | Train Loss: 2.6672 | Val Loss: 5.2875 | LR: 0.000099 === 
+Validation Task Losses: Seg: 2.374 | Depth: 2.914 (depth_weight: 1.0)
+Depth | RMSE: 0.8194 | AbsRel: 0.2260 | δ1: 0.6193 | δ2: 0.8909 | δ3: 0.9725
+Seg   | mIoU: 0.2681 | Dice: 0.4029 | Pixel Acc: 0.5577
+--> Saved new best DEPTH checkpoint.
+
+ === Epoch [20/150] | Train Loss: 2.5292 | Val Loss: 5.2342 | LR: 0.000098 === 
+Validation Task Losses: Seg: 2.367 | Depth: 2.867 (depth_weight: 1.0)
+Depth | RMSE: 0.8050 | AbsRel: 0.2303 | δ1: 0.6294 | δ2: 0.8928 | δ3: 0.9715
+Seg   | mIoU: 0.2873 | Dice: 0.4265 | Pixel Acc: 0.5854
+--> Saved new best DEPTH checkpoint.
+--> Saved new best SEG checkpoint.
+
+ === Epoch [21/150] | Train Loss: 2.4657 | Val Loss: 5.2415 | LR: 0.000098 === 
+Validation Task Losses: Seg: 2.404 | Depth: 2.837 (depth_weight: 1.0)
+Depth | RMSE: 0.7907 | AbsRel: 0.2217 | δ1: 0.6325 | δ2: 0.8981 | δ3: 0.9746
+Seg   | mIoU: 0.2849 | Dice: 0.4241 | Pixel Acc: 0.5808
+--> Saved new best DEPTH checkpoint.
+
+ === Epoch [22/150] | Train Loss: 2.4119 | Val Loss: 5.4283 | LR: 0.000098 === 
+Validation Task Losses: Seg: 2.502 | Depth: 2.926 (depth_weight: 1.0)
+Depth | RMSE: 0.8309 | AbsRel: 0.2595 | δ1: 0.6016 | δ2: 0.8769 | δ3: 0.9636
+Seg   | mIoU: 0.2811 | Dice: 0.4187 | Pixel Acc: 0.5767
+
+ === Epoch [23/150] | Train Loss: 2.3538 | Val Loss: 5.3480 | LR: 0.000098 === 
+Validation Task Losses: Seg: 2.450 | Depth: 2.898 (depth_weight: 1.0)
+Depth | RMSE: 0.8085 | AbsRel: 0.2464 | δ1: 0.6144 | δ2: 0.8825 | δ3: 0.9670
+Seg   | mIoU: 0.2858 | Dice: 0.4247 | Pixel Acc: 0.5934
+
+ === Epoch [24/150] | Train Loss: 2.2375 | Val Loss: 5.5156 | LR: 0.000097 === 
+Validation Task Losses: Seg: 2.599 | Depth: 2.917 (depth_weight: 1.0)
+Depth | RMSE: 0.8597 | AbsRel: 0.2183 | δ1: 0.6106 | δ2: 0.8893 | δ3: 0.9723
+Seg   | mIoU: 0.2782 | Dice: 0.4155 | Pixel Acc: 0.5656
+
+ === Epoch [25/150] | Train Loss: 2.2482 | Val Loss: 5.5942 | LR: 0.000097 === 
+Validation Task Losses: Seg: 2.673 | Depth: 2.921 (depth_weight: 1.0)
+Depth | RMSE: 0.8166 | AbsRel: 0.2539 | δ1: 0.6136 | δ2: 0.8794 | δ3: 0.9638
+Seg   | mIoU: 0.2815 | Dice: 0.4188 | Pixel Acc: 0.5820
+
+ === Epoch [26/150] | Train Loss: 2.2477 | Val Loss: 5.4743 | LR: 0.000096 === 
+Validation Task Losses: Seg: 2.571 | Depth: 2.903 (depth_weight: 1.0)
+Depth | RMSE: 0.8092 | AbsRel: 0.2481 | δ1: 0.6168 | δ2: 0.8830 | δ3: 0.9679
+Seg   | mIoU: 0.2901 | Dice: 0.4289 | Pixel Acc: 0.5895
+--> Saved new best SEG checkpoint.
+
+ === Epoch [27/150] | Train Loss: 2.1724 | Val Loss: 5.3383 | LR: 0.000096 === 
+Validation Task Losses: Seg: 2.497 | Depth: 2.841 (depth_weight: 1.0)
+Depth | RMSE: 0.7997 | AbsRel: 0.2255 | δ1: 0.6282 | δ2: 0.8955 | δ3: 0.9733
+Seg   | mIoU: 0.2869 | Dice: 0.4267 | Pixel Acc: 0.5896
+
+ === Epoch [28/150] | Train Loss: 2.1399 | Val Loss: 5.4943 | LR: 0.000096 === 
+Validation Task Losses: Seg: 2.597 | Depth: 2.897 (depth_weight: 1.0)
+Depth | RMSE: 0.8142 | AbsRel: 0.2440 | δ1: 0.6174 | δ2: 0.8821 | δ3: 0.9662
+Seg   | mIoU: 0.2945 | Dice: 0.4352 | Pixel Acc: 0.5879
+--> Saved new best SEG checkpoint.
+
+ === Epoch [29/150] | Train Loss: 2.1648 | Val Loss: 5.4905 | LR: 0.000095 === 
+Validation Task Losses: Seg: 2.581 | Depth: 2.909 (depth_weight: 1.0)
+Depth | RMSE: 0.8211 | AbsRel: 0.2537 | δ1: 0.6110 | δ2: 0.8785 | δ3: 0.9654
+Seg   | mIoU: 0.2986 | Dice: 0.4392 | Pixel Acc: 0.5899
+--> Saved new best SEG checkpoint.
+
+ === Epoch [30/150] | Train Loss: 2.1152 | Val Loss: 5.5432 | LR: 0.000095 === 
+Validation Task Losses: Seg: 2.718 | Depth: 2.826 (depth_weight: 1.0)
+Depth | RMSE: 0.7894 | AbsRel: 0.2359 | δ1: 0.6357 | δ2: 0.8905 | δ3: 0.9682
+Seg   | mIoU: 0.2809 | Dice: 0.4164 | Pixel Acc: 0.5864
+--> Saved new best DEPTH checkpoint.
+
+ === Epoch [31/150] | Train Loss: 2.0938 | Val Loss: 5.4392 | LR: 0.000094 === 
+Validation Task Losses: Seg: 2.644 | Depth: 2.795 (depth_weight: 1.0)
+Depth | RMSE: 0.7886 | AbsRel: 0.2181 | δ1: 0.6423 | δ2: 0.9015 | δ3: 0.9743
+Seg   | mIoU: 0.2924 | Dice: 0.4313 | Pixel Acc: 0.5910
+--> Saved new best DEPTH checkpoint.
+
+ === Epoch [32/150] | Train Loss: 2.0188 | Val Loss: 5.3765 | LR: 0.000094 === 
+Validation Task Losses: Seg: 2.528 | Depth: 2.849 (depth_weight: 1.0)
+Depth | RMSE: 0.7947 | AbsRel: 0.2343 | δ1: 0.6283 | δ2: 0.8906 | δ3: 0.9696
+Seg   | mIoU: 0.2880 | Dice: 0.4264 | Pixel Acc: 0.5989
+
+ === Epoch [33/150] | Train Loss: 2.0150 | Val Loss: 5.4928 | LR: 0.000093 === 
+Validation Task Losses: Seg: 2.649 | Depth: 2.844 (depth_weight: 1.0)
+Depth | RMSE: 0.8260 | AbsRel: 0.2231 | δ1: 0.6313 | δ2: 0.8932 | δ3: 0.9738
+Seg   | mIoU: 0.2903 | Dice: 0.4288 | Pixel Acc: 0.5933
+
+ === Epoch [34/150] | Train Loss: 1.9745 | Val Loss: 5.4730 | LR: 0.000092 === 
+Validation Task Losses: Seg: 2.642 | Depth: 2.831 (depth_weight: 1.0)
+Depth | RMSE: 0.7986 | AbsRel: 0.2327 | δ1: 0.6370 | δ2: 0.8917 | δ3: 0.9706
+Seg   | mIoU: 0.2859 | Dice: 0.4237 | Pixel Acc: 0.5961
+
+ === Epoch [35/150] | Train Loss: 1.9642 | Val Loss: 5.5786 | LR: 0.000092 === 
+Validation Task Losses: Seg: 2.763 | Depth: 2.815 (depth_weight: 1.0)
+Depth | RMSE: 0.7853 | AbsRel: 0.2346 | δ1: 0.6297 | δ2: 0.8927 | δ3: 0.9725
+Seg   | mIoU: 0.2873 | Dice: 0.4232 | Pixel Acc: 0.5917
+
+ === Epoch [36/150] | Train Loss: 1.9320 | Val Loss: 5.5537 | LR: 0.000091 === 
+Validation Task Losses: Seg: 2.723 | Depth: 2.831 (depth_weight: 1.0)
+Depth | RMSE: 0.7906 | AbsRel: 0.2394 | δ1: 0.6324 | δ2: 0.8886 | δ3: 0.9675
+Seg   | mIoU: 0.2956 | Dice: 0.4342 | Pixel Acc: 0.6007
+
+ === Epoch [37/150] | Train Loss: 1.8778 | Val Loss: 5.3498 | LR: 0.000091 === 
+Validation Task Losses: Seg: 2.566 | Depth: 2.784 (depth_weight: 1.0)
+Depth | RMSE: 0.7902 | AbsRel: 0.2234 | δ1: 0.6440 | δ2: 0.8982 | δ3: 0.9727
+Seg   | mIoU: 0.2965 | Dice: 0.4374 | Pixel Acc: 0.5925
+--> Saved new best DEPTH checkpoint.
+
+ === Epoch [38/150] | Train Loss: 1.8724 | Val Loss: 5.4731 | LR: 0.000090 === 
+Validation Task Losses: Seg: 2.636 | Depth: 2.837 (depth_weight: 1.0)
+Depth | RMSE: 0.7903 | AbsRel: 0.2297 | δ1: 0.6397 | δ2: 0.8958 | δ3: 0.9705
+Seg   | mIoU: 0.2902 | Dice: 0.4288 | Pixel Acc: 0.6028
+
+ === Epoch [39/150] | Train Loss: 1.8313 | Val Loss: 5.3783 | LR: 0.000089 === 
+Validation Task Losses: Seg: 2.582 | Depth: 2.797 (depth_weight: 1.0)
+Depth | RMSE: 0.7857 | AbsRel: 0.2285 | δ1: 0.6408 | δ2: 0.8976 | δ3: 0.9731
+Seg   | mIoU: 0.2900 | Dice: 0.4284 | Pixel Acc: 0.5943
+
+ === Epoch [40/150] | Train Loss: 1.8502 | Val Loss: 5.6842 | LR: 0.000088 === 
+Validation Task Losses: Seg: 2.906 | Depth: 2.778 (depth_weight: 1.0)
+Depth | RMSE: 0.7795 | AbsRel: 0.2152 | δ1: 0.6433 | δ2: 0.9016 | δ3: 0.9773
+Seg   | mIoU: 0.2865 | Dice: 0.4238 | Pixel Acc: 0.6048
+
+ === Epoch [41/150] | Train Loss: 1.8043 | Val Loss: 5.5630 | LR: 0.000088 === 
+Validation Task Losses: Seg: 2.791 | Depth: 2.772 (depth_weight: 1.0)
+Depth | RMSE: 0.7735 | AbsRel: 0.2321 | δ1: 0.6381 | δ2: 0.8958 | δ3: 0.9714
+Seg   | mIoU: 0.2979 | Dice: 0.4384 | Pixel Acc: 0.6090
+
+ === Epoch [42/150] | Train Loss: 1.7704 | Val Loss: 5.5445 | LR: 0.000087 === 
+Validation Task Losses: Seg: 2.783 | Depth: 2.762 (depth_weight: 1.0)
+Depth | RMSE: 0.7788 | AbsRel: 0.2146 | δ1: 0.6449 | δ2: 0.9032 | δ3: 0.9772
+Seg   | mIoU: 0.3006 | Dice: 0.4407 | Pixel Acc: 0.6099
+--> Saved new best DEPTH checkpoint.
+--> Saved new best SEG checkpoint.
+
+ === Epoch [43/150] | Train Loss: 1.7240 | Val Loss: 5.5620 | LR: 0.000086 === 
+Validation Task Losses: Seg: 2.795 | Depth: 2.767 (depth_weight: 1.0)
+Depth | RMSE: 0.7780 | AbsRel: 0.2272 | δ1: 0.6446 | δ2: 0.8969 | δ3: 0.9738
+Seg   | mIoU: 0.2928 | Dice: 0.4298 | Pixel Acc: 0.5961
+
+ === Epoch [44/150] | Train Loss: 1.7676 | Val Loss: 5.4718 | LR: 0.000086 === 
+Validation Task Losses: Seg: 2.683 | Depth: 2.789 (depth_weight: 1.0)
+Depth | RMSE: 0.7828 | AbsRel: 0.2280 | δ1: 0.6392 | δ2: 0.8964 | δ3: 0.9727
+Seg   | mIoU: 0.3003 | Dice: 0.4403 | Pixel Acc: 0.6037
+
+ === Epoch [45/150] | Train Loss: 1.7296 | Val Loss: 5.6191 | LR: 0.000085 === 
+Validation Task Losses: Seg: 2.887 | Depth: 2.732 (depth_weight: 1.0)
+Depth | RMSE: 0.7710 | AbsRel: 0.2124 | δ1: 0.6526 | δ2: 0.9060 | δ3: 0.9779
+Seg   | mIoU: 0.2987 | Dice: 0.4382 | Pixel Acc: 0.6079
+--> Saved new best DEPTH checkpoint.
+
+ === Epoch [46/150] | Train Loss: 1.7045 | Val Loss: 5.6905 | LR: 0.000084 === 
+Validation Task Losses: Seg: 2.866 | Depth: 2.825 (depth_weight: 1.0)
+Depth | RMSE: 0.7915 | AbsRel: 0.2503 | δ1: 0.6229 | δ2: 0.8830 | δ3: 0.9650
+Seg   | mIoU: 0.2993 | Dice: 0.4382 | Pixel Acc: 0.6088
+
+ === Epoch [47/150] | Train Loss: 1.7064 | Val Loss: 5.6912 | LR: 0.000083 === 
+Validation Task Losses: Seg: 2.887 | Depth: 2.804 (depth_weight: 1.0)
+Depth | RMSE: 0.7930 | AbsRel: 0.2282 | δ1: 0.6385 | δ2: 0.8950 | δ3: 0.9723
+Seg   | mIoU: 0.2994 | Dice: 0.4383 | Pixel Acc: 0.6082
+
+ === Epoch [48/150] | Train Loss: 1.7115 | Val Loss: 5.5000 | LR: 0.000082 === 
+Validation Task Losses: Seg: 2.742 | Depth: 2.758 (depth_weight: 1.0)
+Depth | RMSE: 0.7711 | AbsRel: 0.2164 | δ1: 0.6507 | δ2: 0.9037 | δ3: 0.9764
+Seg   | mIoU: 0.3046 | Dice: 0.4442 | Pixel Acc: 0.6023
+--> Saved new best SEG checkpoint.
+
+ === Epoch [49/150] | Train Loss: 1.7164 | Val Loss: 5.6168 | LR: 0.000081 === 
+Validation Task Losses: Seg: 2.865 | Depth: 2.752 (depth_weight: 1.0)
+Depth | RMSE: 0.7681 | AbsRel: 0.2345 | δ1: 0.6435 | δ2: 0.8955 | δ3: 0.9709
+Seg   | mIoU: 0.3032 | Dice: 0.4437 | Pixel Acc: 0.6111
+
+ === Epoch [50/150] | Train Loss: 1.6873 | Val Loss: 5.7365 | LR: 0.000080 === 
+Validation Task Losses: Seg: 2.990 | Depth: 2.746 (depth_weight: 1.0)
+Depth | RMSE: 0.7662 | AbsRel: 0.2249 | δ1: 0.6464 | δ2: 0.9000 | δ3: 0.9753
+Seg   | mIoU: 0.2927 | Dice: 0.4325 | Pixel Acc: 0.6039
+
+ === Epoch [51/150] | Train Loss: 1.6919 | Val Loss: 5.5033 | LR: 0.000080 === 
+Validation Task Losses: Seg: 2.744 | Depth: 2.759 (depth_weight: 1.0)
+Depth | RMSE: 0.7771 | AbsRel: 0.2173 | δ1: 0.6479 | δ2: 0.9027 | δ3: 0.9757
+Seg   | mIoU: 0.3023 | Dice: 0.4432 | Pixel Acc: 0.6065
+
+ === Epoch [52/150] | Train Loss: 1.6482 | Val Loss: 5.5539 | LR: 0.000079 === 
+Validation Task Losses: Seg: 2.814 | Depth: 2.740 (depth_weight: 1.0)
+Depth | RMSE: 0.7693 | AbsRel: 0.2165 | δ1: 0.6518 | δ2: 0.9040 | δ3: 0.9764
+Seg   | mIoU: 0.3023 | Dice: 0.4426 | Pixel Acc: 0.6046
+
+ === Epoch [53/150] | Train Loss: 1.6285 | Val Loss: 5.6007 | LR: 0.000078 === 
+Validation Task Losses: Seg: 2.869 | Depth: 2.732 (depth_weight: 1.0)
+Depth | RMSE: 0.7592 | AbsRel: 0.2225 | δ1: 0.6497 | δ2: 0.9026 | δ3: 0.9754
+Seg   | mIoU: 0.2999 | Dice: 0.4397 | Pixel Acc: 0.6102
+
+ === Epoch [54/150] | Train Loss: 1.6044 | Val Loss: 5.5890 | LR: 0.000077 === 
+Validation Task Losses: Seg: 2.857 | Depth: 2.732 (depth_weight: 1.0)
+Depth | RMSE: 0.7716 | AbsRel: 0.2141 | δ1: 0.6562 | δ2: 0.9054 | δ3: 0.9763
+Seg   | mIoU: 0.2960 | Dice: 0.4349 | Pixel Acc: 0.6072
+--> Saved new best DEPTH checkpoint.
+
+ === Epoch [55/150] | Train Loss: 1.6045 | Val Loss: 5.6002 | LR: 0.000076 === 
+Validation Task Losses: Seg: 2.860 | Depth: 2.741 (depth_weight: 1.0)
+Depth | RMSE: 0.7681 | AbsRel: 0.2198 | δ1: 0.6536 | δ2: 0.9027 | δ3: 0.9751
+Seg   | mIoU: 0.3045 | Dice: 0.4447 | Pixel Acc: 0.6135
+
+ === Epoch [56/150] | Train Loss: 1.5474 | Val Loss: 5.7283 | LR: 0.000075 === 
+Validation Task Losses: Seg: 2.967 | Depth: 2.761 (depth_weight: 1.0)
+Depth | RMSE: 0.7806 | AbsRel: 0.2318 | δ1: 0.6473 | δ2: 0.8944 | δ3: 0.9707
+Seg   | mIoU: 0.2958 | Dice: 0.4347 | Pixel Acc: 0.6069
+
+ === Epoch [57/150] | Train Loss: 1.5654 | Val Loss: 5.6337 | LR: 0.000074 === 
+Validation Task Losses: Seg: 2.872 | Depth: 2.762 (depth_weight: 1.0)
+Depth | RMSE: 0.7768 | AbsRel: 0.2255 | δ1: 0.6500 | δ2: 0.8981 | δ3: 0.9732
+Seg   | mIoU: 0.2993 | Dice: 0.4390 | Pixel Acc: 0.6133
+
+ === Epoch [58/150] | Train Loss: 1.5995 | Val Loss: 5.7770 | LR: 0.000073 === 
+Validation Task Losses: Seg: 3.000 | Depth: 2.777 (depth_weight: 1.0)
+Depth | RMSE: 0.7756 | AbsRel: 0.2305 | δ1: 0.6451 | δ2: 0.8962 | δ3: 0.9720
+Seg   | mIoU: 0.2928 | Dice: 0.4320 | Pixel Acc: 0.5999
+
+ === Epoch [59/150] | Train Loss: 1.6426 | Val Loss: 5.5573 | LR: 0.000072 === 
+Validation Task Losses: Seg: 2.791 | Depth: 2.766 (depth_weight: 1.0)
+Depth | RMSE: 0.7699 | AbsRel: 0.2253 | δ1: 0.6488 | δ2: 0.8987 | δ3: 0.9730
+Seg   | mIoU: 0.3041 | Dice: 0.4448 | Pixel Acc: 0.6059
+
+ === Epoch [60/150] | Train Loss: 1.5778 | Val Loss: 5.8286 | LR: 0.000071 === 
+Validation Task Losses: Seg: 3.064 | Depth: 2.764 (depth_weight: 1.0)
+Depth | RMSE: 0.7838 | AbsRel: 0.2228 | δ1: 0.6506 | δ2: 0.8995 | δ3: 0.9740
+Seg   | mIoU: 0.2938 | Dice: 0.4313 | Pixel Acc: 0.6126
+
+ === Epoch [61/150] | Train Loss: 1.5574 | Val Loss: 5.5633 | LR: 0.000070 === 
+Validation Task Losses: Seg: 2.828 | Depth: 2.735 (depth_weight: 1.0)
+Depth | RMSE: 0.7728 | AbsRel: 0.2203 | δ1: 0.6530 | δ2: 0.9016 | δ3: 0.9762
+Seg   | mIoU: 0.3047 | Dice: 0.4461 | Pixel Acc: 0.6070
+--> Saved new best SEG checkpoint.
+
+ === Epoch [62/150] | Train Loss: 1.5387 | Val Loss: 5.5098 | LR: 0.000069 === 
+Validation Task Losses: Seg: 2.760 | Depth: 2.750 (depth_weight: 1.0)
+Depth | RMSE: 0.7727 | AbsRel: 0.2236 | δ1: 0.6505 | δ2: 0.8995 | δ3: 0.9733
+Seg   | mIoU: 0.3095 | Dice: 0.4509 | Pixel Acc: 0.6120
+--> Saved new best SEG checkpoint.
+
+ === Epoch [63/150] | Train Loss: 1.5350 | Val Loss: 5.8336 | LR: 0.000068 === 
+Validation Task Losses: Seg: 3.123 | Depth: 2.711 (depth_weight: 1.0)
+Depth | RMSE: 0.7621 | AbsRel: 0.2200 | δ1: 0.6564 | δ2: 0.9026 | δ3: 0.9756
+Seg   | mIoU: 0.2966 | Dice: 0.4346 | Pixel Acc: 0.6154
+--> Saved new best DEPTH checkpoint.
+
+ === Epoch [64/150] | Train Loss: 1.4972 | Val Loss: 5.7810 | LR: 0.000067 === 
+Validation Task Losses: Seg: 3.055 | Depth: 2.726 (depth_weight: 1.0)
+Depth | RMSE: 0.7726 | AbsRel: 0.2280 | δ1: 0.6494 | δ2: 0.8967 | δ3: 0.9727
+Seg   | mIoU: 0.2967 | Dice: 0.4353 | Pixel Acc: 0.6120
+
+ === Epoch [65/150] | Train Loss: 1.5351 | Val Loss: 5.7342 | LR: 0.000066 === 
+Validation Task Losses: Seg: 2.983 | Depth: 2.752 (depth_weight: 1.0)
+Depth | RMSE: 0.7729 | AbsRel: 0.2357 | δ1: 0.6431 | δ2: 0.8936 | δ3: 0.9705
+Seg   | mIoU: 0.3026 | Dice: 0.4415 | Pixel Acc: 0.6098
+
+ === Epoch [66/150] | Train Loss: 1.5361 | Val Loss: 5.6639 | LR: 0.000065 === 
+Validation Task Losses: Seg: 2.943 | Depth: 2.721 (depth_weight: 1.0)
+Depth | RMSE: 0.7694 | AbsRel: 0.2292 | δ1: 0.6525 | δ2: 0.8977 | δ3: 0.9728
+Seg   | mIoU: 0.3033 | Dice: 0.4438 | Pixel Acc: 0.6115
+
+ === Epoch [67/150] | Train Loss: 1.5104 | Val Loss: 5.6985 | LR: 0.000064 === 
+Validation Task Losses: Seg: 2.978 | Depth: 2.721 (depth_weight: 1.0)
+Depth | RMSE: 0.7820 | AbsRel: 0.2120 | δ1: 0.6559 | δ2: 0.9046 | δ3: 0.9773
+Seg   | mIoU: 0.3095 | Dice: 0.4500 | Pixel Acc: 0.6174
+--> Saved new best SEG checkpoint.
+
+ === Epoch [68/150] | Train Loss: 1.4178 | Val Loss: 5.9099 | LR: 0.000063 === 
+Validation Task Losses: Seg: 3.174 | Depth: 2.736 (depth_weight: 1.0)
+Depth | RMSE: 0.7738 | AbsRel: 0.2154 | δ1: 0.6543 | δ2: 0.9048 | δ3: 0.9764
+Seg   | mIoU: 0.2997 | Dice: 0.4386 | Pixel Acc: 0.6118
+
+ === Epoch [69/150] | Train Loss: 1.4636 | Val Loss: 5.5860 | LR: 0.000062 === 
+Validation Task Losses: Seg: 2.867 | Depth: 2.719 (depth_weight: 1.0)
+Depth | RMSE: 0.7705 | AbsRel: 0.2142 | δ1: 0.6594 | δ2: 0.9052 | δ3: 0.9769
+Seg   | mIoU: 0.3091 | Dice: 0.4509 | Pixel Acc: 0.6184
+--> Saved new best DEPTH checkpoint.
+
+ === Epoch [70/150] | Train Loss: 1.3987 | Val Loss: 5.8391 | LR: 0.000060 === 
+Validation Task Losses: Seg: 3.126 | Depth: 2.713 (depth_weight: 1.0)
+Depth | RMSE: 0.7639 | AbsRel: 0.2149 | δ1: 0.6607 | δ2: 0.9068 | δ3: 0.9767
+Seg   | mIoU: 0.3041 | Dice: 0.4443 | Pixel Acc: 0.6195
+--> Saved new best DEPTH checkpoint.
+
+ === Epoch [71/150] | Train Loss: 1.4405 | Val Loss: 5.9306 | LR: 0.000059 === 
+Validation Task Losses: Seg: 3.205 | Depth: 2.725 (depth_weight: 1.0)
+Depth | RMSE: 0.7656 | AbsRel: 0.2212 | δ1: 0.6582 | δ2: 0.9015 | δ3: 0.9745
+Seg   | mIoU: 0.3018 | Dice: 0.4404 | Pixel Acc: 0.6164
+
+ === Epoch [72/150] | Train Loss: 1.4432 | Val Loss: 5.8325 | LR: 0.000058 === 
+Validation Task Losses: Seg: 3.111 | Depth: 2.721 (depth_weight: 1.0)
+Depth | RMSE: 0.7681 | AbsRel: 0.2224 | δ1: 0.6557 | δ2: 0.9015 | δ3: 0.9751
+Seg   | mIoU: 0.3057 | Dice: 0.4456 | Pixel Acc: 0.6165
+
+ === Epoch [73/150] | Train Loss: 1.3846 | Val Loss: 5.6556 | LR: 0.000057 === 
+Validation Task Losses: Seg: 2.958 | Depth: 2.697 (depth_weight: 1.0)
+Depth | RMSE: 0.7715 | AbsRel: 0.2109 | δ1: 0.6588 | δ2: 0.9076 | δ3: 0.9783
+Seg   | mIoU: 0.3142 | Dice: 0.4564 | Pixel Acc: 0.6160
+--> Saved new best SEG checkpoint.
+
+ === Epoch [74/150] | Train Loss: 1.4294 | Val Loss: 5.6464 | LR: 0.000056 === 
+Validation Task Losses: Seg: 2.921 | Depth: 2.725 (depth_weight: 1.0)
+Depth | RMSE: 0.7731 | AbsRel: 0.2184 | δ1: 0.6533 | δ2: 0.9030 | δ3: 0.9757
+Seg   | mIoU: 0.3092 | Dice: 0.4499 | Pixel Acc: 0.6175
+
+ === Epoch [75/150] | Train Loss: 1.4188 | Val Loss: 5.7709 | LR: 0.000055 === 
+Validation Task Losses: Seg: 3.069 | Depth: 2.702 (depth_weight: 1.0)
+Depth | RMSE: 0.7582 | AbsRel: 0.2201 | δ1: 0.6587 | δ2: 0.9033 | δ3: 0.9752
+Seg   | mIoU: 0.3069 | Dice: 0.4474 | Pixel Acc: 0.6194
+
+ === Epoch [76/150] | Train Loss: 1.3891 | Val Loss: 5.8789 | LR: 0.000054 === 
+Validation Task Losses: Seg: 3.137 | Depth: 2.742 (depth_weight: 1.0)
+Depth | RMSE: 0.7811 | AbsRel: 0.2228 | δ1: 0.6488 | δ2: 0.8986 | δ3: 0.9742
+Seg   | mIoU: 0.3055 | Dice: 0.4455 | Pixel Acc: 0.6219
+
+ === Epoch [77/150] | Train Loss: 1.3859 | Val Loss: 5.8326 | LR: 0.000053 === 
+Validation Task Losses: Seg: 3.135 | Depth: 2.698 (depth_weight: 1.0)
+Depth | RMSE: 0.7570 | AbsRel: 0.2204 | δ1: 0.6596 | δ2: 0.9046 | δ3: 0.9760
+Seg   | mIoU: 0.3048 | Dice: 0.4443 | Pixel Acc: 0.6167
+
+ === Epoch [78/150] | Train Loss: 1.3768 | Val Loss: 5.7521 | LR: 0.000052 === 
+Validation Task Losses: Seg: 3.024 | Depth: 2.728 (depth_weight: 1.0)
+Depth | RMSE: 0.7726 | AbsRel: 0.2344 | δ1: 0.6477 | δ2: 0.8958 | δ3: 0.9720
+Seg   | mIoU: 0.3116 | Dice: 0.4529 | Pixel Acc: 0.6200
+
+ === Epoch [79/150] | Train Loss: 1.3355 | Val Loss: 5.7509 | LR: 0.000051 === 
+Validation Task Losses: Seg: 3.027 | Depth: 2.724 (depth_weight: 1.0)
+Depth | RMSE: 0.7728 | AbsRel: 0.2259 | δ1: 0.6505 | δ2: 0.8993 | δ3: 0.9745
+Seg   | mIoU: 0.3093 | Dice: 0.4497 | Pixel Acc: 0.6173
+
+ === Epoch [80/150] | Train Loss: 1.3580 | Val Loss: 5.9150 | LR: 0.000049 === 
+Validation Task Losses: Seg: 3.212 | Depth: 2.703 (depth_weight: 1.0)
+Depth | RMSE: 0.7594 | AbsRel: 0.2185 | δ1: 0.6595 | δ2: 0.9045 | δ3: 0.9760
+Seg   | mIoU: 0.3040 | Dice: 0.4444 | Pixel Acc: 0.6131
+
+ === Epoch [81/150] | Train Loss: 1.3680 | Val Loss: 5.7804 | LR: 0.000048 === 
+Validation Task Losses: Seg: 3.071 | Depth: 2.710 (depth_weight: 1.0)
+Depth | RMSE: 0.7693 | AbsRel: 0.2325 | δ1: 0.6472 | δ2: 0.8969 | δ3: 0.9720
+Seg   | mIoU: 0.3060 | Dice: 0.4464 | Pixel Acc: 0.6170
+
+ === Epoch [82/150] | Train Loss: 1.3381 | Val Loss: 5.8187 | LR: 0.000047 === 
+Validation Task Losses: Seg: 3.133 | Depth: 2.686 (depth_weight: 1.0)
+Depth | RMSE: 0.7520 | AbsRel: 0.2170 | δ1: 0.6628 | δ2: 0.9075 | δ3: 0.9775
+Seg   | mIoU: 0.3074 | Dice: 0.4474 | Pixel Acc: 0.6217
+--> Saved new best DEPTH checkpoint.
+
+ === Epoch [83/150] | Train Loss: 1.3366 | Val Loss: 5.8365 | LR: 0.000046 === 
+Validation Task Losses: Seg: 3.117 | Depth: 2.720 (depth_weight: 1.0)
+Depth | RMSE: 0.7875 | AbsRel: 0.2127 | δ1: 0.6560 | δ2: 0.9043 | δ3: 0.9774
+Seg   | mIoU: 0.3106 | Dice: 0.4516 | Pixel Acc: 0.6219
+
+ === Epoch [84/150] | Train Loss: 1.3252 | Val Loss: 6.0311 | LR: 0.000045 === 
+Validation Task Losses: Seg: 3.304 | Depth: 2.727 (depth_weight: 1.0)
+Depth | RMSE: 0.7718 | AbsRel: 0.2256 | δ1: 0.6571 | δ2: 0.8994 | δ3: 0.9731
+Seg   | mIoU: 0.3023 | Dice: 0.4417 | Pixel Acc: 0.6166
+
+ === Epoch [85/150] | Train Loss: 1.3326 | Val Loss: 5.8188 | LR: 0.000044 === 
+Validation Task Losses: Seg: 3.138 | Depth: 2.680 (depth_weight: 1.0)
+Depth | RMSE: 0.7615 | AbsRel: 0.2090 | δ1: 0.6638 | δ2: 0.9098 | δ3: 0.9785
+Seg   | mIoU: 0.3100 | Dice: 0.4504 | Pixel Acc: 0.6249
+--> Saved new best DEPTH checkpoint.
+
+ === Epoch [86/150] | Train Loss: 1.3168 | Val Loss: 5.8550 | LR: 0.000043 === 
+Validation Task Losses: Seg: 3.162 | Depth: 2.693 (depth_weight: 1.0)
+Depth | RMSE: 0.7589 | AbsRel: 0.2195 | δ1: 0.6607 | δ2: 0.9039 | δ3: 0.9756
+Seg   | mIoU: 0.3091 | Dice: 0.4493 | Pixel Acc: 0.6191
+
+ === Epoch [87/150] | Train Loss: 1.3146 | Val Loss: 5.8405 | LR: 0.000042 === 
+Validation Task Losses: Seg: 3.129 | Depth: 2.711 (depth_weight: 1.0)
+Depth | RMSE: 0.7624 | AbsRel: 0.2268 | δ1: 0.6551 | δ2: 0.8990 | δ3: 0.9731
+Seg   | mIoU: 0.3083 | Dice: 0.4471 | Pixel Acc: 0.6232
+
+ === Epoch [88/150] | Train Loss: 1.3050 | Val Loss: 5.9068 | LR: 0.000041 === 
+Validation Task Losses: Seg: 3.215 | Depth: 2.691 (depth_weight: 1.0)
+Depth | RMSE: 0.7730 | AbsRel: 0.2104 | δ1: 0.6621 | δ2: 0.9077 | δ3: 0.9782
+Seg   | mIoU: 0.3084 | Dice: 0.4486 | Pixel Acc: 0.6210
+
+ === Epoch [89/150] | Train Loss: 1.2508 | Val Loss: 5.8514 | LR: 0.000039 === 
+Validation Task Losses: Seg: 3.146 | Depth: 2.705 (depth_weight: 1.0)
+Depth | RMSE: 0.7623 | AbsRel: 0.2187 | δ1: 0.6590 | δ2: 0.9038 | δ3: 0.9758
+Seg   | mIoU: 0.3101 | Dice: 0.4503 | Pixel Acc: 0.6231
+
+ === Epoch [90/150] | Train Loss: 1.2951 | Val Loss: 5.8286 | LR: 0.000038 === 
+Validation Task Losses: Seg: 3.138 | Depth: 2.691 (depth_weight: 1.0)
+Depth | RMSE: 0.7572 | AbsRel: 0.2134 | δ1: 0.6619 | δ2: 0.9079 | δ3: 0.9778
+Seg   | mIoU: 0.3086 | Dice: 0.4475 | Pixel Acc: 0.6228
+
+ === Epoch [91/150] | Train Loss: 1.2921 | Val Loss: 5.9260 | LR: 0.000037 === 
+Validation Task Losses: Seg: 3.230 | Depth: 2.697 (depth_weight: 1.0)
+Depth | RMSE: 0.7616 | AbsRel: 0.2165 | δ1: 0.6596 | δ2: 0.9055 | δ3: 0.9773
+Seg   | mIoU: 0.3073 | Dice: 0.4473 | Pixel Acc: 0.6190
+
+ === Epoch [92/150] | Train Loss: 1.2519 | Val Loss: 5.7762 | LR: 0.000036 === 
+Validation Task Losses: Seg: 3.086 | Depth: 2.690 (depth_weight: 1.0)
+Depth | RMSE: 0.7558 | AbsRel: 0.2171 | δ1: 0.6629 | δ2: 0.9057 | δ3: 0.9763
+Seg   | mIoU: 0.3123 | Dice: 0.4536 | Pixel Acc: 0.6174
+
+ === Epoch [93/150] | Train Loss: 1.2470 | Val Loss: 5.7438 | LR: 0.000035 === 
+Validation Task Losses: Seg: 3.059 | Depth: 2.684 (depth_weight: 1.0)
+Depth | RMSE: 0.7542 | AbsRel: 0.2185 | δ1: 0.6643 | δ2: 0.9054 | δ3: 0.9762
+Seg   | mIoU: 0.3138 | Dice: 0.4554 | Pixel Acc: 0.6244
+--> Saved new best DEPTH checkpoint.
+
+ === Epoch [94/150] | Train Loss: 1.2381 | Val Loss: 5.9929 | LR: 0.000034 === 
+Validation Task Losses: Seg: 3.309 | Depth: 2.684 (depth_weight: 1.0)
+Depth | RMSE: 0.7559 | AbsRel: 0.2134 | δ1: 0.6667 | δ2: 0.9070 | δ3: 0.9770
+Seg   | mIoU: 0.3055 | Dice: 0.4449 | Pixel Acc: 0.6206
+--> Saved new best DEPTH checkpoint.
+
+ === Epoch [95/150] | Train Loss: 1.2556 | Val Loss: 5.8741 | LR: 0.000033 === 
+Validation Task Losses: Seg: 3.183 | Depth: 2.691 (depth_weight: 1.0)
+Depth | RMSE: 0.7503 | AbsRel: 0.2199 | δ1: 0.6622 | δ2: 0.9032 | δ3: 0.9752
+Seg   | mIoU: 0.3095 | Dice: 0.4499 | Pixel Acc: 0.6223
+
+ === Epoch [96/150] | Train Loss: 1.2390 | Val Loss: 5.8510 | LR: 0.000032 === 
+Validation Task Losses: Seg: 3.155 | Depth: 2.696 (depth_weight: 1.0)
+Depth | RMSE: 0.7703 | AbsRel: 0.2111 | δ1: 0.6597 | δ2: 0.9065 | δ3: 0.9776
+Seg   | mIoU: 0.3089 | Dice: 0.4490 | Pixel Acc: 0.6209
+
+ === Epoch [97/150] | Train Loss: 1.2379 | Val Loss: 5.8802 | LR: 0.000031 === 
+Validation Task Losses: Seg: 3.189 | Depth: 2.691 (depth_weight: 1.0)
+Depth | RMSE: 0.7532 | AbsRel: 0.2165 | δ1: 0.6659 | δ2: 0.9059 | δ3: 0.9765
+Seg   | mIoU: 0.3099 | Dice: 0.4505 | Pixel Acc: 0.6212
+
+ === Epoch [98/150] | Train Loss: 1.2364 | Val Loss: 5.8734 | LR: 0.000030 === 
+Validation Task Losses: Seg: 3.196 | Depth: 2.678 (depth_weight: 1.0)
+Depth | RMSE: 0.7514 | AbsRel: 0.2123 | δ1: 0.6661 | δ2: 0.9078 | δ3: 0.9784
+Seg   | mIoU: 0.3101 | Dice: 0.4501 | Pixel Acc: 0.6224
+
+ === Epoch [99/150] | Train Loss: 1.2278 | Val Loss: 5.8260 | LR: 0.000029 === 
+Validation Task Losses: Seg: 3.147 | Depth: 2.679 (depth_weight: 1.0)
+Depth | RMSE: 0.7563 | AbsRel: 0.2176 | δ1: 0.6630 | δ2: 0.9043 | δ3: 0.9762
+Seg   | mIoU: 0.3103 | Dice: 0.4505 | Pixel Acc: 0.6234
+
+ === Epoch [100/150] | Train Loss: 1.2251 | Val Loss: 5.9736 | LR: 0.000028 === 
+Validation Task Losses: Seg: 3.278 | Depth: 2.695 (depth_weight: 1.0)
+Depth | RMSE: 0.7569 | AbsRel: 0.2216 | δ1: 0.6622 | δ2: 0.9029 | δ3: 0.9752
+Seg   | mIoU: 0.3080 | Dice: 0.4481 | Pixel Acc: 0.6209
+
+ === Epoch [101/150] | Train Loss: 1.2036 | Val Loss: 5.9903 | LR: 0.000027 === 
+Validation Task Losses: Seg: 3.303 | Depth: 2.688 (depth_weight: 1.0)
+Depth | RMSE: 0.7566 | AbsRel: 0.2228 | δ1: 0.6611 | δ2: 0.9024 | δ3: 0.9750
+Seg   | mIoU: 0.3071 | Dice: 0.4465 | Pixel Acc: 0.6233
+
+ === Epoch [102/150] | Train Loss: 1.2292 | Val Loss: 5.8138 | LR: 0.000026 === 
+Validation Task Losses: Seg: 3.138 | Depth: 2.676 (depth_weight: 1.0)
+Depth | RMSE: 0.7563 | AbsRel: 0.2162 | δ1: 0.6652 | δ2: 0.9049 | δ3: 0.9769
+Seg   | mIoU: 0.3098 | Dice: 0.4505 | Pixel Acc: 0.6227
+
+ === Epoch [103/150] | Train Loss: 1.1946 | Val Loss: 5.9788 | LR: 0.000025 === 
+Validation Task Losses: Seg: 3.301 | Depth: 2.677 (depth_weight: 1.0)
+Depth | RMSE: 0.7543 | AbsRel: 0.2172 | δ1: 0.6642 | δ2: 0.9058 | δ3: 0.9769
+Seg   | mIoU: 0.3072 | Dice: 0.4465 | Pixel Acc: 0.6210
+
+ === Epoch [104/150] | Train Loss: 1.1749 | Val Loss: 5.9582 | LR: 0.000024 === 
+Validation Task Losses: Seg: 3.275 | Depth: 2.683 (depth_weight: 1.0)
+Depth | RMSE: 0.7589 | AbsRel: 0.2104 | δ1: 0.6672 | δ2: 0.9082 | δ3: 0.9782
+Seg   | mIoU: 0.3056 | Dice: 0.4445 | Pixel Acc: 0.6226
+--> Saved new best DEPTH checkpoint.
+
+ === Epoch [105/150] | Train Loss: 1.1693 | Val Loss: 6.0139 | LR: 0.000023 === 
+Validation Task Losses: Seg: 3.341 | Depth: 2.673 (depth_weight: 1.0)
+Depth | RMSE: 0.7558 | AbsRel: 0.2101 | δ1: 0.6693 | δ2: 0.9089 | δ3: 0.9784
+Seg   | mIoU: 0.3084 | Dice: 0.4481 | Pixel Acc: 0.6230
+--> Saved new best DEPTH checkpoint.
+
+ === Epoch [106/150] | Train Loss: 1.1582 | Val Loss: 5.9147 | LR: 0.000022 === 
+Validation Task Losses: Seg: 3.227 | Depth: 2.687 (depth_weight: 1.0)
+Depth | RMSE: 0.7555 | AbsRel: 0.2216 | δ1: 0.6635 | δ2: 0.9025 | δ3: 0.9754
+Seg   | mIoU: 0.3125 | Dice: 0.4529 | Pixel Acc: 0.6269
+
+ === Epoch [107/150] | Train Loss: 1.1573 | Val Loss: 5.9738 | LR: 0.000021 === 
+Validation Task Losses: Seg: 3.276 | Depth: 2.698 (depth_weight: 1.0)
+Depth | RMSE: 0.7728 | AbsRel: 0.2168 | δ1: 0.6608 | δ2: 0.9033 | δ3: 0.9761
+Seg   | mIoU: 0.3081 | Dice: 0.4481 | Pixel Acc: 0.6231
+
+ === Epoch [108/150] | Train Loss: 1.1689 | Val Loss: 5.9360 | LR: 0.000021 === 
+Validation Task Losses: Seg: 3.260 | Depth: 2.676 (depth_weight: 1.0)
+Depth | RMSE: 0.7593 | AbsRel: 0.2133 | δ1: 0.6661 | δ2: 0.9065 | δ3: 0.9777
+Seg   | mIoU: 0.3084 | Dice: 0.4486 | Pixel Acc: 0.6229
+
+ === Epoch [109/150] | Train Loss: 1.1569 | Val Loss: 5.8765 | LR: 0.000020 === 
+Validation Task Losses: Seg: 3.194 | Depth: 2.683 (depth_weight: 1.0)
+Depth | RMSE: 0.7543 | AbsRel: 0.2215 | δ1: 0.6639 | δ2: 0.9025 | δ3: 0.9755
+Seg   | mIoU: 0.3113 | Dice: 0.4522 | Pixel Acc: 0.6228
+
+ === Epoch [110/150] | Train Loss: 1.1672 | Val Loss: 5.9748 | LR: 0.000019 === 
+Validation Task Losses: Seg: 3.306 | Depth: 2.668 (depth_weight: 1.0)
+Depth | RMSE: 0.7668 | AbsRel: 0.2083 | δ1: 0.6641 | δ2: 0.9088 | δ3: 0.9793
+Seg   | mIoU: 0.3085 | Dice: 0.4481 | Pixel Acc: 0.6246
+
+ === Epoch [111/150] | Train Loss: 1.1395 | Val Loss: 5.8747 | LR: 0.000018 === 
+Validation Task Losses: Seg: 3.198 | Depth: 2.677 (depth_weight: 1.0)
+Depth | RMSE: 0.7637 | AbsRel: 0.2088 | δ1: 0.6688 | δ2: 0.9087 | δ3: 0.9784
+Seg   | mIoU: 0.3110 | Dice: 0.4518 | Pixel Acc: 0.6240
+
+ === Epoch [112/150] | Train Loss: 1.1167 | Val Loss: 5.9137 | LR: 0.000017 === 
+Validation Task Losses: Seg: 3.244 | Depth: 2.669 (depth_weight: 1.0)
+Depth | RMSE: 0.7493 | AbsRel: 0.2127 | δ1: 0.6684 | δ2: 0.9075 | δ3: 0.9779
+Seg   | mIoU: 0.3089 | Dice: 0.4490 | Pixel Acc: 0.6225
+
+ === Epoch [113/150] | Train Loss: 1.1522 | Val Loss: 5.9467 | LR: 0.000016 === 
+Validation Task Losses: Seg: 3.283 | Depth: 2.663 (depth_weight: 1.0)
+Depth | RMSE: 0.7491 | AbsRel: 0.2163 | δ1: 0.6679 | δ2: 0.9060 | δ3: 0.9768
+Seg   | mIoU: 0.3082 | Dice: 0.4479 | Pixel Acc: 0.6235
+
+ === Epoch [114/150] | Train Loss: 1.1298 | Val Loss: 5.9629 | LR: 0.000015 === 
+Validation Task Losses: Seg: 3.283 | Depth: 2.680 (depth_weight: 1.0)
+Depth | RMSE: 0.7539 | AbsRel: 0.2245 | δ1: 0.6611 | δ2: 0.9015 | δ3: 0.9746
+Seg   | mIoU: 0.3107 | Dice: 0.4505 | Pixel Acc: 0.6258
+
+ === Epoch [115/150] | Train Loss: 1.1092 | Val Loss: 5.9991 | LR: 0.000015 === 
+Validation Task Losses: Seg: 3.303 | Depth: 2.696 (depth_weight: 1.0)
+Depth | RMSE: 0.7682 | AbsRel: 0.2208 | δ1: 0.6618 | δ2: 0.9014 | δ3: 0.9744
+Seg   | mIoU: 0.3101 | Dice: 0.4502 | Pixel Acc: 0.6250
+
+ === Epoch [116/150] | Train Loss: 1.1203 | Val Loss: 5.9700 | LR: 0.000014 === 
+Validation Task Losses: Seg: 3.301 | Depth: 2.669 (depth_weight: 1.0)
+Depth | RMSE: 0.7545 | AbsRel: 0.2192 | δ1: 0.6648 | δ2: 0.9040 | δ3: 0.9760
+Seg   | mIoU: 0.3090 | Dice: 0.4488 | Pixel Acc: 0.6252
+
+ === Epoch [117/150] | Train Loss: 1.1335 | Val Loss: 5.8756 | LR: 0.000013 === 
+Validation Task Losses: Seg: 3.199 | Depth: 2.676 (depth_weight: 1.0)
+Depth | RMSE: 0.7558 | AbsRel: 0.2210 | δ1: 0.6638 | δ2: 0.9027 | δ3: 0.9749
+Seg   | mIoU: 0.3127 | Dice: 0.4536 | Pixel Acc: 0.6263
+
+ === Epoch [118/150] | Train Loss: 1.1332 | Val Loss: 6.0448 | LR: 0.000013 === 
+Validation Task Losses: Seg: 3.358 | Depth: 2.687 (depth_weight: 1.0)
+Depth | RMSE: 0.7598 | AbsRel: 0.2244 | δ1: 0.6604 | δ2: 0.9008 | δ3: 0.9742
+Seg   | mIoU: 0.3065 | Dice: 0.4451 | Pixel Acc: 0.6249
+
+ === Epoch [119/150] | Train Loss: 1.1061 | Val Loss: 5.9138 | LR: 0.000012 === 
+Validation Task Losses: Seg: 3.245 | Depth: 2.668 (depth_weight: 1.0)
+Depth | RMSE: 0.7529 | AbsRel: 0.2162 | δ1: 0.6662 | δ2: 0.9055 | δ3: 0.9765
+Seg   | mIoU: 0.3118 | Dice: 0.4523 | Pixel Acc: 0.6263
+
+ === Epoch [120/150] | Train Loss: 1.1280 | Val Loss: 5.9991 | LR: 0.000011 === 
+Validation Task Losses: Seg: 3.350 | Depth: 2.649 (depth_weight: 1.0)
+Depth | RMSE: 0.7469 | AbsRel: 0.2102 | δ1: 0.6702 | δ2: 0.9099 | δ3: 0.9789
+Seg   | mIoU: 0.3103 | Dice: 0.4503 | Pixel Acc: 0.6263
+--> Saved new best DEPTH checkpoint.
+
+ === Epoch [121/150] | Train Loss: 1.1151 | Val Loss: 5.9487 | LR: 0.000010 === 
+Validation Task Losses: Seg: 3.281 | Depth: 2.667 (depth_weight: 1.0)
+Depth | RMSE: 0.7496 | AbsRel: 0.2173 | δ1: 0.6670 | δ2: 0.9051 | δ3: 0.9760
+Seg   | mIoU: 0.3122 | Dice: 0.4529 | Pixel Acc: 0.6277
+
+ === Epoch [122/150] | Train Loss: 1.1194 | Val Loss: 5.9395 | LR: 0.000010 === 
+Validation Task Losses: Seg: 3.279 | Depth: 2.660 (depth_weight: 1.0)
+Depth | RMSE: 0.7482 | AbsRel: 0.2111 | δ1: 0.6687 | δ2: 0.9091 | δ3: 0.9784
+Seg   | mIoU: 0.3114 | Dice: 0.4520 | Pixel Acc: 0.6257
+
+ === Epoch [123/150] | Train Loss: 1.1027 | Val Loss: 5.9488 | LR: 0.000009 === 
+Validation Task Losses: Seg: 3.275 | Depth: 2.673 (depth_weight: 1.0)
+Depth | RMSE: 0.7516 | AbsRel: 0.2223 | δ1: 0.6642 | δ2: 0.9027 | δ3: 0.9749
+Seg   | mIoU: 0.3127 | Dice: 0.4531 | Pixel Acc: 0.6273
+
+ === Epoch [124/150] | Train Loss: 1.0951 | Val Loss: 6.0076 | LR: 0.000009 === 
+Validation Task Losses: Seg: 3.347 | Depth: 2.661 (depth_weight: 1.0)
+Depth | RMSE: 0.7483 | AbsRel: 0.2171 | δ1: 0.6661 | δ2: 0.9056 | δ3: 0.9769
+Seg   | mIoU: 0.3102 | Dice: 0.4498 | Pixel Acc: 0.6267
+
+ === Epoch [125/150] | Train Loss: 1.0729 | Val Loss: 5.9656 | LR: 0.000008 === 
+Validation Task Losses: Seg: 3.302 | Depth: 2.663 (depth_weight: 1.0)
+Depth | RMSE: 0.7493 | AbsRel: 0.2161 | δ1: 0.6671 | δ2: 0.9062 | δ3: 0.9772
+Seg   | mIoU: 0.3118 | Dice: 0.4522 | Pixel Acc: 0.6250
+
+ === Epoch [126/150] | Train Loss: 1.0787 | Val Loss: 6.0361 | LR: 0.000007 === 
+Validation Task Losses: Seg: 3.371 | Depth: 2.665 (depth_weight: 1.0)
+Depth | RMSE: 0.7510 | AbsRel: 0.2140 | δ1: 0.6684 | δ2: 0.9072 | δ3: 0.9775
+Seg   | mIoU: 0.3109 | Dice: 0.4507 | Pixel Acc: 0.6258
+
+ === Epoch [127/150] | Train Loss: 1.0682 | Val Loss: 5.9900 | LR: 0.000007 === 
+Validation Task Losses: Seg: 3.320 | Depth: 2.670 (depth_weight: 1.0)
+Depth | RMSE: 0.7516 | AbsRel: 0.2193 | δ1: 0.6651 | δ2: 0.9039 | δ3: 0.9757
+Seg   | mIoU: 0.3119 | Dice: 0.4522 | Pixel Acc: 0.6271
+
+ === Epoch [128/150] | Train Loss: 1.0873 | Val Loss: 5.9181 | LR: 0.000006 === 
+Validation Task Losses: Seg: 3.251 | Depth: 2.667 (depth_weight: 1.0)
+Depth | RMSE: 0.7527 | AbsRel: 0.2167 | δ1: 0.6663 | δ2: 0.9046 | δ3: 0.9764
+Seg   | mIoU: 0.3130 | Dice: 0.4539 | Pixel Acc: 0.6263
+
+ === Epoch [129/150] | Train Loss: 1.0944 | Val Loss: 6.0422 | LR: 0.000006 === 
+Validation Task Losses: Seg: 3.374 | Depth: 2.668 (depth_weight: 1.0)
+Depth | RMSE: 0.7519 | AbsRel: 0.2178 | δ1: 0.6671 | δ2: 0.9047 | δ3: 0.9761
+Seg   | mIoU: 0.3086 | Dice: 0.4481 | Pixel Acc: 0.6247
+
+ === Epoch [130/150] | Train Loss: 1.1150 | Val Loss: 6.0090 | LR: 0.000005 === 
+Validation Task Losses: Seg: 3.311 | Depth: 2.698 (depth_weight: 1.0)
+Depth | RMSE: 0.7633 | AbsRel: 0.2333 | δ1: 0.6531 | δ2: 0.8958 | δ3: 0.9719
+Seg   | mIoU: 0.3114 | Dice: 0.4518 | Pixel Acc: 0.6266
+
+ === Epoch [131/150] | Train Loss: 1.0699 | Val Loss: 6.0361 | LR: 0.000005 === 
+Validation Task Losses: Seg: 3.362 | Depth: 2.674 (depth_weight: 1.0)
+Depth | RMSE: 0.7532 | AbsRel: 0.2223 | δ1: 0.6634 | δ2: 0.9022 | δ3: 0.9751
+Seg   | mIoU: 0.3102 | Dice: 0.4501 | Pixel Acc: 0.6254
+
+ === Epoch [132/150] | Train Loss: 1.0735 | Val Loss: 6.0191 | LR: 0.000005 === 
+Validation Task Losses: Seg: 3.352 | Depth: 2.667 (depth_weight: 1.0)
+Depth | RMSE: 0.7514 | AbsRel: 0.2142 | δ1: 0.6676 | δ2: 0.9067 | δ3: 0.9776
+Seg   | mIoU: 0.3114 | Dice: 0.4515 | Pixel Acc: 0.6263
+
+ === Epoch [133/150] | Train Loss: 1.0625 | Val Loss: 6.0260 | LR: 0.000004 === 
+Validation Task Losses: Seg: 3.362 | Depth: 2.664 (depth_weight: 1.0)
+Depth | RMSE: 0.7516 | AbsRel: 0.2152 | δ1: 0.6669 | δ2: 0.9064 | δ3: 0.9776
+Seg   | mIoU: 0.3103 | Dice: 0.4503 | Pixel Acc: 0.6264
+
+ === Epoch [134/150] | Train Loss: 1.0758 | Val Loss: 5.9931 | LR: 0.000004 === 
+Validation Task Losses: Seg: 3.327 | Depth: 2.666 (depth_weight: 1.0)
+Depth | RMSE: 0.7492 | AbsRel: 0.2177 | δ1: 0.6668 | δ2: 0.9047 | δ3: 0.9764
+Seg   | mIoU: 0.3124 | Dice: 0.4526 | Pixel Acc: 0.6279
+
+ === Epoch [135/150] | Train Loss: 1.0776 | Val Loss: 5.9910 | LR: 0.000003 === 
+Validation Task Losses: Seg: 3.321 | Depth: 2.669 (depth_weight: 1.0)
+Depth | RMSE: 0.7493 | AbsRel: 0.2187 | δ1: 0.6663 | δ2: 0.9046 | δ3: 0.9763
+Seg   | mIoU: 0.3118 | Dice: 0.4520 | Pixel Acc: 0.6275
+
+ === Epoch [136/150] | Train Loss: 1.0684 | Val Loss: 6.0166 | LR: 0.000003 === 
+Validation Task Losses: Seg: 3.350 | Depth: 2.666 (depth_weight: 1.0)
+Depth | RMSE: 0.7517 | AbsRel: 0.2160 | δ1: 0.6670 | δ2: 0.9057 | δ3: 0.9769
+Seg   | mIoU: 0.3110 | Dice: 0.4510 | Pixel Acc: 0.6267
+
+ === Epoch [137/150] | Train Loss: 1.0755 | Val Loss: 6.0156 | LR: 0.000003 === 
+Validation Task Losses: Seg: 3.359 | Depth: 2.657 (depth_weight: 1.0)
+Depth | RMSE: 0.7473 | AbsRel: 0.2138 | δ1: 0.6687 | δ2: 0.9078 | δ3: 0.9779
+Seg   | mIoU: 0.3115 | Dice: 0.4517 | Pixel Acc: 0.6279
+
+ === Epoch [138/150] | Train Loss: 1.0597 | Val Loss: 6.0097 | LR: 0.000003 === 
+Validation Task Losses: Seg: 3.345 | Depth: 2.665 (depth_weight: 1.0)
+Depth | RMSE: 0.7594 | AbsRel: 0.2093 | δ1: 0.6680 | δ2: 0.9088 | δ3: 0.9785
+Seg   | mIoU: 0.3104 | Dice: 0.4502 | Pixel Acc: 0.6270
+
+ === Epoch [139/150] | Train Loss: 1.0538 | Val Loss: 6.0172 | LR: 0.000002 === 
+Validation Task Losses: Seg: 3.358 | Depth: 2.659 (depth_weight: 1.0)
+Depth | RMSE: 0.7513 | AbsRel: 0.2114 | δ1: 0.6694 | δ2: 0.9086 | δ3: 0.9784
+Seg   | mIoU: 0.3118 | Dice: 0.4520 | Pixel Acc: 0.6274
+
+ === Epoch [140/150] | Train Loss: 1.0616 | Val Loss: 6.0052 | LR: 0.000002 === 
+Validation Task Losses: Seg: 3.347 | Depth: 2.658 (depth_weight: 1.0)
+Depth | RMSE: 0.7507 | AbsRel: 0.2116 | δ1: 0.6694 | δ2: 0.9084 | δ3: 0.9781
+Seg   | mIoU: 0.3124 | Dice: 0.4524 | Pixel Acc: 0.6274
+
+ === Epoch [141/150] | Train Loss: 1.0433 | Val Loss: 6.0201 | LR: 0.000002 === 
+Validation Task Losses: Seg: 3.363 | Depth: 2.657 (depth_weight: 1.0)
+Depth | RMSE: 0.7457 | AbsRel: 0.2149 | δ1: 0.6693 | δ2: 0.9074 | δ3: 0.9774
+Seg   | mIoU: 0.3111 | Dice: 0.4509 | Pixel Acc: 0.6280
+
+ === Epoch [142/150] | Train Loss: 1.0430 | Val Loss: 6.0215 | LR: 0.000002 === 
+Validation Task Losses: Seg: 3.346 | Depth: 2.676 (depth_weight: 1.0)
+Depth | RMSE: 0.7514 | AbsRel: 0.2223 | δ1: 0.6640 | δ2: 0.9022 | δ3: 0.9748
+Seg   | mIoU: 0.3106 | Dice: 0.4504 | Pixel Acc: 0.6263
+
+ === Epoch [143/150] | Train Loss: 1.0615 | Val Loss: 6.0141 | LR: 0.000001 === 
+Validation Task Losses: Seg: 3.352 | Depth: 2.662 (depth_weight: 1.0)
+Depth | RMSE: 0.7495 | AbsRel: 0.2158 | δ1: 0.6684 | δ2: 0.9060 | δ3: 0.9768
+Seg   | mIoU: 0.3110 | Dice: 0.4509 | Pixel Acc: 0.6268
+
+ === Epoch [144/150] | Train Loss: 1.0605 | Val Loss: 6.0413 | LR: 0.000001 === 
+Validation Task Losses: Seg: 3.369 | Depth: 2.673 (depth_weight: 1.0)
+Depth | RMSE: 0.7509 | AbsRel: 0.2210 | δ1: 0.6650 | δ2: 0.9035 | δ3: 0.9758
+Seg   | mIoU: 0.3111 | Dice: 0.4509 | Pixel Acc: 0.6279
+
+ === Epoch [145/150] | Train Loss: 1.0629 | Val Loss: 6.0015 | LR: 0.000001 === 
+Validation Task Losses: Seg: 3.341 | Depth: 2.661 (depth_weight: 1.0)
+Depth | RMSE: 0.7499 | AbsRel: 0.2150 | δ1: 0.6688 | δ2: 0.9069 | δ3: 0.9775
+Seg   | mIoU: 0.3118 | Dice: 0.4521 | Pixel Acc: 0.6275

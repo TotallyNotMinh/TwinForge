@@ -1,0 +1,10 @@
+=================================================================
+       TwinForge Training Summary: isolated_depth (151 Epochs)
+=================================================================
+  • Best Depth δ1:       0.7248 (Epoch 139)
+  • Best Depth δ2:       0.9332 (Epoch 139)
+  • Best Depth δ3:       0.9849 (Epoch 139)
+  • Best Depth RMSE:     0.6470 (Epoch 116)
+  • Best Depth AbsRel:   0.1811 (Epoch 115)
+  • Min Val Loss:        0.4812 (Epoch 139)
+=================================================================

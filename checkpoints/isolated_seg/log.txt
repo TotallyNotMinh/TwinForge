@@ -1,0 +1,577 @@
+166.7s 24 === Epoch [00/150] | Train Loss: 2.0570 | Val Loss: 1.9494 | LR: 0.000019 ===
+166.7s 26 Depth | RMSE: 2.9438 | AbsRel: 0.9522 | δ1: 0.0005 | δ2: 0.0017 | δ3: 0.0042
+166.7s 27 Seg   | mIoU: 0.0266 | Dice: 0.0467 | Pixel Acc: 0.2016
+166.7s 28 Bound | F1: 0.2029 | Precision: 0.1204 | Recall: 0.6506
+209.6s 31 === Epoch [01/150] | Train Loss: 1.8054 | Val Loss: 1.8134 | LR: 0.000028 ===
+209.6s 33 Depth | RMSE: 2.9187 | AbsRel: 0.9399 | δ1: 0.0005 | δ2: 0.0014 | δ3: 0.0039
+209.6s 34 Seg   | mIoU: 0.0426 | Dice: 0.0724 | Pixel Acc: 0.2423
+209.6s 35 Bound | F1: 0.2142 | Precision: 0.1277 | Recall: 0.6664
+253.6s 38 === Epoch [02/150] | Train Loss: 1.6283 | Val Loss: 1.6772 | LR: 0.000037 ===
+253.6s 40 Depth | RMSE: 2.9404 | AbsRel: 0.9502 | δ1: 0.0002 | δ2: 0.0006 | δ3: 0.0016
+253.6s 41 Seg   | mIoU: 0.0582 | Dice: 0.0977 | Pixel Acc: 0.2651
+253.6s 42 Bound | F1: 0.1947 | Precision: 0.1142 | Recall: 0.6650
+294.9s 45 === Epoch [03/150] | Train Loss: 1.5355 | Val Loss: 1.5935 | LR: 0.000046 ===
+294.9s 47 Depth | RMSE: 2.9457 | AbsRel: 0.9448 | δ1: 0.0006 | δ2: 0.0021 | δ3: 0.0046
+294.9s 48 Seg   | mIoU: 0.0806 | Dice: 0.1301 | Pixel Acc: 0.3374
+294.9s 49 Bound | F1: 0.2115 | Precision: 0.1257 | Recall: 0.6674
+337.7s 52 === Epoch [04/150] | Train Loss: 1.4399 | Val Loss: 1.5625 | LR: 0.000055 ===
+337.7s 54 Depth | RMSE: 2.9675 | AbsRel: 0.9549 | δ1: 0.0003 | δ2: 0.0011 | δ3: 0.0030
+337.7s 55 Seg   | mIoU: 0.0878 | Dice: 0.1435 | Pixel Acc: 0.3138
+337.7s 56 Bound | F1: 0.2111 | Precision: 0.1225 | Recall: 0.7636
+379.8s 59 === Epoch [05/150] | Train Loss: 1.4050 | Val Loss: 1.5687 | LR: 0.000064 ===
+379.8s 61 Depth | RMSE: 2.9662 | AbsRel: 0.9567 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+379.8s 62 Seg   | mIoU: 0.0845 | Dice: 0.1385 | Pixel Acc: 0.3192
+379.8s 63 Bound | F1: 0.2041 | Precision: 0.1194 | Recall: 0.7063
+420.3s 65 === Epoch [06/150] | Train Loss: 1.3673 | Val Loss: 1.4713 | LR: 0.000073 ===
+420.3s 67 Depth | RMSE: 2.9603 | AbsRel: 0.9557 | δ1: 0.0001 | δ2: 0.0006 | δ3: 0.0020
+420.3s 68 Seg   | mIoU: 0.1124 | Dice: 0.1781 | Pixel Acc: 0.3896
+420.3s 69 Bound | F1: 0.2028 | Precision: 0.1176 | Recall: 0.7364
+462.1s 72 === Epoch [07/150] | Train Loss: 1.2867 | Val Loss: 1.4197 | LR: 0.000082 ===
+462.1s 74 Depth | RMSE: 2.9687 | AbsRel: 0.9561 | δ1: 0.0006 | δ2: 0.0018 | δ3: 0.0039
+462.1s 75 Seg   | mIoU: 0.1198 | Dice: 0.1880 | Pixel Acc: 0.4086
+462.1s 76 Bound | F1: 0.2039 | Precision: 0.1190 | Recall: 0.7158
+504.2s 79 === Epoch [08/150] | Train Loss: 1.2634 | Val Loss: 1.4682 | LR: 0.000091 ===
+504.2s 81 Depth | RMSE: 2.9496 | AbsRel: 0.9515 | δ1: 0.0000 | δ2: 0.0002 | δ3: 0.0013
+504.2s 82 Seg   | mIoU: 0.1169 | Dice: 0.1850 | Pixel Acc: 0.4258
+504.2s 83 Bound | F1: 0.2033 | Precision: 0.1203 | Recall: 0.6581
+546.2s 85 === Epoch [09/150] | Train Loss: 1.2548 | Val Loss: 1.4766 | LR: 0.000100 ===
+546.2s 87 Depth | RMSE: 2.9622 | AbsRel: 0.9538 | δ1: 0.0005 | δ2: 0.0013 | δ3: 0.0025
+546.2s 88 Seg   | mIoU: 0.1214 | Dice: 0.1919 | Pixel Acc: 0.3682
+546.2s 89 Bound | F1: 0.2142 | Precision: 0.1251 | Recall: 0.7473
+587.7s 92 === Epoch [10/150] | Train Loss: 1.1866 | Val Loss: 1.3921 | LR: 0.000100 ===
+587.7s 94 Depth | RMSE: 2.9726 | AbsRel: 0.9620 | δ1: 0.0001 | δ2: 0.0005 | δ3: 0.0013
+587.7s 95 Seg   | mIoU: 0.1292 | Dice: 0.2010 | Pixel Acc: 0.4126
+587.7s 96 Bound | F1: 0.2079 | Precision: 0.1212 | Recall: 0.7336
+628.9s 99 === Epoch [11/150] | Train Loss: 1.1495 | Val Loss: 1.3399 | LR: 0.000100 ===
+628.9s 101 Depth | RMSE: 2.9631 | AbsRel: 0.9556 | δ1: 0.0000 | δ2: 0.0003 | δ3: 0.0010
+628.9s 102 Seg   | mIoU: 0.1418 | Dice: 0.2205 | Pixel Acc: 0.4500
+628.9s 103 Bound | F1: 0.2122 | Precision: 0.1256 | Recall: 0.6842
+671.3s 106 === Epoch [12/150] | Train Loss: 1.1050 | Val Loss: 1.3019 | LR: 0.000100 ===
+671.3s 108 Depth | RMSE: 2.9528 | AbsRel: 0.9514 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0001
+671.3s 109 Seg   | mIoU: 0.1551 | Dice: 0.2383 | Pixel Acc: 0.4817
+671.3s 110 Bound | F1: 0.2182 | Precision: 0.1281 | Recall: 0.7367
+712.7s 113 === Epoch [13/150] | Train Loss: 1.0651 | Val Loss: 1.3670 | LR: 0.000100 ===
+712.7s 115 Depth | RMSE: 2.9676 | AbsRel: 0.9569 | δ1: 0.0000 | δ2: 0.0001 | δ3: 0.0008
+712.7s 116 Seg   | mIoU: 0.1366 | Dice: 0.2131 | Pixel Acc: 0.4234
+712.7s 117 Bound | F1: 0.2135 | Precision: 0.1302 | Recall: 0.5931
+754.2s 119 === Epoch [14/150] | Train Loss: 1.0231 | Val Loss: 1.3129 | LR: 0.000100 ===
+754.2s 121 Depth | RMSE: 2.9647 | AbsRel: 0.9517 | δ1: 0.0000 | δ2: 0.0004 | δ3: 0.0017
+754.2s 122 Seg   | mIoU: 0.1554 | Dice: 0.2393 | Pixel Acc: 0.4605
+754.2s 123 Bound | F1: 0.2025 | Precision: 0.1207 | Recall: 0.6291
+796.1s 126 === Epoch [15/150] | Train Loss: 0.9994 | Val Loss: 1.2360 | LR: 0.000100 ===
+796.1s 128 Depth | RMSE: 2.9512 | AbsRel: 0.9496 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0002
+796.1s 129 Seg   | mIoU: 0.1803 | Dice: 0.2725 | Pixel Acc: 0.4994
+796.1s 130 Bound | F1: 0.2161 | Precision: 0.1274 | Recall: 0.7129
+837.7s 133 === Epoch [16/150] | Train Loss: 0.9806 | Val Loss: 1.2985 | LR: 0.000099 ===
+837.7s 135 Depth | RMSE: 2.9704 | AbsRel: 0.9598 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0004
+837.7s 136 Seg   | mIoU: 0.1713 | Dice: 0.2595 | Pixel Acc: 0.5066
+837.7s 137 Bound | F1: 0.2013 | Precision: 0.1175 | Recall: 0.7063
+879.6s 139 === Epoch [17/150] | Train Loss: 0.9536 | Val Loss: 1.2943 | LR: 0.000099 ===
+879.6s 141 Depth | RMSE: 2.9406 | AbsRel: 0.9440 | δ1: 0.0000 | δ2: 0.0001 | δ3: 0.0005
+879.6s 142 Seg   | mIoU: 0.1785 | Dice: 0.2692 | Pixel Acc: 0.4900
+879.6s 143 Bound | F1: 0.2022 | Precision: 0.1186 | Recall: 0.6851
+920.0s 145 === Epoch [18/150] | Train Loss: 0.9061 | Val Loss: 1.2111 | LR: 0.000099 ===
+920.0s 147 Depth | RMSE: 2.9569 | AbsRel: 0.9506 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0001
+920.0s 148 Seg   | mIoU: 0.1831 | Dice: 0.2746 | Pixel Acc: 0.5198
+920.0s 149 Bound | F1: 0.2056 | Precision: 0.1206 | Recall: 0.7009
+964.0s 152 === Epoch [19/150] | Train Loss: 0.8782 | Val Loss: 1.2726 | LR: 0.000099 ===
+964.0s 154 Depth | RMSE: 2.9586 | AbsRel: 0.9525 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+964.0s 155 Seg   | mIoU: 0.1858 | Dice: 0.2791 | Pixel Acc: 0.4967
+964.0s 156 Bound | F1: 0.2188 | Precision: 0.1287 | Recall: 0.7336
+1009.4s 159 === Epoch [20/150] | Train Loss: 0.8874 | Val Loss: 1.2140 | LR: 0.000098 ===
+1009.4s 161 Depth | RMSE: 2.9576 | AbsRel: 0.9531 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+1009.4s 162 Seg   | mIoU: 0.1944 | Dice: 0.2891 | Pixel Acc: 0.5322
+1009.4s 163 Bound | F1: 0.2170 | Precision: 0.1278 | Recall: 0.7180
+1053.6s 166 === Epoch [21/150] | Train Loss: 0.8283 | Val Loss: 1.2521 | LR: 0.000098 ===
+1053.6s 168 Depth | RMSE: 2.9572 | AbsRel: 0.9523 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0001
+1053.6s 169 Seg   | mIoU: 0.1996 | Dice: 0.2954 | Pixel Acc: 0.5317
+1053.6s 170 Bound | F1: 0.2194 | Precision: 0.1301 | Recall: 0.7005
+1098.5s 173 === Epoch [22/150] | Train Loss: 0.7984 | Val Loss: 1.2789 | LR: 0.000098 ===
+1098.5s 175 Depth | RMSE: 2.9480 | AbsRel: 0.9469 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+1098.5s 176 Seg   | mIoU: 0.2005 | Dice: 0.2973 | Pixel Acc: 0.5514
+1098.5s 177 Bound | F1: 0.2156 | Precision: 0.1272 | Recall: 0.7062
+1143.7s 180 === Epoch [23/150] | Train Loss: 0.8087 | Val Loss: 1.2446 | LR: 0.000098 ===
+1143.7s 182 Depth | RMSE: 2.9674 | AbsRel: 0.9584 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+1143.7s 183 Seg   | mIoU: 0.2032 | Dice: 0.2980 | Pixel Acc: 0.5344
+1143.7s 184 Bound | F1: 0.2250 | Precision: 0.1329 | Recall: 0.7355
+1188.4s 187 === Epoch [24/150] | Train Loss: 0.7822 | Val Loss: 1.2370 | LR: 0.000097 ===
+1188.4s 189 Depth | RMSE: 2.9539 | AbsRel: 0.9530 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+1188.4s 190 Seg   | mIoU: 0.2072 | Dice: 0.3063 | Pixel Acc: 0.5630
+1188.4s 191 Bound | F1: 0.2252 | Precision: 0.1356 | Recall: 0.6662
+1232.1s 194 === Epoch [25/150] | Train Loss: 0.7651 | Val Loss: 1.2266 | LR: 0.000097 ===
+1232.1s 196 Depth | RMSE: 2.9648 | AbsRel: 0.9573 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+1232.1s 197 Seg   | mIoU: 0.2121 | Dice: 0.3116 | Pixel Acc: 0.5505
+1232.1s 198 Bound | F1: 0.2155 | Precision: 0.1263 | Recall: 0.7327
+1276.5s 201 === Epoch [26/150] | Train Loss: 0.7477 | Val Loss: 1.2736 | LR: 0.000096 ===
+1276.5s 203 Depth | RMSE: 2.9667 | AbsRel: 0.9573 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+1276.5s 204 Seg   | mIoU: 0.1889 | Dice: 0.2814 | Pixel Acc: 0.5256
+1276.5s 205 Bound | F1: 0.2101 | Precision: 0.1241 | Recall: 0.6847
+1320.3s 207 === Epoch [27/150] | Train Loss: 0.7647 | Val Loss: 1.2800 | LR: 0.000096 ===
+1320.3s 209 Depth | RMSE: 2.9474 | AbsRel: 0.9468 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+1320.3s 210 Seg   | mIoU: 0.2121 | Dice: 0.3125 | Pixel Acc: 0.5668
+1320.3s 211 Bound | F1: 0.2086 | Precision: 0.1229 | Recall: 0.6899
+1362.8s 213 === Epoch [28/150] | Train Loss: 0.7122 | Val Loss: 1.2914 | LR: 0.000096 ===
+1362.8s 215 Depth | RMSE: 2.9609 | AbsRel: 0.9552 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+1362.8s 216 Seg   | mIoU: 0.2075 | Dice: 0.3060 | Pixel Acc: 0.5540
+1362.8s 217 Bound | F1: 0.2119 | Precision: 0.1258 | Recall: 0.6737
+1406.0s 219 === Epoch [29/150] | Train Loss: 0.6934 | Val Loss: 1.2358 | LR: 0.000095 ===
+1406.0s 221 Depth | RMSE: 2.9621 | AbsRel: 0.9566 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+1406.0s 222 Seg   | mIoU: 0.2067 | Dice: 0.3054 | Pixel Acc: 0.5562
+1406.0s 223 Bound | F1: 0.2155 | Precision: 0.1283 | Recall: 0.6758
+1448.5s 225 === Epoch [30/150] | Train Loss: 0.6988 | Val Loss: 1.2837 | LR: 0.000095 ===
+1448.5s 227 Depth | RMSE: 2.9576 | AbsRel: 0.9559 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+1448.5s 228 Seg   | mIoU: 0.2091 | Dice: 0.3086 | Pixel Acc: 0.5568
+1448.5s 229 Bound | F1: 0.2174 | Precision: 0.1297 | Recall: 0.6750
+1491.4s 231 === Epoch [31/150] | Train Loss: 0.6881 | Val Loss: 1.2915 | LR: 0.000094 ===
+1491.4s 233 Depth | RMSE: 2.9554 | AbsRel: 0.9515 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+1491.4s 234 Seg   | mIoU: 0.2144 | Dice: 0.3143 | Pixel Acc: 0.5676
+1491.4s 235 Bound | F1: 0.2192 | Precision: 0.1306 | Recall: 0.6829
+1534.5s 238 === Epoch [32/150] | Train Loss: 0.6647 | Val Loss: 1.2731 | LR: 0.000094 ===
+1534.5s 240 Depth | RMSE: 2.9508 | AbsRel: 0.9533 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+1534.5s 241 Seg   | mIoU: 0.2238 | Dice: 0.3267 | Pixel Acc: 0.5829
+1534.5s 242 Bound | F1: 0.2191 | Precision: 0.1319 | Recall: 0.6485
+1577.7s 245 === Epoch [33/150] | Train Loss: 0.6288 | Val Loss: 1.2247 | LR: 0.000093 ===
+1577.7s 247 Depth | RMSE: 2.9594 | AbsRel: 0.9542 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+1577.7s 248 Seg   | mIoU: 0.2250 | Dice: 0.3289 | Pixel Acc: 0.5744
+1577.7s 249 Bound | F1: 0.2173 | Precision: 0.1289 | Recall: 0.6918
+1621.3s 252 === Epoch [34/150] | Train Loss: 0.6222 | Val Loss: 1.3393 | LR: 0.000092 ===
+1621.3s 254 Depth | RMSE: 2.9526 | AbsRel: 0.9526 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+1621.3s 255 Seg   | mIoU: 0.2314 | Dice: 0.3371 | Pixel Acc: 0.5879
+1621.3s 256 Bound | F1: 0.2156 | Precision: 0.1287 | Recall: 0.6655
+1662.9s 259 === Epoch [35/150] | Train Loss: 0.6025 | Val Loss: 1.2407 | LR: 0.000092 ===
+1662.9s 261 Depth | RMSE: 2.9599 | AbsRel: 0.9580 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+1662.9s 262 Seg   | mIoU: 0.2297 | Dice: 0.3341 | Pixel Acc: 0.5921
+1662.9s 263 Bound | F1: 0.2242 | Precision: 0.1335 | Recall: 0.7006
+1706.1s 265 === Epoch [36/150] | Train Loss: 0.5834 | Val Loss: 1.2716 | LR: 0.000091 ===
+1706.1s 267 Depth | RMSE: 2.9471 | AbsRel: 0.9497 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0001
+1706.1s 268 Seg   | mIoU: 0.2327 | Dice: 0.3351 | Pixel Acc: 0.5959
+1706.1s 269 Bound | F1: 0.2205 | Precision: 0.1308 | Recall: 0.7036
+1749.2s 272 === Epoch [37/150] | Train Loss: 0.5733 | Val Loss: 1.2294 | LR: 0.000091 ===
+1749.2s 274 Depth | RMSE: 2.9576 | AbsRel: 0.9540 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+1749.2s 275 Seg   | mIoU: 0.2350 | Dice: 0.3415 | Pixel Acc: 0.6013
+1749.2s 276 Bound | F1: 0.2223 | Precision: 0.1320 | Recall: 0.7054
+1792.0s 279 === Epoch [38/150] | Train Loss: 0.5711 | Val Loss: 1.2805 | LR: 0.000090 ===
+1792.0s 281 Depth | RMSE: 2.9667 | AbsRel: 0.9592 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+1792.0s 282 Seg   | mIoU: 0.2239 | Dice: 0.3265 | Pixel Acc: 0.5897
+1792.0s 283 Bound | F1: 0.2258 | Precision: 0.1351 | Recall: 0.6894
+1833.9s 285 === Epoch [39/150] | Train Loss: 0.5599 | Val Loss: 1.2755 | LR: 0.000089 ===
+1833.9s 287 Depth | RMSE: 2.9480 | AbsRel: 0.9493 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+1833.9s 288 Seg   | mIoU: 0.2348 | Dice: 0.3406 | Pixel Acc: 0.6073
+1833.9s 289 Bound | F1: 0.2140 | Precision: 0.1270 | Recall: 0.6809
+1875.6s 291 === Epoch [40/150] | Train Loss: 0.5346 | Val Loss: 1.3432 | LR: 0.000088 ===
+1875.6s 293 Depth | RMSE: 2.9510 | AbsRel: 0.9496 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+1875.6s 294 Seg   | mIoU: 0.2230 | Dice: 0.3258 | Pixel Acc: 0.5935
+1875.6s 295 Bound | F1: 0.2170 | Precision: 0.1291 | Recall: 0.6801
+1917.3s 297 === Epoch [41/150] | Train Loss: 0.5215 | Val Loss: 1.3412 | LR: 0.000088 ===
+1917.3s 299 Depth | RMSE: 2.9650 | AbsRel: 0.9603 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+1917.3s 300 Seg   | mIoU: 0.2306 | Dice: 0.3340 | Pixel Acc: 0.5910
+1917.3s 301 Bound | F1: 0.2164 | Precision: 0.1303 | Recall: 0.6411
+1959.0s 303 === Epoch [42/150] | Train Loss: 0.5241 | Val Loss: 1.3252 | LR: 0.000087 ===
+1959.0s 305 Depth | RMSE: 2.9562 | AbsRel: 0.9553 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+1959.0s 306 Seg   | mIoU: 0.2315 | Dice: 0.3370 | Pixel Acc: 0.6049
+1959.0s 307 Bound | F1: 0.2206 | Precision: 0.1314 | Recall: 0.6877
+2001.6s 309 === Epoch [43/150] | Train Loss: 0.5326 | Val Loss: 1.3107 | LR: 0.000086 ===
+2001.6s 311 Depth | RMSE: 2.9620 | AbsRel: 0.9579 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+2001.6s 312 Seg   | mIoU: 0.2347 | Dice: 0.3400 | Pixel Acc: 0.5921
+2001.6s 313 Bound | F1: 0.2201 | Precision: 0.1296 | Recall: 0.7324
+2042.7s 315 === Epoch [44/150] | Train Loss: 0.5338 | Val Loss: 1.2764 | LR: 0.000086 ===
+2042.7s 317 Depth | RMSE: 2.9446 | AbsRel: 0.9486 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+2042.7s 318 Seg   | mIoU: 0.2386 | Dice: 0.3439 | Pixel Acc: 0.5971
+2042.7s 319 Bound | F1: 0.2196 | Precision: 0.1309 | Recall: 0.6830
+2085.5s 322 === Epoch [45/150] | Train Loss: 0.4971 | Val Loss: 1.3307 | LR: 0.000085 ===
+2085.5s 324 Depth | RMSE: 2.9443 | AbsRel: 0.9488 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+2085.5s 325 Seg   | mIoU: 0.2318 | Dice: 0.3379 | Pixel Acc: 0.6088
+2085.5s 326 Bound | F1: 0.2189 | Precision: 0.1298 | Recall: 0.7016
+2127.3s 328 === Epoch [46/150] | Train Loss: 0.4943 | Val Loss: 1.3358 | LR: 0.000084 ===
+2127.3s 330 Depth | RMSE: 2.9665 | AbsRel: 0.9603 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+2127.3s 331 Seg   | mIoU: 0.2387 | Dice: 0.3429 | Pixel Acc: 0.6129
+2127.3s 332 Bound | F1: 0.2085 | Precision: 0.1221 | Recall: 0.7150
+2170.6s 335 === Epoch [47/150] | Train Loss: 0.5027 | Val Loss: 1.3093 | LR: 0.000083 ===
+2170.6s 337 Depth | RMSE: 2.9660 | AbsRel: 0.9601 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+2170.6s 338 Seg   | mIoU: 0.2426 | Dice: 0.3495 | Pixel Acc: 0.6115
+2170.6s 339 Bound | F1: 0.2173 | Precision: 0.1301 | Recall: 0.6594
+2213.7s 342 === Epoch [48/150] | Train Loss: 0.4824 | Val Loss: 1.3377 | LR: 0.000082 ===
+2213.7s 344 Depth | RMSE: 2.9489 | AbsRel: 0.9515 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+2213.7s 345 Seg   | mIoU: 0.2319 | Dice: 0.3373 | Pixel Acc: 0.6063
+2213.7s 346 Bound | F1: 0.2237 | Precision: 0.1345 | Recall: 0.6649
+2255.0s 348 === Epoch [49/150] | Train Loss: 0.4651 | Val Loss: 1.3419 | LR: 0.000081 ===
+2255.0s 350 Depth | RMSE: 2.9649 | AbsRel: 0.9607 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+2255.0s 351 Seg   | mIoU: 0.2355 | Dice: 0.3387 | Pixel Acc: 0.6130
+2255.0s 352 Bound | F1: 0.2259 | Precision: 0.1368 | Recall: 0.6481
+2295.7s 354 === Epoch [50/150] | Train Loss: 0.4646 | Val Loss: 1.3021 | LR: 0.000080 ===
+2295.7s 356 Depth | RMSE: 2.9673 | AbsRel: 0.9615 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+2295.7s 357 Seg   | mIoU: 0.2350 | Dice: 0.3419 | Pixel Acc: 0.6195
+2295.7s 358 Bound | F1: 0.2146 | Precision: 0.1270 | Recall: 0.6954
+2338.2s 360 === Epoch [51/150] | Train Loss: 0.4564 | Val Loss: 1.3437 | LR: 0.000080 ===
+2338.2s 362 Depth | RMSE: 2.9623 | AbsRel: 0.9588 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+2338.2s 363 Seg   | mIoU: 0.2453 | Dice: 0.3506 | Pixel Acc: 0.6240
+2338.2s 364 Bound | F1: 0.2251 | Precision: 0.1346 | Recall: 0.6877
+2380.4s 367 === Epoch [52/150] | Train Loss: 0.4330 | Val Loss: 1.3102 | LR: 0.000079 ===
+2380.4s 369 Depth | RMSE: 2.9458 | AbsRel: 0.9506 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+2380.4s 370 Seg   | mIoU: 0.2571 | Dice: 0.3664 | Pixel Acc: 0.6376
+2380.4s 371 Bound | F1: 0.2291 | Precision: 0.1375 | Recall: 0.6893
+2422.2s 374 === Epoch [53/150] | Train Loss: 0.4188 | Val Loss: 1.3844 | LR: 0.000078 ===
+2422.2s 376 Depth | RMSE: 2.9546 | AbsRel: 0.9551 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+2422.2s 377 Seg   | mIoU: 0.2439 | Dice: 0.3494 | Pixel Acc: 0.6269
+2422.2s 378 Bound | F1: 0.2297 | Precision: 0.1379 | Recall: 0.6881
+2464.9s 380 === Epoch [54/150] | Train Loss: 0.4293 | Val Loss: 1.3413 | LR: 0.000077 ===
+2464.9s 382 Depth | RMSE: 2.9503 | AbsRel: 0.9526 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+2464.9s 383 Seg   | mIoU: 0.2502 | Dice: 0.3577 | Pixel Acc: 0.6285
+2464.9s 384 Bound | F1: 0.2312 | Precision: 0.1372 | Recall: 0.7358
+2506.4s 386 === Epoch [55/150] | Train Loss: 0.4144 | Val Loss: 1.3523 | LR: 0.000076 ===
+2506.4s 388 Depth | RMSE: 2.9592 | AbsRel: 0.9560 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+2506.4s 389 Seg   | mIoU: 0.2517 | Dice: 0.3603 | Pixel Acc: 0.6292
+2506.4s 390 Bound | F1: 0.2224 | Precision: 0.1328 | Recall: 0.6845
+2546.8s 392 === Epoch [56/150] | Train Loss: 0.3957 | Val Loss: 1.4176 | LR: 0.000075 ===
+2546.8s 394 Depth | RMSE: 2.9604 | AbsRel: 0.9544 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+2546.8s 395 Seg   | mIoU: 0.2391 | Dice: 0.3472 | Pixel Acc: 0.6177
+2546.8s 396 Bound | F1: 0.2215 | Precision: 0.1309 | Recall: 0.7214
+2588.7s 398 === Epoch [57/150] | Train Loss: 0.3848 | Val Loss: 1.3968 | LR: 0.000074 ===
+2588.7s 400 Depth | RMSE: 2.9499 | AbsRel: 0.9516 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+2588.7s 401 Seg   | mIoU: 0.2561 | Dice: 0.3657 | Pixel Acc: 0.6438
+2588.7s 402 Bound | F1: 0.2228 | Precision: 0.1342 | Recall: 0.6571
+2629.7s 404 === Epoch [58/150] | Train Loss: 0.3955 | Val Loss: 1.3393 | LR: 0.000073 ===
+2629.7s 406 Depth | RMSE: 2.9632 | AbsRel: 0.9580 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+2629.7s 407 Seg   | mIoU: 0.2437 | Dice: 0.3526 | Pixel Acc: 0.6207
+2629.7s 408 Bound | F1: 0.2170 | Precision: 0.1293 | Recall: 0.6751
+2671.6s 410 === Epoch [59/150] | Train Loss: 0.4130 | Val Loss: 1.3694 | LR: 0.000072 ===
+2671.6s 412 Depth | RMSE: 2.9489 | AbsRel: 0.9518 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+2671.6s 413 Seg   | mIoU: 0.2517 | Dice: 0.3604 | Pixel Acc: 0.6323
+2671.6s 414 Bound | F1: 0.2305 | Precision: 0.1387 | Recall: 0.6828
+2713.5s 416 === Epoch [60/150] | Train Loss: 0.3838 | Val Loss: 1.3801 | LR: 0.000071 ===
+2713.5s 418 Depth | RMSE: 2.9531 | AbsRel: 0.9526 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+2713.5s 419 Seg   | mIoU: 0.2518 | Dice: 0.3612 | Pixel Acc: 0.6308
+2713.5s 420 Bound | F1: 0.2239 | Precision: 0.1332 | Recall: 0.7007
+2754.9s 422 === Epoch [61/150] | Train Loss: 0.3760 | Val Loss: 1.3641 | LR: 0.000070 ===
+2754.9s 424 Depth | RMSE: 2.9563 | AbsRel: 0.9566 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+2754.9s 425 Seg   | mIoU: 0.2479 | Dice: 0.3552 | Pixel Acc: 0.6272
+2754.9s 426 Bound | F1: 0.2179 | Precision: 0.1305 | Recall: 0.6624
+2796.2s 428 === Epoch [62/150] | Train Loss: 0.3676 | Val Loss: 1.4244 | LR: 0.000069 ===
+2796.2s 430 Depth | RMSE: 2.9552 | AbsRel: 0.9550 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+2796.2s 431 Seg   | mIoU: 0.2513 | Dice: 0.3578 | Pixel Acc: 0.6386
+2796.2s 432 Bound | F1: 0.2226 | Precision: 0.1335 | Recall: 0.6705
+2837.7s 434 === Epoch [63/150] | Train Loss: 0.3606 | Val Loss: 1.4641 | LR: 0.000068 ===
+2837.7s 436 Depth | RMSE: 2.9511 | AbsRel: 0.9517 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+2837.7s 437 Seg   | mIoU: 0.2543 | Dice: 0.3619 | Pixel Acc: 0.6374
+2837.7s 438 Bound | F1: 0.2233 | Precision: 0.1331 | Recall: 0.6942
+2879.4s 440 === Epoch [64/150] | Train Loss: 0.3662 | Val Loss: 1.3977 | LR: 0.000067 ===
+2879.4s 442 Depth | RMSE: 2.9548 | AbsRel: 0.9546 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+2879.4s 443 Seg   | mIoU: 0.2529 | Dice: 0.3614 | Pixel Acc: 0.6308
+2879.4s 444 Bound | F1: 0.2191 | Precision: 0.1317 | Recall: 0.6547
+2921.3s 446 === Epoch [65/150] | Train Loss: 0.3452 | Val Loss: 1.3621 | LR: 0.000066 ===
+2921.3s 448 Depth | RMSE: 2.9619 | AbsRel: 0.9588 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+2921.3s 449 Seg   | mIoU: 0.2611 | Dice: 0.3716 | Pixel Acc: 0.6456
+2921.3s 450 Bound | F1: 0.2217 | Precision: 0.1312 | Recall: 0.7156
+2966.9s 453 === Epoch [66/150] | Train Loss: 0.3456 | Val Loss: 1.3527 | LR: 0.000065 ===
+2966.9s 455 Depth | RMSE: 2.9614 | AbsRel: 0.9571 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+2966.9s 456 Seg   | mIoU: 0.2546 | Dice: 0.3640 | Pixel Acc: 0.6483
+2966.9s 457 Bound | F1: 0.2217 | Precision: 0.1332 | Recall: 0.6635
+3010.9s 459 === Epoch [67/150] | Train Loss: 0.3412 | Val Loss: 1.4247 | LR: 0.000064 ===
+3010.9s 461 Depth | RMSE: 2.9578 | AbsRel: 0.9561 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+3010.9s 462 Seg   | mIoU: 0.2558 | Dice: 0.3643 | Pixel Acc: 0.6509
+3010.9s 463 Bound | F1: 0.2222 | Precision: 0.1330 | Recall: 0.6762
+3054.2s 465 === Epoch [68/150] | Train Loss: 0.3297 | Val Loss: 1.4216 | LR: 0.000063 ===
+3054.2s 467 Depth | RMSE: 2.9507 | AbsRel: 0.9515 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+3054.2s 468 Seg   | mIoU: 0.2601 | Dice: 0.3702 | Pixel Acc: 0.6472
+3054.2s 469 Bound | F1: 0.2266 | Precision: 0.1367 | Recall: 0.6618
+3099.1s 471 === Epoch [69/150] | Train Loss: 0.3114 | Val Loss: 1.4574 | LR: 0.000062 ===
+3099.1s 473 Depth | RMSE: 2.9494 | AbsRel: 0.9539 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+3099.1s 474 Seg   | mIoU: 0.2604 | Dice: 0.3698 | Pixel Acc: 0.6537
+3099.1s 475 Bound | F1: 0.2189 | Precision: 0.1310 | Recall: 0.6670
+3144.1s 477 === Epoch [70/150] | Train Loss: 0.3100 | Val Loss: 1.4075 | LR: 0.000060 ===
+3144.1s 479 Depth | RMSE: 2.9551 | AbsRel: 0.9552 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+3144.1s 480 Seg   | mIoU: 0.2588 | Dice: 0.3695 | Pixel Acc: 0.6428
+3144.1s 481 Bound | F1: 0.2263 | Precision: 0.1354 | Recall: 0.6897
+3187.8s 483 === Epoch [71/150] | Train Loss: 0.3130 | Val Loss: 1.4096 | LR: 0.000059 ===
+3187.8s 485 Depth | RMSE: 2.9457 | AbsRel: 0.9514 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+3187.8s 486 Seg   | mIoU: 0.2618 | Dice: 0.3712 | Pixel Acc: 0.6398
+3187.8s 487 Bound | F1: 0.2201 | Precision: 0.1302 | Recall: 0.7134
+3233.3s 490 === Epoch [72/150] | Train Loss: 0.3149 | Val Loss: 1.4313 | LR: 0.000058 ===
+3233.3s 492 Depth | RMSE: 2.9537 | AbsRel: 0.9550 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+3233.3s 493 Seg   | mIoU: 0.2603 | Dice: 0.3699 | Pixel Acc: 0.6444
+3233.3s 494 Bound | F1: 0.2152 | Precision: 0.1274 | Recall: 0.6939
+3277.8s 496 === Epoch [73/150] | Train Loss: 0.3107 | Val Loss: 1.4236 | LR: 0.000057 ===
+3277.8s 498 Depth | RMSE: 2.9515 | AbsRel: 0.9536 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+3277.8s 499 Seg   | mIoU: 0.2560 | Dice: 0.3650 | Pixel Acc: 0.6327
+3277.8s 500 Bound | F1: 0.2187 | Precision: 0.1284 | Recall: 0.7368
+3322.1s 502 === Epoch [74/150] | Train Loss: 0.3017 | Val Loss: 1.5249 | LR: 0.000056 ===
+3322.1s 504 Depth | RMSE: 2.9605 | AbsRel: 0.9573 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+3322.1s 505 Seg   | mIoU: 0.2589 | Dice: 0.3677 | Pixel Acc: 0.6464
+3322.1s 506 Bound | F1: 0.2161 | Precision: 0.1283 | Recall: 0.6870
+3366.8s 508 === Epoch [75/150] | Train Loss: 0.2986 | Val Loss: 1.4633 | LR: 0.000055 ===
+3366.8s 510 Depth | RMSE: 2.9524 | AbsRel: 0.9531 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+3366.8s 511 Seg   | mIoU: 0.2689 | Dice: 0.3790 | Pixel Acc: 0.6554
+3366.8s 512 Bound | F1: 0.2183 | Precision: 0.1292 | Recall: 0.7048
+3410.6s 515 === Epoch [76/150] | Train Loss: 0.2921 | Val Loss: 1.4323 | LR: 0.000054 ===
+3410.6s 517 Depth | RMSE: 2.9630 | AbsRel: 0.9598 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+3410.6s 518 Seg   | mIoU: 0.2576 | Dice: 0.3660 | Pixel Acc: 0.6475
+3410.6s 519 Bound | F1: 0.2185 | Precision: 0.1305 | Recall: 0.6731
+3454.4s 521 === Epoch [77/150] | Train Loss: 0.2891 | Val Loss: 1.4303 | LR: 0.000053 ===
+3454.4s 523 Depth | RMSE: 2.9523 | AbsRel: 0.9534 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+3454.4s 524 Seg   | mIoU: 0.2680 | Dice: 0.3794 | Pixel Acc: 0.6583
+3454.4s 525 Bound | F1: 0.2176 | Precision: 0.1303 | Recall: 0.6607
+3497.3s 527 === Epoch [78/150] | Train Loss: 0.2821 | Val Loss: 1.4371 | LR: 0.000052 ===
+3497.3s 529 Depth | RMSE: 2.9528 | AbsRel: 0.9534 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+3497.3s 530 Seg   | mIoU: 0.2634 | Dice: 0.3732 | Pixel Acc: 0.6566
+3497.3s 531 Bound | F1: 0.2202 | Precision: 0.1312 | Recall: 0.6871
+3541.5s 533 === Epoch [79/150] | Train Loss: 0.2910 | Val Loss: 1.4007 | LR: 0.000051 ===
+3541.5s 535 Depth | RMSE: 2.9540 | AbsRel: 0.9546 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+3541.5s 536 Seg   | mIoU: 0.2680 | Dice: 0.3793 | Pixel Acc: 0.6551
+3541.5s 537 Bound | F1: 0.2181 | Precision: 0.1307 | Recall: 0.6584
+3586.6s 539 === Epoch [80/150] | Train Loss: 0.2787 | Val Loss: 1.4161 | LR: 0.000049 ===
+3586.6s 541 Depth | RMSE: 2.9527 | AbsRel: 0.9542 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+3586.6s 542 Seg   | mIoU: 0.2661 | Dice: 0.3774 | Pixel Acc: 0.6573
+3586.6s 543 Bound | F1: 0.2191 | Precision: 0.1300 | Recall: 0.6986
+3630.0s 545 === Epoch [81/150] | Train Loss: 0.2817 | Val Loss: 1.4695 | LR: 0.000048 ===
+3630.0s 547 Depth | RMSE: 2.9495 | AbsRel: 0.9524 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+3630.0s 548 Seg   | mIoU: 0.2647 | Dice: 0.3752 | Pixel Acc: 0.6565
+3630.0s 549 Bound | F1: 0.2200 | Precision: 0.1326 | Recall: 0.6460
+3673.7s 551 === Epoch [82/150] | Train Loss: 0.2668 | Val Loss: 1.4589 | LR: 0.000047 ===
+3673.7s 553 Depth | RMSE: 2.9621 | AbsRel: 0.9583 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+3673.7s 554 Seg   | mIoU: 0.2659 | Dice: 0.3767 | Pixel Acc: 0.6584
+3673.7s 555 Bound | F1: 0.2139 | Precision: 0.1261 | Recall: 0.7068
+3717.9s 557 === Epoch [83/150] | Train Loss: 0.2621 | Val Loss: 1.4908 | LR: 0.000046 ===
+3717.9s 559 Depth | RMSE: 2.9574 | AbsRel: 0.9566 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+3717.9s 560 Seg   | mIoU: 0.2653 | Dice: 0.3753 | Pixel Acc: 0.6539
+3717.9s 561 Bound | F1: 0.2191 | Precision: 0.1301 | Recall: 0.6953
+3762.1s 563 === Epoch [84/150] | Train Loss: 0.2626 | Val Loss: 1.4321 | LR: 0.000045 ===
+3762.1s 565 Depth | RMSE: 2.9617 | AbsRel: 0.9596 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+3762.1s 566 Seg   | mIoU: 0.2644 | Dice: 0.3745 | Pixel Acc: 0.6547
+3762.1s 567 Bound | F1: 0.2199 | Precision: 0.1313 | Recall: 0.6769
+3805.9s 569 === Epoch [85/150] | Train Loss: 0.2613 | Val Loss: 1.4966 | LR: 0.000044 ===
+3805.9s 571 Depth | RMSE: 2.9609 | AbsRel: 0.9590 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+3805.9s 572 Seg   | mIoU: 0.2625 | Dice: 0.3725 | Pixel Acc: 0.6554
+3805.9s 573 Bound | F1: 0.2188 | Precision: 0.1298 | Recall: 0.6962
+3851.3s 575 === Epoch [86/150] | Train Loss: 0.2632 | Val Loss: 1.5278 | LR: 0.000043 ===
+3851.3s 577 Depth | RMSE: 2.9553 | AbsRel: 0.9552 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+3851.3s 578 Seg   | mIoU: 0.2645 | Dice: 0.3745 | Pixel Acc: 0.6569
+3851.3s 579 Bound | F1: 0.2194 | Precision: 0.1306 | Recall: 0.6856
+3897.1s 581 === Epoch [87/150] | Train Loss: 0.2620 | Val Loss: 1.4933 | LR: 0.000042 ===
+3897.1s 583 Depth | RMSE: 2.9605 | AbsRel: 0.9590 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+3897.1s 584 Seg   | mIoU: 0.2707 | Dice: 0.3813 | Pixel Acc: 0.6584
+3897.1s 585 Bound | F1: 0.2147 | Precision: 0.1273 | Recall: 0.6870
+3942.7s 588 === Epoch [88/150] | Train Loss: 0.2477 | Val Loss: 1.4735 | LR: 0.000041 ===
+3942.7s 590 Depth | RMSE: 2.9610 | AbsRel: 0.9585 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+3942.7s 591 Seg   | mIoU: 0.2673 | Dice: 0.3783 | Pixel Acc: 0.6564
+3942.7s 592 Bound | F1: 0.2148 | Precision: 0.1279 | Recall: 0.6709
+3987.0s 594 === Epoch [89/150] | Train Loss: 0.2400 | Val Loss: 1.5381 | LR: 0.000039 ===
+3987.0s 596 Depth | RMSE: 2.9619 | AbsRel: 0.9595 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+3987.0s 597 Seg   | mIoU: 0.2609 | Dice: 0.3699 | Pixel Acc: 0.6554
+3987.0s 598 Bound | F1: 0.2139 | Precision: 0.1259 | Recall: 0.7116
+4032.6s 600 === Epoch [90/150] | Train Loss: 0.2464 | Val Loss: 1.4583 | LR: 0.000038 ===
+4032.6s 602 Depth | RMSE: 2.9685 | AbsRel: 0.9621 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+4032.6s 603 Seg   | mIoU: 0.2678 | Dice: 0.3782 | Pixel Acc: 0.6587
+4032.6s 604 Bound | F1: 0.2187 | Precision: 0.1299 | Recall: 0.6923
+4077.5s 606 === Epoch [91/150] | Train Loss: 0.2421 | Val Loss: 1.5265 | LR: 0.000037 ===
+4077.5s 608 Depth | RMSE: 2.9555 | AbsRel: 0.9576 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+4077.5s 609 Seg   | mIoU: 0.2676 | Dice: 0.3773 | Pixel Acc: 0.6580
+4077.5s 610 Bound | F1: 0.2197 | Precision: 0.1312 | Recall: 0.6763
+4122.0s 612 === Epoch [92/150] | Train Loss: 0.2357 | Val Loss: 1.5427 | LR: 0.000036 ===
+4122.0s 614 Depth | RMSE: 2.9451 | AbsRel: 0.9518 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+4122.0s 615 Seg   | mIoU: 0.2718 | Dice: 0.3821 | Pixel Acc: 0.6671
+4122.0s 616 Bound | F1: 0.2165 | Precision: 0.1285 | Recall: 0.6902
+4166.8s 619 === Epoch [93/150] | Train Loss: 0.2327 | Val Loss: 1.5249 | LR: 0.000035 ===
+4166.8s 621 Depth | RMSE: 2.9469 | AbsRel: 0.9519 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+4166.8s 622 Seg   | mIoU: 0.2674 | Dice: 0.3773 | Pixel Acc: 0.6635
+4166.8s 623 Bound | F1: 0.2192 | Precision: 0.1315 | Recall: 0.6596
+4211.6s 625 === Epoch [94/150] | Train Loss: 0.2325 | Val Loss: 1.5123 | LR: 0.000034 ===
+4211.6s 627 Depth | RMSE: 2.9563 | AbsRel: 0.9574 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+4211.6s 628 Seg   | mIoU: 0.2679 | Dice: 0.3780 | Pixel Acc: 0.6624
+4211.6s 629 Bound | F1: 0.2171 | Precision: 0.1302 | Recall: 0.6551
+4256.9s 631 === Epoch [95/150] | Train Loss: 0.2308 | Val Loss: 1.5146 | LR: 0.000033 ===
+4256.9s 633 Depth | RMSE: 2.9580 | AbsRel: 0.9581 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+4256.9s 634 Seg   | mIoU: 0.2666 | Dice: 0.3768 | Pixel Acc: 0.6650
+4256.9s 635 Bound | F1: 0.2118 | Precision: 0.1263 | Recall: 0.6551
+4302.2s 637 === Epoch [96/150] | Train Loss: 0.2236 | Val Loss: 1.5546 | LR: 0.000032 ===
+4302.2s 639 Depth | RMSE: 2.9491 | AbsRel: 0.9532 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+4302.2s 640 Seg   | mIoU: 0.2662 | Dice: 0.3756 | Pixel Acc: 0.6608
+4302.2s 641 Bound | F1: 0.2158 | Precision: 0.1275 | Recall: 0.7038
+4346.9s 643 === Epoch [97/150] | Train Loss: 0.2256 | Val Loss: 1.5127 | LR: 0.000031 ===
+4346.9s 645 Depth | RMSE: 2.9555 | AbsRel: 0.9567 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+4346.9s 646 Seg   | mIoU: 0.2678 | Dice: 0.3785 | Pixel Acc: 0.6605
+4346.9s 647 Bound | F1: 0.2170 | Precision: 0.1293 | Recall: 0.6768
+4393.1s 649 === Epoch [98/150] | Train Loss: 0.2159 | Val Loss: 1.5522 | LR: 0.000030 ===
+4393.1s 651 Depth | RMSE: 2.9601 | AbsRel: 0.9591 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+4393.1s 652 Seg   | mIoU: 0.2674 | Dice: 0.3769 | Pixel Acc: 0.6628
+4393.1s 653 Bound | F1: 0.2158 | Precision: 0.1290 | Recall: 0.6618
+4437.6s 655 === Epoch [99/150] | Train Loss: 0.2170 | Val Loss: 1.5197 | LR: 0.000029 ===
+4437.6s 657 Depth | RMSE: 2.9631 | AbsRel: 0.9612 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+4437.6s 658 Seg   | mIoU: 0.2666 | Dice: 0.3774 | Pixel Acc: 0.6574
+4437.6s 659 Bound | F1: 0.2181 | Precision: 0.1289 | Recall: 0.7107
+4482.5s 661 === Epoch [100/150] | Train Loss: 0.2163 | Val Loss: 1.5537 | LR: 0.000028 ===
+4482.5s 663 Depth | RMSE: 2.9576 | AbsRel: 0.9573 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+4482.5s 664 Seg   | mIoU: 0.2679 | Dice: 0.3774 | Pixel Acc: 0.6586
+4482.5s 665 Bound | F1: 0.2171 | Precision: 0.1288 | Recall: 0.6916
+4528.7s 667 === Epoch [101/150] | Train Loss: 0.2141 | Val Loss: 1.5604 | LR: 0.000027 ===
+4528.7s 669 Depth | RMSE: 2.9535 | AbsRel: 0.9559 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+4528.7s 670 Seg   | mIoU: 0.2673 | Dice: 0.3775 | Pixel Acc: 0.6599
+4528.7s 671 Bound | F1: 0.2168 | Precision: 0.1291 | Recall: 0.6761
+4573.5s 673 === Epoch [102/150] | Train Loss: 0.2125 | Val Loss: 1.5181 | LR: 0.000026 ===
+4573.5s 675 Depth | RMSE: 2.9574 | AbsRel: 0.9581 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+4573.5s 676 Seg   | mIoU: 0.2702 | Dice: 0.3805 | Pixel Acc: 0.6650
+4573.5s 677 Bound | F1: 0.2132 | Precision: 0.1255 | Recall: 0.7112
+4618.1s 679 === Epoch [103/150] | Train Loss: 0.2103 | Val Loss: 1.5240 | LR: 0.000025 ===
+4618.1s 681 Depth | RMSE: 2.9577 | AbsRel: 0.9578 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+4618.1s 682 Seg   | mIoU: 0.2753 | Dice: 0.3875 | Pixel Acc: 0.6674
+4618.1s 683 Bound | F1: 0.2170 | Precision: 0.1286 | Recall: 0.6972
+4663.1s 686 === Epoch [104/150] | Train Loss: 0.2057 | Val Loss: 1.5681 | LR: 0.000024 ===
+4663.1s 688 Depth | RMSE: 2.9539 | AbsRel: 0.9548 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+4663.1s 689 Seg   | mIoU: 0.2726 | Dice: 0.3838 | Pixel Acc: 0.6644
+4663.1s 690 Bound | F1: 0.2168 | Precision: 0.1272 | Recall: 0.7364
+4708.3s 692 === Epoch [105/150] | Train Loss: 0.2094 | Val Loss: 1.5345 | LR: 0.000023 ===
+4708.3s 694 Depth | RMSE: 2.9576 | AbsRel: 0.9578 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+4708.3s 695 Seg   | mIoU: 0.2751 | Dice: 0.3857 | Pixel Acc: 0.6692
+4708.3s 696 Bound | F1: 0.2185 | Precision: 0.1291 | Recall: 0.7123
+4753.2s 698 === Epoch [106/150] | Train Loss: 0.2138 | Val Loss: 1.5891 | LR: 0.000022 ===
+4753.2s 700 Depth | RMSE: 2.9570 | AbsRel: 0.9573 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+4753.2s 701 Seg   | mIoU: 0.2687 | Dice: 0.3779 | Pixel Acc: 0.6628
+4753.2s 702 Bound | F1: 0.2177 | Precision: 0.1288 | Recall: 0.7042
+4797.9s 704 === Epoch [107/150] | Train Loss: 0.2010 | Val Loss: 1.5749 | LR: 0.000021 ===
+4797.9s 706 Depth | RMSE: 2.9523 | AbsRel: 0.9555 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+4797.9s 707 Seg   | mIoU: 0.2733 | Dice: 0.3836 | Pixel Acc: 0.6693
+4797.9s 708 Bound | F1: 0.2166 | Precision: 0.1274 | Recall: 0.7247
+4843.3s 710 === Epoch [108/150] | Train Loss: 0.1974 | Val Loss: 1.5942 | LR: 0.000021 ===
+4843.3s 712 Depth | RMSE: 2.9561 | AbsRel: 0.9570 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+4843.3s 713 Seg   | mIoU: 0.2721 | Dice: 0.3826 | Pixel Acc: 0.6695
+4843.3s 714 Bound | F1: 0.2131 | Precision: 0.1259 | Recall: 0.6968
+4888.1s 716 === Epoch [109/150] | Train Loss: 0.1997 | Val Loss: 1.5639 | LR: 0.000020 ===
+4888.1s 718 Depth | RMSE: 2.9533 | AbsRel: 0.9549 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+4888.1s 719 Seg   | mIoU: 0.2736 | Dice: 0.3843 | Pixel Acc: 0.6726
+4888.1s 720 Bound | F1: 0.2127 | Precision: 0.1263 | Recall: 0.6750
+4933.1s 722 === Epoch [110/150] | Train Loss: 0.1982 | Val Loss: 1.5501 | LR: 0.000019 ===
+4933.1s 724 Depth | RMSE: 2.9590 | AbsRel: 0.9575 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+4933.1s 725 Seg   | mIoU: 0.2726 | Dice: 0.3845 | Pixel Acc: 0.6673
+4933.1s 726 Bound | F1: 0.2153 | Precision: 0.1276 | Recall: 0.6885
+4976.8s 728 === Epoch [111/150] | Train Loss: 0.1923 | Val Loss: 1.5383 | LR: 0.000018 ===
+4976.8s 730 Depth | RMSE: 2.9647 | AbsRel: 0.9607 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+4976.8s 731 Seg   | mIoU: 0.2740 | Dice: 0.3846 | Pixel Acc: 0.6685
+4976.8s 732 Bound | F1: 0.2150 | Precision: 0.1272 | Recall: 0.6965
+5021.9s 734 === Epoch [112/150] | Train Loss: 0.1912 | Val Loss: 1.5542 | LR: 0.000017 ===
+5021.9s 736 Depth | RMSE: 2.9599 | AbsRel: 0.9583 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+5021.9s 737 Seg   | mIoU: 0.2745 | Dice: 0.3854 | Pixel Acc: 0.6697
+5021.9s 738 Bound | F1: 0.2158 | Precision: 0.1282 | Recall: 0.6842
+5066.0s 740 === Epoch [113/150] | Train Loss: 0.1884 | Val Loss: 1.6097 | LR: 0.000016 ===
+5066.0s 742 Depth | RMSE: 2.9606 | AbsRel: 0.9581 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+5066.0s 743 Seg   | mIoU: 0.2728 | Dice: 0.3838 | Pixel Acc: 0.6683
+5066.0s 744 Bound | F1: 0.2136 | Precision: 0.1270 | Recall: 0.6732
+5110.3s 746 === Epoch [114/150] | Train Loss: 0.1866 | Val Loss: 1.6086 | LR: 0.000015 ===
+5110.3s 748 Depth | RMSE: 2.9547 | AbsRel: 0.9564 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+5110.3s 749 Seg   | mIoU: 0.2723 | Dice: 0.3821 | Pixel Acc: 0.6687
+5110.3s 750 Bound | F1: 0.2133 | Precision: 0.1260 | Recall: 0.6967
+5154.8s 752 === Epoch [115/150] | Train Loss: 0.1853 | Val Loss: 1.5717 | LR: 0.000015 ===
+5154.8s 754 Depth | RMSE: 2.9619 | AbsRel: 0.9595 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+5154.8s 755 Seg   | mIoU: 0.2723 | Dice: 0.3833 | Pixel Acc: 0.6662
+5154.8s 756 Bound | F1: 0.2147 | Precision: 0.1271 | Recall: 0.6908
+5199.6s 758 === Epoch [116/150] | Train Loss: 0.1846 | Val Loss: 1.5839 | LR: 0.000014 ===
+5199.6s 760 Depth | RMSE: 2.9559 | AbsRel: 0.9563 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+5199.6s 761 Seg   | mIoU: 0.2739 | Dice: 0.3843 | Pixel Acc: 0.6711
+5199.6s 762 Bound | F1: 0.2156 | Precision: 0.1281 | Recall: 0.6830
+5244.3s 764 === Epoch [117/150] | Train Loss: 0.1785 | Val Loss: 1.6002 | LR: 0.000013 ===
+5244.3s 766 Depth | RMSE: 2.9555 | AbsRel: 0.9560 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+5244.3s 767 Seg   | mIoU: 0.2748 | Dice: 0.3850 | Pixel Acc: 0.6725
+5244.3s 768 Bound | F1: 0.2137 | Precision: 0.1263 | Recall: 0.6959
+5288.4s 770 === Epoch [118/150] | Train Loss: 0.1796 | Val Loss: 1.5846 | LR: 0.000013 ===
+5288.4s 772 Depth | RMSE: 2.9582 | AbsRel: 0.9578 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+5288.4s 773 Seg   | mIoU: 0.2754 | Dice: 0.3861 | Pixel Acc: 0.6697
+5288.4s 774 Bound | F1: 0.2153 | Precision: 0.1276 | Recall: 0.6915
+5334.2s 777 === Epoch [119/150] | Train Loss: 0.1782 | Val Loss: 1.5920 | LR: 0.000012 ===
+5334.2s 779 Depth | RMSE: 2.9557 | AbsRel: 0.9572 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+5334.2s 780 Seg   | mIoU: 0.2747 | Dice: 0.3845 | Pixel Acc: 0.6704
+5334.2s 781 Bound | F1: 0.2159 | Precision: 0.1277 | Recall: 0.6988
+5379.8s 783 === Epoch [120/150] | Train Loss: 0.1769 | Val Loss: 1.5928 | LR: 0.000011 ===
+5379.8s 785 Depth | RMSE: 2.9602 | AbsRel: 0.9593 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+5379.8s 786 Seg   | mIoU: 0.2748 | Dice: 0.3852 | Pixel Acc: 0.6694
+5379.8s 787 Bound | F1: 0.2156 | Precision: 0.1271 | Recall: 0.7108
+5424.9s 789 === Epoch [121/150] | Train Loss: 0.1762 | Val Loss: 1.5892 | LR: 0.000010 ===
+5424.9s 791 Depth | RMSE: 2.9606 | AbsRel: 0.9598 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+5424.9s 792 Seg   | mIoU: 0.2744 | Dice: 0.3842 | Pixel Acc: 0.6724
+5424.9s 793 Bound | F1: 0.2162 | Precision: 0.1280 | Recall: 0.6959
+5469.9s 795 === Epoch [122/150] | Train Loss: 0.1779 | Val Loss: 1.6091 | LR: 0.000010 ===
+5469.9s 797 Depth | RMSE: 2.9620 | AbsRel: 0.9600 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+5469.9s 798 Seg   | mIoU: 0.2746 | Dice: 0.3846 | Pixel Acc: 0.6707
+5469.9s 799 Bound | F1: 0.2168 | Precision: 0.1285 | Recall: 0.6930
+5515.3s 801 === Epoch [123/150] | Train Loss: 0.1773 | Val Loss: 1.6082 | LR: 0.000009 ===
+5515.3s 803 Depth | RMSE: 2.9578 | AbsRel: 0.9572 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+5515.3s 804 Seg   | mIoU: 0.2745 | Dice: 0.3846 | Pixel Acc: 0.6744
+5515.3s 805 Bound | F1: 0.2139 | Precision: 0.1265 | Recall: 0.6930
+5560.1s 807 === Epoch [124/150] | Train Loss: 0.1725 | Val Loss: 1.5843 | LR: 0.000009 ===
+5560.1s 809 Depth | RMSE: 2.9569 | AbsRel: 0.9576 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+5560.1s 810 Seg   | mIoU: 0.2752 | Dice: 0.3857 | Pixel Acc: 0.6713
+5560.1s 811 Bound | F1: 0.2147 | Precision: 0.1269 | Recall: 0.6976
+5605.9s 813 === Epoch [125/150] | Train Loss: 0.1752 | Val Loss: 1.6209 | LR: 0.000008 ===
+5605.9s 815 Depth | RMSE: 2.9622 | AbsRel: 0.9600 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+5605.9s 816 Seg   | mIoU: 0.2735 | Dice: 0.3837 | Pixel Acc: 0.6680
+5605.9s 817 Bound | F1: 0.2157 | Precision: 0.1270 | Recall: 0.7165
+5651.6s 819 === Epoch [126/150] | Train Loss: 0.1757 | Val Loss: 1.6255 | LR: 0.000007 ===
+5651.6s 821 Depth | RMSE: 2.9579 | AbsRel: 0.9575 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+5651.6s 822 Seg   | mIoU: 0.2733 | Dice: 0.3835 | Pixel Acc: 0.6719
+5651.6s 823 Bound | F1: 0.2143 | Precision: 0.1271 | Recall: 0.6853
+5697.3s 825 === Epoch [127/150] | Train Loss: 0.1707 | Val Loss: 1.5860 | LR: 0.000007 ===
+5697.3s 827 Depth | RMSE: 2.9661 | AbsRel: 0.9618 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+5697.3s 828 Seg   | mIoU: 0.2720 | Dice: 0.3819 | Pixel Acc: 0.6701
+5697.3s 829 Bound | F1: 0.2145 | Precision: 0.1270 | Recall: 0.6917
+5741.4s 831 === Epoch [128/150] | Train Loss: 0.1710 | Val Loss: 1.6224 | LR: 0.000006 ===
+5741.4s 833 Depth | RMSE: 2.9556 | AbsRel: 0.9564 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+5741.4s 834 Seg   | mIoU: 0.2714 | Dice: 0.3816 | Pixel Acc: 0.6725
+5741.4s 835 Bound | F1: 0.2143 | Precision: 0.1269 | Recall: 0.6888
+5786.8s 837 === Epoch [129/150] | Train Loss: 0.1687 | Val Loss: 1.6167 | LR: 0.000006 ===
+5786.8s 839 Depth | RMSE: 2.9569 | AbsRel: 0.9573 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+5786.8s 840 Seg   | mIoU: 0.2733 | Dice: 0.3834 | Pixel Acc: 0.6716
+5786.8s 841 Bound | F1: 0.2168 | Precision: 0.1282 | Recall: 0.7024
+5831.5s 843 === Epoch [130/150] | Train Loss: 0.1691 | Val Loss: 1.6262 | LR: 0.000005 ===
+5831.5s 845 Depth | RMSE: 2.9632 | AbsRel: 0.9603 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+5831.5s 846 Seg   | mIoU: 0.2730 | Dice: 0.3830 | Pixel Acc: 0.6712
+5831.5s 847 Bound | F1: 0.2129 | Precision: 0.1258 | Recall: 0.6933
+5875.9s 849 === Epoch [131/150] | Train Loss: 0.1685 | Val Loss: 1.6305 | LR: 0.000005 ===
+5875.9s 851 Depth | RMSE: 2.9597 | AbsRel: 0.9590 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+5875.9s 852 Seg   | mIoU: 0.2737 | Dice: 0.3833 | Pixel Acc: 0.6722
+5875.9s 853 Bound | F1: 0.2149 | Precision: 0.1270 | Recall: 0.7009
+5920.7s 855 === Epoch [132/150] | Train Loss: 0.1709 | Val Loss: 1.6408 | LR: 0.000005 ===
+5920.7s 857 Depth | RMSE: 2.9610 | AbsRel: 0.9597 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+5920.7s 858 Seg   | mIoU: 0.2719 | Dice: 0.3813 | Pixel Acc: 0.6722
+5920.7s 859 Bound | F1: 0.2141 | Precision: 0.1270 | Recall: 0.6827
+5965.2s 861 === Epoch [133/150] | Train Loss: 0.1706 | Val Loss: 1.6452 | LR: 0.000004 ===
+5965.2s 863 Depth | RMSE: 2.9573 | AbsRel: 0.9572 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+5965.2s 864 Seg   | mIoU: 0.2736 | Dice: 0.3832 | Pixel Acc: 0.6735
+5965.2s 865 Bound | F1: 0.2151 | Precision: 0.1270 | Recall: 0.7050
+6008.9s 867 === Epoch [134/150] | Train Loss: 0.1687 | Val Loss: 1.6289 | LR: 0.000004 ===
+6008.9s 869 Depth | RMSE: 2.9624 | AbsRel: 0.9598 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+6008.9s 870 Seg   | mIoU: 0.2725 | Dice: 0.3822 | Pixel Acc: 0.6713
+6008.9s 871 Bound | F1: 0.2147 | Precision: 0.1275 | Recall: 0.6795
+6053.5s 873 === Epoch [135/150] | Train Loss: 0.1654 | Val Loss: 1.6063 | LR: 0.000003 ===
+6053.5s 875 Depth | RMSE: 2.9596 | AbsRel: 0.9590 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+6053.5s 876 Seg   | mIoU: 0.2734 | Dice: 0.3838 | Pixel Acc: 0.6707
+6053.5s 877 Bound | F1: 0.2157 | Precision: 0.1282 | Recall: 0.6802
+6098.4s 879 === Epoch [136/150] | Train Loss: 0.1648 | Val Loss: 1.6324 | LR: 0.000003 ===
+6098.4s 881 Depth | RMSE: 2.9597 | AbsRel: 0.9586 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+6098.4s 882 Seg   | mIoU: 0.2735 | Dice: 0.3833 | Pixel Acc: 0.6725
+6098.4s 883 Bound | F1: 0.2159 | Precision: 0.1279 | Recall: 0.6936
+6144.2s 885 === Epoch [137/150] | Train Loss: 0.1662 | Val Loss: 1.6368 | LR: 0.000003 ===
+6144.2s 887 Depth | RMSE: 2.9610 | AbsRel: 0.9595 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+6144.2s 888 Seg   | mIoU: 0.2743 | Dice: 0.3838 | Pixel Acc: 0.6722
+6144.2s 889 Bound | F1: 0.2152 | Precision: 0.1269 | Recall: 0.7074
+6186.8s 891 === Epoch [138/150] | Train Loss: 0.1653 | Val Loss: 1.6257 | LR: 0.000003 ===
+6186.8s 893 Depth | RMSE: 2.9614 | AbsRel: 0.9595 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+6186.8s 894 Seg   | mIoU: 0.2727 | Dice: 0.3826 | Pixel Acc: 0.6713
+6186.8s 895 Bound | F1: 0.2139 | Precision: 0.1268 | Recall: 0.6840
+6230.2s 897 === Epoch [139/150] | Train Loss: 0.1640 | Val Loss: 1.6251 | LR: 0.000002 ===
+6230.2s 899 Depth | RMSE: 2.9604 | AbsRel: 0.9590 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+6230.2s 900 Seg   | mIoU: 0.2743 | Dice: 0.3841 | Pixel Acc: 0.6715
+6230.2s 901 Bound | F1: 0.2152 | Precision: 0.1271 | Recall: 0.7030
+6274.2s 903 === Epoch [140/150] | Train Loss: 0.1667 | Val Loss: 1.6299 | LR: 0.000002 ===
+6274.2s 905 Depth | RMSE: 2.9612 | AbsRel: 0.9596 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+6274.2s 906 Seg   | mIoU: 0.2746 | Dice: 0.3844 | Pixel Acc: 0.6729
+6274.2s 907 Bound | F1: 0.2155 | Precision: 0.1273 | Recall: 0.7044
+6317.0s 909 === Epoch [141/150] | Train Loss: 0.1640 | Val Loss: 1.6296 | LR: 0.000002 ===
+6317.0s 911 Depth | RMSE: 2.9599 | AbsRel: 0.9587 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+6317.0s 912 Seg   | mIoU: 0.2738 | Dice: 0.3838 | Pixel Acc: 0.6712
+6317.0s 913 Bound | F1: 0.2143 | Precision: 0.1271 | Recall: 0.6854
+6359.8s 915 === Epoch [142/150] | Train Loss: 0.1664 | Val Loss: 1.6542 | LR: 0.000002 ===
+6359.8s 917 Depth | RMSE: 2.9563 | AbsRel: 0.9568 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+6359.8s 918 Seg   | mIoU: 0.2745 | Dice: 0.3841 | Pixel Acc: 0.6723
+6359.8s 919 Bound | F1: 0.2143 | Precision: 0.1267 | Recall: 0.6957
+6403.0s 921 === Epoch [143/150] | Train Loss: 0.1657 | Val Loss: 1.6493 | LR: 0.000001 ===
+6403.0s 923 Depth | RMSE: 2.9564 | AbsRel: 0.9569 | δ1: 0.0000 | δ2: 0.0000 | δ3: 0.0000
+6403.0s 924 Seg   | mIoU: 0.2751 | Dice: 0.3850 | Pixel Acc: 0.6717
+6403.0s 925 Bound | F1: 0.2147 | Precision: 0.1264 | Recall: 0.7141
+6403.7s 926 Early stop triggered.

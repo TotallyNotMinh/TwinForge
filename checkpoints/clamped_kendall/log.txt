@@ -1,0 +1,1023 @@
+168.5s 22 === Epoch [00/150] | Train Loss: 1.8930 | Val Loss: 1.5358 | LR: 0.000019 ===
+168.5s 23 Average Task Losses: Seg: 2.069 | Depth: 0.590 | Bound: 0.418
+168.5s 24 Kendall Weights -> Seg: 0.498 | Depth: 0.499 | Bound: 0.502
+168.5s 25 Kendall log_vars -> Seg: 0.004 | Depth: 0.002 | Bound: -0.004
+168.5s 26 Depth | RMSE: 1.3748 | AbsRel: 0.3769 | δ1: 0.3315 | δ2: 0.6093 | δ3: 0.8016
+168.5s 27 Seg   | mIoU: 0.0068 | Dice: 0.0130 | Pixel Acc: 0.0404
+168.5s 28 Bound | F1: 0.2732 | Precision: 0.2021 | Recall: 0.4261
+216.9s 33 === Epoch [01/150] | Train Loss: 1.4629 | Val Loss: 1.4141 | LR: 0.000028 ===
+216.9s 34 Average Task Losses: Seg: 1.937 | Depth: 0.517 | Bound: 0.392
+216.9s 35 Kendall Weights -> Seg: 0.495 | Depth: 0.502 | Bound: 0.505
+216.9s 36 Kendall log_vars -> Seg: 0.010 | Depth: -0.004 | Bound: -0.011
+216.9s 37 Depth | RMSE: 1.1844 | AbsRel: 0.3826 | δ1: 0.3939 | δ2: 0.7094 | δ3: 0.8872
+216.9s 38 Seg   | mIoU: 0.0183 | Dice: 0.0337 | Pixel Acc: 0.1169
+216.9s 39 Bound | F1: 0.3462 | Precision: 0.2312 | Recall: 0.6919
+266.6s 44 === Epoch [02/150] | Train Loss: 1.3334 | Val Loss: 1.2897 | LR: 0.000037 ===
+266.6s 45 Average Task Losses: Seg: 1.797 | Depth: 0.453 | Bound: 0.366
+266.6s 46 Kendall Weights -> Seg: 0.490 | Depth: 0.508 | Bound: 0.511
+266.6s 47 Kendall log_vars -> Seg: 0.019 | Depth: -0.015 | Bound: -0.022
+266.6s 48 Depth | RMSE: 1.0593 | AbsRel: 0.3360 | δ1: 0.4345 | δ2: 0.7477 | δ3: 0.9116
+266.6s 49 Seg   | mIoU: 0.0373 | Dice: 0.0668 | Pixel Acc: 0.1544
+266.6s 50 Bound | F1: 0.4139 | Precision: 0.3189 | Recall: 0.5902
+316.9s 55 === Epoch [03/150] | Train Loss: 1.2670 | Val Loss: 1.2572 | LR: 0.000046 ===
+316.9s 56 Average Task Losses: Seg: 1.775 | Depth: 0.449 | Bound: 0.352
+316.9s 57 Kendall Weights -> Seg: 0.485 | Depth: 0.515 | Bound: 0.518
+316.9s 58 Kendall log_vars -> Seg: 0.030 | Depth: -0.030 | Bound: -0.036
+316.9s 59 Depth | RMSE: 1.0491 | AbsRel: 0.3300 | δ1: 0.4504 | δ2: 0.7557 | δ3: 0.9093
+316.9s 60 Seg   | mIoU: 0.0427 | Dice: 0.0743 | Pixel Acc: 0.1604
+316.9s 61 Bound | F1: 0.4437 | Precision: 0.3359 | Recall: 0.6551
+366.2s 66 === Epoch [04/150] | Train Loss: 1.1995 | Val Loss: 1.3081 | LR: 0.000055 ===
+366.2s 67 Average Task Losses: Seg: 1.894 | Depth: 0.461 | Bound: 0.357
+366.2s 68 Kendall Weights -> Seg: 0.479 | Depth: 0.525 | Bound: 0.528
+366.2s 69 Kendall log_vars -> Seg: 0.043 | Depth: -0.049 | Bound: -0.054
+366.2s 70 Depth | RMSE: 1.0976 | AbsRel: 0.3064 | δ1: 0.4065 | δ2: 0.7263 | δ3: 0.9063
+366.2s 71 Seg   | mIoU: 0.0488 | Dice: 0.0836 | Pixel Acc: 0.1634
+366.2s 72 Bound | F1: 0.4145 | Precision: 0.2843 | Recall: 0.7676
+414.9s 75 === Epoch [05/150] | Train Loss: 1.1560 | Val Loss: 1.1930 | LR: 0.000064 ===
+414.9s 76 Average Task Losses: Seg: 1.711 | Depth: 0.458 | Bound: 0.341
+414.9s 77 Kendall Weights -> Seg: 0.472 | Depth: 0.537 | Bound: 0.539
+414.9s 78 Kendall log_vars -> Seg: 0.057 | Depth: -0.071 | Bound: -0.074
+414.9s 79 Depth | RMSE: 1.0569 | AbsRel: 0.3542 | δ1: 0.4699 | δ2: 0.7702 | δ3: 0.9178
+414.9s 80 Seg   | mIoU: 0.0546 | Dice: 0.0939 | Pixel Acc: 0.1870
+414.9s 81 Bound | F1: 0.4627 | Precision: 0.3655 | Recall: 0.6309
+464.8s 86 === Epoch [06/150] | Train Loss: 1.0874 | Val Loss: 1.1224 | LR: 0.000073 ===
+464.8s 87 Average Task Losses: Seg: 1.693 | Depth: 0.388 | Bound: 0.331
+464.8s 88 Kendall Weights -> Seg: 0.465 | Depth: 0.551 | Bound: 0.552
+464.8s 89 Kendall log_vars -> Seg: 0.073 | Depth: -0.097 | Bound: -0.099
+464.8s 90 Depth | RMSE: 0.9263 | AbsRel: 0.2945 | δ1: 0.5027 | δ2: 0.8130 | δ3: 0.9434
+464.8s 91 Seg   | mIoU: 0.0706 | Dice: 0.1176 | Pixel Acc: 0.2338
+464.8s 92 Bound | F1: 0.4747 | Precision: 0.3659 | Recall: 0.6762
+515.2s 97 === Epoch [07/150] | Train Loss: 1.0517 | Val Loss: 1.1391 | LR: 0.000082 ===
+515.2s 98 Average Task Losses: Seg: 1.743 | Depth: 0.413 | Bound: 0.334
+515.2s 99 Kendall Weights -> Seg: 0.457 | Depth: 0.567 | Bound: 0.567
+515.2s 100 Kendall log_vars -> Seg: 0.090 | Depth: -0.126 | Bound: -0.126
+515.2s 101 Depth | RMSE: 0.9454 | AbsRel: 0.3363 | δ1: 0.5084 | δ2: 0.7997 | δ3: 0.9196
+515.2s 102 Seg   | mIoU: 0.0639 | Dice: 0.1086 | Pixel Acc: 0.2190
+515.2s 103 Bound | F1: 0.4648 | Precision: 0.3423 | Recall: 0.7253
+563.5s 106 === Epoch [08/150] | Train Loss: 1.0295 | Val Loss: 1.1575 | LR: 0.000091 ===
+563.5s 107 Average Task Losses: Seg: 1.676 | Depth: 0.535 | Bound: 0.333
+563.5s 108 Kendall Weights -> Seg: 0.449 | Depth: 0.585 | Bound: 0.584
+563.5s 109 Kendall log_vars -> Seg: 0.107 | Depth: -0.156 | Bound: -0.156
+563.5s 110 Depth | RMSE: 1.1746 | AbsRel: 0.4272 | δ1: 0.4228 | δ2: 0.7190 | δ3: 0.8843
+563.5s 111 Seg   | mIoU: 0.0765 | Dice: 0.1278 | Pixel Acc: 0.2230
+563.5s 112 Bound | F1: 0.4743 | Precision: 0.3611 | Recall: 0.6923
+612.7s 115 === Epoch [09/150] | Train Loss: 0.9785 | Val Loss: 1.0177 | LR: 0.000100 ===
+612.7s 116 Average Task Losses: Seg: 1.631 | Depth: 0.376 | Bound: 0.328
+612.7s 117 Kendall Weights -> Seg: 0.441 | Depth: 0.605 | Bound: 0.604
+612.7s 118 Kendall log_vars -> Seg: 0.125 | Depth: -0.190 | Bound: -0.189
+612.7s 119 Depth | RMSE: 0.9015 | AbsRel: 0.3046 | δ1: 0.5345 | δ2: 0.8231 | δ3: 0.9390
+612.7s 120 Seg   | mIoU: 0.0900 | Dice: 0.1478 | Pixel Acc: 0.2921
+612.7s 121 Bound | F1: 0.4761 | Precision: 0.3577 | Recall: 0.7128
+662.3s 126 === Epoch [10/150] | Train Loss: 0.9271 | Val Loss: 0.9906 | LR: 0.000100 ===
+662.3s 127 Average Task Losses: Seg: 1.655 | Depth: 0.359 | Bound: 0.324
+662.3s 128 Kendall Weights -> Seg: 0.433 | Depth: 0.629 | Bound: 0.626
+662.3s 129 Kendall log_vars -> Seg: 0.143 | Depth: -0.229 | Bound: -0.225
+662.3s 130 Depth | RMSE: 0.8852 | AbsRel: 0.2608 | δ1: 0.5446 | δ2: 0.8387 | δ3: 0.9493
+662.3s 131 Seg   | mIoU: 0.0821 | Dice: 0.1368 | Pixel Acc: 0.2193
+662.3s 132 Bound | F1: 0.4866 | Precision: 0.3732 | Recall: 0.6998
+711.7s 136 === Epoch [11/150] | Train Loss: 0.8885 | Val Loss: 0.9516 | LR: 0.000100 ===
+711.7s 137 Average Task Losses: Seg: 1.610 | Depth: 0.368 | Bound: 0.321
+711.7s 138 Kendall Weights -> Seg: 0.427 | Depth: 0.652 | Bound: 0.649
+711.7s 139 Kendall log_vars -> Seg: 0.159 | Depth: -0.266 | Bound: -0.260
+711.7s 140 Depth | RMSE: 0.8897 | AbsRel: 0.2699 | δ1: 0.5474 | δ2: 0.8369 | δ3: 0.9518
+711.7s 141 Seg   | mIoU: 0.0925 | Dice: 0.1528 | Pixel Acc: 0.2587
+711.7s 142 Bound | F1: 0.4944 | Precision: 0.3868 | Recall: 0.6858
+761.9s 147 === Epoch [12/150] | Train Loss: 0.8598 | Val Loss: 0.9321 | LR: 0.000100 ===
+761.9s 148 Average Task Losses: Seg: 1.610 | Depth: 0.371 | Bound: 0.321
+761.9s 149 Kendall Weights -> Seg: 0.421 | Depth: 0.676 | Bound: 0.672
+761.9s 150 Kendall log_vars -> Seg: 0.173 | Depth: -0.302 | Bound: -0.295
+761.9s 151 Depth | RMSE: 0.8965 | AbsRel: 0.2827 | δ1: 0.5311 | δ2: 0.8238 | δ3: 0.9461
+761.9s 152 Seg   | mIoU: 0.1023 | Dice: 0.1653 | Pixel Acc: 0.3188
+761.9s 153 Bound | F1: 0.4947 | Precision: 0.3894 | Recall: 0.6784
+811.5s 157 === Epoch [13/150] | Train Loss: 0.7938 | Val Loss: 0.8863 | LR: 0.000100 ===
+811.5s 158 Average Task Losses: Seg: 1.600 | Depth: 0.344 | Bound: 0.319
+811.5s 159 Kendall Weights -> Seg: 0.416 | Depth: 0.702 | Bound: 0.695
+811.5s 160 Kendall log_vars -> Seg: 0.185 | Depth: -0.339 | Bound: -0.329
+811.5s 161 Depth | RMSE: 0.8438 | AbsRel: 0.2610 | δ1: 0.5614 | δ2: 0.8536 | δ3: 0.9569
+811.5s 162 Seg   | mIoU: 0.1146 | Dice: 0.1854 | Pixel Acc: 0.3297
+811.5s 163 Bound | F1: 0.4977 | Precision: 0.3841 | Recall: 0.7077
+861.6s 168 === Epoch [14/150] | Train Loss: 0.7665 | Val Loss: 0.8498 | LR: 0.000100 ===
+861.6s 169 Average Task Losses: Seg: 1.512 | Depth: 0.375 | Bound: 0.314
+861.6s 170 Kendall Weights -> Seg: 0.412 | Depth: 0.728 | Bound: 0.719
+861.6s 171 Kendall log_vars -> Seg: 0.195 | Depth: -0.376 | Bound: -0.363
+861.6s 172 Depth | RMSE: 0.8808 | AbsRel: 0.3293 | δ1: 0.5262 | δ2: 0.8129 | δ3: 0.9319
+861.6s 173 Seg   | mIoU: 0.1170 | Dice: 0.1903 | Pixel Acc: 0.3165
+861.6s 174 Bound | F1: 0.5010 | Precision: 0.3846 | Recall: 0.7192
+911.1s 178 === Epoch [15/150] | Train Loss: 0.7307 | Val Loss: 0.8559 | LR: 0.000100 ===
+911.1s 179 Average Task Losses: Seg: 1.541 | Depth: 0.390 | Bound: 0.316
+911.1s 180 Kendall Weights -> Seg: 0.408 | Depth: 0.755 | Bound: 0.743
+911.1s 181 Kendall log_vars -> Seg: 0.204 | Depth: -0.413 | Bound: -0.396
+911.1s 182 Depth | RMSE: 0.9293 | AbsRel: 0.2969 | δ1: 0.5286 | δ2: 0.8382 | δ3: 0.9505
+911.1s 183 Seg   | mIoU: 0.1245 | Dice: 0.1977 | Pixel Acc: 0.3663
+911.1s 184 Bound | F1: 0.4986 | Precision: 0.3798 | Recall: 0.7263
+959.5s 187 === Epoch [16/150] | Train Loss: 0.7414 | Val Loss: 0.8112 | LR: 0.000099 ===
+959.5s 188 Average Task Losses: Seg: 1.565 | Depth: 0.341 | Bound: 0.317
+959.5s 189 Kendall Weights -> Seg: 0.404 | Depth: 0.781 | Bound: 0.767
+959.5s 190 Kendall log_vars -> Seg: 0.213 | Depth: -0.446 | Bound: -0.428
+959.5s 191 Depth | RMSE: 0.8421 | AbsRel: 0.2397 | δ1: 0.5755 | δ2: 0.8565 | δ3: 0.9646
+959.5s 192 Seg   | mIoU: 0.1208 | Dice: 0.1933 | Pixel Acc: 0.3643
+959.5s 193 Bound | F1: 0.5056 | Precision: 0.4060 | Recall: 0.6706
+1008.6s 197 === Epoch [17/150] | Train Loss: 0.6903 | Val Loss: 0.7614 | LR: 0.000099 ===
+1008.6s 198 Average Task Losses: Seg: 1.503 | Depth: 0.329 | Bound: 0.319
+1008.6s 199 Kendall Weights -> Seg: 0.401 | Depth: 0.809 | Bound: 0.792
+1008.6s 200 Kendall log_vars -> Seg: 0.221 | Depth: -0.481 | Bound: -0.460
+1008.6s 201 Depth | RMSE: 0.8214 | AbsRel: 0.2478 | δ1: 0.6047 | δ2: 0.8740 | δ3: 0.9662
+1008.6s 202 Seg   | mIoU: 0.1443 | Dice: 0.2234 | Pixel Acc: 0.3761
+1008.6s 203 Bound | F1: 0.4891 | Precision: 0.3544 | Recall: 0.7900
+1057.8s 207 === Epoch [18/150] | Train Loss: 0.6238 | Val Loss: 0.7282 | LR: 0.000099 ===
+1057.8s 208 Average Task Losses: Seg: 1.489 | Depth: 0.321 | Bound: 0.314
+1057.8s 209 Kendall Weights -> Seg: 0.399 | Depth: 0.838 | Bound: 0.817
+1057.8s 210 Kendall log_vars -> Seg: 0.225 | Depth: -0.517 | Bound: -0.491
+1057.8s 211 Depth | RMSE: 0.7887 | AbsRel: 0.2368 | δ1: 0.6079 | δ2: 0.8795 | δ3: 0.9696
+1057.8s 212 Seg   | mIoU: 0.1367 | Dice: 0.2171 | Pixel Acc: 0.3856
+1057.8s 213 Bound | F1: 0.5035 | Precision: 0.3943 | Recall: 0.6972
+1106.9s 216 === Epoch [19/150] | Train Loss: 0.6092 | Val Loss: 0.7299 | LR: 0.000099 ===
+1106.9s 217 Average Task Losses: Seg: 1.472 | Depth: 0.352 | Bound: 0.310
+1106.9s 218 Kendall Weights -> Seg: 0.398 | Depth: 0.868 | Bound: 0.842
+1106.9s 219 Kendall log_vars -> Seg: 0.229 | Depth: -0.551 | Bound: -0.522
+1106.9s 220 Depth | RMSE: 0.8597 | AbsRel: 0.2777 | δ1: 0.5742 | δ2: 0.8537 | δ3: 0.9558
+1106.9s 221 Seg   | mIoU: 0.1530 | Dice: 0.2382 | Pixel Acc: 0.4122
+1106.9s 222 Bound | F1: 0.5126 | Precision: 0.4092 | Recall: 0.6865
+1156.1s 226 === Epoch [20/150] | Train Loss: 0.5598 | Val Loss: 0.7695 | LR: 0.000098 ===
+1156.1s 227 Average Task Losses: Seg: 1.480 | Depth: 0.407 | Bound: 0.310
+1156.1s 228 Kendall Weights -> Seg: 0.397 | Depth: 0.899 | Bound: 0.868
+1156.1s 229 Kendall log_vars -> Seg: 0.230 | Depth: -0.587 | Bound: -0.552
+1156.1s 230 Depth | RMSE: 0.9698 | AbsRel: 0.3312 | δ1: 0.5214 | δ2: 0.8174 | δ3: 0.9374
+1156.1s 231 Seg   | mIoU: 0.1496 | Dice: 0.2347 | Pixel Acc: 0.3863
+1156.1s 232 Bound | F1: 0.5065 | Precision: 0.3856 | Recall: 0.7383
+1203.8s 234 === Epoch [21/150] | Train Loss: 0.5483 | Val Loss: 0.7042 | LR: 0.000098 ===
+1203.8s 235 Average Task Losses: Seg: 1.486 | Depth: 0.347 | Bound: 0.310
+1203.8s 236 Kendall Weights -> Seg: 0.397 | Depth: 0.931 | Bound: 0.894
+1203.8s 237 Kendall log_vars -> Seg: 0.231 | Depth: -0.622 | Bound: -0.581
+1203.8s 238 Depth | RMSE: 0.8333 | AbsRel: 0.2767 | δ1: 0.5714 | δ2: 0.8615 | δ3: 0.9634
+1203.8s 239 Seg   | mIoU: 0.1635 | Dice: 0.2524 | Pixel Acc: 0.4333
+1203.8s 240 Bound | F1: 0.5090 | Precision: 0.3949 | Recall: 0.7165
+1252.3s 243 === Epoch [22/150] | Train Loss: 0.5315 | Val Loss: 0.6522 | LR: 0.000098 ===
+1252.3s 244 Average Task Losses: Seg: 1.468 | Depth: 0.314 | Bound: 0.309
+1252.3s 245 Kendall Weights -> Seg: 0.397 | Depth: 0.963 | Bound: 0.920
+1252.3s 246 Kendall log_vars -> Seg: 0.231 | Depth: -0.655 | Bound: -0.610
+1252.3s 247 Depth | RMSE: 0.7671 | AbsRel: 0.2561 | δ1: 0.6180 | δ2: 0.8733 | δ3: 0.9634
+1252.3s 248 Seg   | mIoU: 0.1530 | Dice: 0.2376 | Pixel Acc: 0.4114
+1252.3s 249 Bound | F1: 0.5110 | Precision: 0.3960 | Recall: 0.7205
+1300.9s 252 === Epoch [23/150] | Train Loss: 0.5537 | Val Loss: 0.7066 | LR: 0.000098 ===
+1300.9s 253 Average Task Losses: Seg: 1.486 | Depth: 0.374 | Bound: 0.308
+1300.9s 254 Kendall Weights -> Seg: 0.397 | Depth: 0.991 | Bound: 0.945
+1300.9s 255 Kendall log_vars -> Seg: 0.231 | Depth: -0.685 | Bound: -0.637
+1300.9s 256 Depth | RMSE: 0.9225 | AbsRel: 0.2342 | δ1: 0.4879 | δ2: 0.8364 | δ3: 0.9604
+1300.9s 257 Seg   | mIoU: 0.1525 | Dice: 0.2390 | Pixel Acc: 0.4134
+1300.9s 258 Bound | F1: 0.5183 | Precision: 0.4191 | Recall: 0.6794
+1349.3s 261 === Epoch [24/150] | Train Loss: 0.4912 | Val Loss: 0.6438 | LR: 0.000097 ===
+1349.3s 262 Average Task Losses: Seg: 1.502 | Depth: 0.317 | Bound: 0.307
+1349.3s 263 Kendall Weights -> Seg: 0.397 | Depth: 1.022 | Bound: 0.971
+1349.3s 264 Kendall log_vars -> Seg: 0.230 | Depth: -0.715 | Bound: -0.664
+1349.3s 265 Depth | RMSE: 0.8129 | AbsRel: 0.2194 | δ1: 0.6130 | δ2: 0.8860 | δ3: 0.9701
+1349.3s 266 Seg   | mIoU: 0.1530 | Dice: 0.2385 | Pixel Acc: 0.4203
+1349.3s 267 Bound | F1: 0.5176 | Precision: 0.4114 | Recall: 0.6982
+1396.6s 269 === Epoch [25/150] | Train Loss: 0.4689 | Val Loss: 0.6548 | LR: 0.000097 ===
+1396.6s 270 Average Task Losses: Seg: 1.498 | Depth: 0.340 | Bound: 0.306
+1396.6s 271 Kendall Weights -> Seg: 0.398 | Depth: 1.056 | Bound: 0.997
+1396.6s 272 Kendall log_vars -> Seg: 0.228 | Depth: -0.747 | Bound: -0.691
+1396.6s 273 Depth | RMSE: 0.8061 | AbsRel: 0.2861 | δ1: 0.5776 | δ2: 0.8526 | δ3: 0.9513
+1396.6s 274 Seg   | mIoU: 0.1621 | Dice: 0.2482 | Pixel Acc: 0.4285
+1396.6s 275 Bound | F1: 0.5174 | Precision: 0.4070 | Recall: 0.7106
+1443.7s 277 === Epoch [26/150] | Train Loss: 0.4599 | Val Loss: 0.6009 | LR: 0.000096 ===
+1443.7s 278 Average Task Losses: Seg: 1.458 | Depth: 0.311 | Bound: 0.308
+1443.7s 279 Kendall Weights -> Seg: 0.398 | Depth: 1.089 | Bound: 1.023
+1443.7s 280 Kendall log_vars -> Seg: 0.229 | Depth: -0.779 | Bound: -0.716
+1443.7s 281 Depth | RMSE: 0.7805 | AbsRel: 0.2202 | δ1: 0.6113 | δ2: 0.8960 | δ3: 0.9736
+1443.7s 282 Seg   | mIoU: 0.1639 | Dice: 0.2531 | Pixel Acc: 0.4458
+1443.7s 283 Bound | F1: 0.5104 | Precision: 0.3890 | Recall: 0.7429
+1492.8s 286 === Epoch [27/150] | Train Loss: 0.4321 | Val Loss: 0.5783 | LR: 0.000096 ===
+1492.8s 287 Average Task Losses: Seg: 1.463 | Depth: 0.300 | Bound: 0.305
+1492.8s 288 Kendall Weights -> Seg: 0.399 | Depth: 1.123 | Bound: 1.049
+1492.8s 289 Kendall log_vars -> Seg: 0.227 | Depth: -0.809 | Bound: -0.741
+1492.8s 290 Depth | RMSE: 0.7603 | AbsRel: 0.2168 | δ1: 0.6326 | δ2: 0.8963 | δ3: 0.9778
+1492.8s 291 Seg   | mIoU: 0.1797 | Dice: 0.2737 | Pixel Acc: 0.4663
+1492.8s 292 Bound | F1: 0.5224 | Precision: 0.4232 | Recall: 0.6829
+1542.9s 297 === Epoch [28/150] | Train Loss: 0.4033 | Val Loss: 0.6046 | LR: 0.000096 ===
+1542.9s 298 Average Task Losses: Seg: 1.486 | Depth: 0.321 | Bound: 0.306
+1542.9s 299 Kendall Weights -> Seg: 0.400 | Depth: 1.157 | Bound: 1.075
+1542.9s 300 Kendall log_vars -> Seg: 0.222 | Depth: -0.839 | Bound: -0.766
+1542.9s 301 Depth | RMSE: 0.7765 | AbsRel: 0.2775 | δ1: 0.5874 | δ2: 0.8628 | δ3: 0.9564
+1542.9s 302 Seg   | mIoU: 0.1791 | Dice: 0.2717 | Pixel Acc: 0.4800
+1542.9s 303 Bound | F1: 0.5195 | Precision: 0.4036 | Recall: 0.7290
+1590.4s 305 === Epoch [29/150] | Train Loss: 0.4050 | Val Loss: 0.5916 | LR: 0.000095 ===
+1590.4s 306 Average Task Losses: Seg: 1.447 | Depth: 0.328 | Bound: 0.308
+1590.4s 307 Kendall Weights -> Seg: 0.402 | Depth: 1.190 | Bound: 1.101
+1590.4s 308 Kendall log_vars -> Seg: 0.218 | Depth: -0.867 | Bound: -0.789
+1590.4s 309 Depth | RMSE: 0.8426 | AbsRel: 0.2059 | δ1: 0.6025 | δ2: 0.8891 | δ3: 0.9711
+1590.4s 310 Seg   | mIoU: 0.1832 | Dice: 0.2776 | Pixel Acc: 0.4656
+1590.4s 311 Bound | F1: 0.5182 | Precision: 0.4132 | Recall: 0.6951
+1638.9s 314 === Epoch [30/150] | Train Loss: 0.3803 | Val Loss: 0.5574 | LR: 0.000095 ===
+1638.9s 315 Average Task Losses: Seg: 1.478 | Depth: 0.297 | Bound: 0.305
+1638.9s 316 Kendall Weights -> Seg: 0.404 | Depth: 1.223 | Bound: 1.126
+1638.9s 317 Kendall log_vars -> Seg: 0.213 | Depth: -0.894 | Bound: -0.812
+1638.9s 318 Depth | RMSE: 0.7525 | AbsRel: 0.2248 | δ1: 0.6478 | δ2: 0.9002 | δ3: 0.9700
+1638.9s 319 Seg   | mIoU: 0.1778 | Dice: 0.2720 | Pixel Acc: 0.4669
+1638.9s 320 Bound | F1: 0.5212 | Precision: 0.4151 | Recall: 0.7007
+1687.0s 323 === Epoch [31/150] | Train Loss: 0.3929 | Val Loss: 0.5687 | LR: 0.000094 ===
+1687.0s 324 Average Task Losses: Seg: 1.479 | Depth: 0.312 | Bound: 0.304
+1687.0s 325 Kendall Weights -> Seg: 0.406 | Depth: 1.253 | Bound: 1.151
+1687.0s 326 Kendall log_vars -> Seg: 0.209 | Depth: -0.919 | Bound: -0.834
+1687.0s 327 Depth | RMSE: 0.7819 | AbsRel: 0.2115 | δ1: 0.6022 | δ2: 0.8906 | δ3: 0.9733
+1687.0s 328 Seg   | mIoU: 0.1803 | Dice: 0.2744 | Pixel Acc: 0.4778
+1687.0s 329 Bound | F1: 0.5225 | Precision: 0.4137 | Recall: 0.7097
+1735.7s 332 === Epoch [32/150] | Train Loss: 0.3738 | Val Loss: 0.6049 | LR: 0.000094 ===
+1735.7s 333 Average Task Losses: Seg: 1.492 | Depth: 0.340 | Bound: 0.304
+1735.7s 334 Kendall Weights -> Seg: 0.408 | Depth: 1.285 | Bound: 1.176
+1735.7s 335 Kendall log_vars -> Seg: 0.204 | Depth: -0.944 | Bound: -0.855
+1735.7s 336 Depth | RMSE: 0.8596 | AbsRel: 0.2152 | δ1: 0.5532 | δ2: 0.8719 | δ3: 0.9719
+1735.7s 337 Seg   | mIoU: 0.1792 | Dice: 0.2716 | Pixel Acc: 0.4557
+1735.7s 338 Bound | F1: 0.5258 | Precision: 0.4289 | Recall: 0.6797
+1784.8s 341 === Epoch [33/150] | Train Loss: 0.3595 | Val Loss: 0.5591 | LR: 0.000093 ===
+1784.8s 342 Average Task Losses: Seg: 1.478 | Depth: 0.312 | Bound: 0.304
+1784.8s 343 Kendall Weights -> Seg: 0.409 | Depth: 1.316 | Bound: 1.200
+1784.8s 344 Kendall log_vars -> Seg: 0.201 | Depth: -0.968 | Bound: -0.875
+1784.8s 345 Depth | RMSE: 0.8008 | AbsRel: 0.2048 | δ1: 0.6295 | δ2: 0.9045 | δ3: 0.9752
+1784.8s 346 Seg   | mIoU: 0.1916 | Dice: 0.2874 | Pixel Acc: 0.4806
+1784.8s 347 Bound | F1: 0.5225 | Precision: 0.4104 | Recall: 0.7194
+1833.2s 350 === Epoch [34/150] | Train Loss: 0.3299 | Val Loss: 0.5255 | LR: 0.000092 ===
+1833.2s 351 Average Task Losses: Seg: 1.481 | Depth: 0.289 | Bound: 0.305
+1833.2s 352 Kendall Weights -> Seg: 0.411 | Depth: 1.351 | Bound: 1.223
+1833.2s 353 Kendall log_vars -> Seg: 0.197 | Depth: -0.994 | Bound: -0.895
+1833.2s 354 Depth | RMSE: 0.7328 | AbsRel: 0.2120 | δ1: 0.6447 | δ2: 0.9074 | δ3: 0.9759
+1833.2s 355 Seg   | mIoU: 0.1823 | Dice: 0.2745 | Pixel Acc: 0.4724
+1833.2s 356 Bound | F1: 0.5231 | Precision: 0.4201 | Recall: 0.6933
+1880.7s 358 === Epoch [35/150] | Train Loss: 0.3371 | Val Loss: 0.6274 | LR: 0.000092 ===
+1880.7s 359 Average Task Losses: Seg: 1.439 | Depth: 0.381 | Bound: 0.302
+1880.7s 360 Kendall Weights -> Seg: 0.412 | Depth: 1.367 | Bound: 1.247
+1880.7s 361 Kendall log_vars -> Seg: 0.193 | Depth: -1.006 | Bound: -0.914
+1880.7s 362 Depth | RMSE: 0.8821 | AbsRel: 0.3110 | δ1: 0.5256 | δ2: 0.8444 | δ3: 0.9565
+1880.7s 363 Seg   | mIoU: 0.1971 | Dice: 0.2956 | Pixel Acc: 0.4865
+1880.7s 364 Bound | F1: 0.5240 | Precision: 0.4099 | Recall: 0.7269
+1929.1s 367 === Epoch [36/150] | Train Loss: 0.3139 | Val Loss: 0.4940 | LR: 0.000091 ===
+1929.1s 368 Average Task Losses: Seg: 1.445 | Depth: 0.281 | Bound: 0.303
+1929.1s 369 Kendall Weights -> Seg: 0.414 | Depth: 1.368 | Bound: 1.270
+1929.1s 370 Kendall log_vars -> Seg: 0.189 | Depth: -1.006 | Bound: -0.932
+1929.1s 371 Depth | RMSE: 0.7142 | AbsRel: 0.2085 | δ1: 0.6723 | δ2: 0.9122 | δ3: 0.9778
+1929.1s 372 Seg   | mIoU: 0.1925 | Dice: 0.2912 | Pixel Acc: 0.4852
+1929.1s 373 Bound | F1: 0.5214 | Precision: 0.4043 | Recall: 0.7347
+1977.9s 376 === Epoch [37/150] | Train Loss: 0.3957 | Val Loss: 0.5060 | LR: 0.000091 ===
+1977.9s 377 Average Task Losses: Seg: 1.457 | Depth: 0.289 | Bound: 0.302
+1977.9s 378 Kendall Weights -> Seg: 0.416 | Depth: 1.368 | Bound: 1.292
+1977.9s 379 Kendall log_vars -> Seg: 0.184 | Depth: -1.006 | Bound: -0.949
+1977.9s 380 Depth | RMSE: 0.7382 | AbsRel: 0.2079 | δ1: 0.6518 | δ2: 0.9060 | δ3: 0.9783
+1977.9s 381 Seg   | mIoU: 0.1743 | Dice: 0.2674 | Pixel Acc: 0.4796
+1977.9s 382 Bound | F1: 0.5281 | Precision: 0.4284 | Recall: 0.6886
+2026.3s 385 === Epoch [38/150] | Train Loss: 0.2770 | Val Loss: 0.4852 | LR: 0.000090 ===
+2026.3s 386 Average Task Losses: Seg: 1.472 | Depth: 0.270 | Bound: 0.301
+2026.3s 387 Kendall Weights -> Seg: 0.419 | Depth: 1.368 | Bound: 1.314
+2026.3s 388 Kendall log_vars -> Seg: 0.177 | Depth: -1.006 | Bound: -0.966
+2026.3s 389 Depth | RMSE: 0.6903 | AbsRel: 0.2028 | δ1: 0.6869 | δ2: 0.9196 | δ3: 0.9807
+2026.3s 390 Seg   | mIoU: 0.1956 | Dice: 0.2940 | Pixel Acc: 0.5111
+2026.3s 391 Bound | F1: 0.5296 | Precision: 0.4307 | Recall: 0.6882
+2076.1s 395 === Epoch [39/150] | Train Loss: 0.2669 | Val Loss: 0.4833 | LR: 0.000089 ===
+2076.1s 396 Average Task Losses: Seg: 1.473 | Depth: 0.270 | Bound: 0.301
+2076.1s 397 Kendall Weights -> Seg: 0.422 | Depth: 1.368 | Bound: 1.335
+2076.1s 398 Kendall log_vars -> Seg: 0.170 | Depth: -1.006 | Bound: -0.982
+2076.1s 399 Depth | RMSE: 0.6977 | AbsRel: 0.1960 | δ1: 0.6902 | δ2: 0.9208 | δ3: 0.9809
+2076.1s 400 Seg   | mIoU: 0.2030 | Dice: 0.3002 | Pixel Acc: 0.5189
+2076.1s 401 Bound | F1: 0.5278 | Precision: 0.4206 | Recall: 0.7090
+2126.7s 405 === Epoch [40/150] | Train Loss: 0.2722 | Val Loss: 0.5096 | LR: 0.000088 ===
+2126.7s 406 Average Task Losses: Seg: 1.468 | Depth: 0.290 | Bound: 0.302
+2126.7s 407 Kendall Weights -> Seg: 0.424 | Depth: 1.368 | Bound: 1.356
+2126.7s 408 Kendall log_vars -> Seg: 0.164 | Depth: -1.006 | Bound: -0.998
+2126.7s 409 Depth | RMSE: 0.7438 | AbsRel: 0.1981 | δ1: 0.6345 | δ2: 0.8973 | δ3: 0.9752
+2126.7s 410 Seg   | mIoU: 0.1954 | Dice: 0.2909 | Pixel Acc: 0.4988
+2126.7s 411 Bound | F1: 0.5214 | Precision: 0.4006 | Recall: 0.7473
+2174.2s 413 === Epoch [41/150] | Train Loss: 0.2727 | Val Loss: 0.5437 | LR: 0.000088 ===
+2174.2s 414 Average Task Losses: Seg: 1.451 | Depth: 0.320 | Bound: 0.302
+2174.2s 415 Kendall Weights -> Seg: 0.427 | Depth: 1.368 | Bound: 1.364
+2174.2s 416 Kendall log_vars -> Seg: 0.158 | Depth: -1.006 | Bound: -1.004
+2174.2s 417 Depth | RMSE: 0.7661 | AbsRel: 0.2695 | δ1: 0.5937 | δ2: 0.8713 | δ3: 0.9656
+2174.2s 418 Seg   | mIoU: 0.2070 | Dice: 0.3063 | Pixel Acc: 0.5038
+2174.2s 419 Bound | F1: 0.5248 | Precision: 0.4067 | Recall: 0.7401
+2223.1s 422 === Epoch [42/150] | Train Loss: 0.2727 | Val Loss: 0.5091 | LR: 0.000087 ===
+2223.1s 423 Average Task Losses: Seg: 1.460 | Depth: 0.291 | Bound: 0.302
+2223.1s 424 Kendall Weights -> Seg: 0.429 | Depth: 1.368 | Bound: 1.364
+2223.1s 425 Kendall log_vars -> Seg: 0.153 | Depth: -1.006 | Bound: -1.004
+2223.1s 426 Depth | RMSE: 0.7408 | AbsRel: 0.1966 | δ1: 0.6286 | δ2: 0.9158 | δ3: 0.9817
+2223.1s 427 Seg   | mIoU: 0.2092 | Dice: 0.3096 | Pixel Acc: 0.5411
+2223.1s 428 Bound | F1: 0.5282 | Precision: 0.4226 | Recall: 0.7047
+2271.2s 431 === Epoch [43/150] | Train Loss: 0.2498 | Val Loss: 0.4703 | LR: 0.000086 ===
+2271.2s 432 Average Task Losses: Seg: 1.439 | Depth: 0.271 | Bound: 0.300
+2271.2s 433 Kendall Weights -> Seg: 0.431 | Depth: 1.368 | Bound: 1.364
+2271.2s 434 Kendall log_vars -> Seg: 0.148 | Depth: -1.006 | Bound: -1.004
+2271.2s 435 Depth | RMSE: 0.6962 | AbsRel: 0.1988 | δ1: 0.6926 | δ2: 0.9205 | δ3: 0.9793
+2271.2s 436 Seg   | mIoU: 0.1999 | Dice: 0.3013 | Pixel Acc: 0.4975
+2271.2s 437 Bound | F1: 0.5314 | Precision: 0.4335 | Recall: 0.6871
+2320.5s 441 === Epoch [44/150] | Train Loss: 0.2305 | Val Loss: 0.5122 | LR: 0.000086 ===
+2320.5s 442 Average Task Losses: Seg: 1.491 | Depth: 0.283 | Bound: 0.301
+2320.5s 443 Kendall Weights -> Seg: 0.434 | Depth: 1.368 | Bound: 1.364
+2320.5s 444 Kendall log_vars -> Seg: 0.141 | Depth: -1.006 | Bound: -1.004
+2320.5s 445 Depth | RMSE: 0.7252 | AbsRel: 0.1996 | δ1: 0.6615 | δ2: 0.9181 | δ3: 0.9783
+2320.5s 446 Seg   | mIoU: 0.2033 | Dice: 0.3012 | Pixel Acc: 0.5207
+2320.5s 447 Bound | F1: 0.5298 | Precision: 0.4335 | Recall: 0.6818
+2368.4s 449 === Epoch [45/150] | Train Loss: 0.2292 | Val Loss: 0.5336 | LR: 0.000085 ===
+2368.4s 450 Average Task Losses: Seg: 1.472 | Depth: 0.307 | Bound: 0.298
+2368.4s 451 Kendall Weights -> Seg: 0.437 | Depth: 1.368 | Bound: 1.364
+2368.4s 452 Kendall log_vars -> Seg: 0.135 | Depth: -1.006 | Bound: -1.004
+2368.4s 453 Depth | RMSE: 0.7383 | AbsRel: 0.2637 | δ1: 0.6168 | δ2: 0.8724 | δ3: 0.9646
+2368.4s 454 Seg   | mIoU: 0.2121 | Dice: 0.3121 | Pixel Acc: 0.5319
+2368.4s 455 Bound | F1: 0.5333 | Precision: 0.4275 | Recall: 0.7092
+2417.7s 459 === Epoch [46/150] | Train Loss: 0.2385 | Val Loss: 0.4986 | LR: 0.000084 ===
+2417.7s 460 Average Task Losses: Seg: 1.492 | Depth: 0.271 | Bound: 0.301
+2417.7s 461 Kendall Weights -> Seg: 0.439 | Depth: 1.368 | Bound: 1.364
+2417.7s 462 Kendall log_vars -> Seg: 0.130 | Depth: -1.006 | Bound: -1.004
+2417.7s 463 Depth | RMSE: 0.6962 | AbsRel: 0.1980 | δ1: 0.6823 | δ2: 0.9213 | δ3: 0.9804
+2417.7s 464 Seg   | mIoU: 0.2026 | Dice: 0.3013 | Pixel Acc: 0.5290
+2417.7s 465 Bound | F1: 0.5293 | Precision: 0.4245 | Recall: 0.7034
+2465.2s 467 === Epoch [47/150] | Train Loss: 0.2135 | Val Loss: 0.4771 | LR: 0.000083 ===
+2465.2s 468 Average Task Losses: Seg: 1.461 | Depth: 0.267 | Bound: 0.299
+2465.2s 469 Kendall Weights -> Seg: 0.442 | Depth: 1.368 | Bound: 1.364
+2465.2s 470 Kendall log_vars -> Seg: 0.124 | Depth: -1.006 | Bound: -1.004
+2465.2s 471 Depth | RMSE: 0.6886 | AbsRel: 0.1945 | δ1: 0.6817 | δ2: 0.9232 | δ3: 0.9817
+2465.2s 472 Seg   | mIoU: 0.2194 | Dice: 0.3214 | Pixel Acc: 0.5392
+2465.2s 473 Bound | F1: 0.5318 | Precision: 0.4253 | Recall: 0.7101
+2513.4s 476 === Epoch [48/150] | Train Loss: 0.1996 | Val Loss: 0.4882 | LR: 0.000082 ===
+2513.4s 477 Average Task Losses: Seg: 1.466 | Depth: 0.273 | Bound: 0.299
+2513.4s 478 Kendall Weights -> Seg: 0.445 | Depth: 1.368 | Bound: 1.364
+2513.4s 479 Kendall log_vars -> Seg: 0.117 | Depth: -1.006 | Bound: -1.004
+2513.4s 480 Depth | RMSE: 0.7075 | AbsRel: 0.1919 | δ1: 0.6805 | δ2: 0.9208 | δ3: 0.9831
+2513.4s 481 Seg   | mIoU: 0.2039 | Dice: 0.3041 | Pixel Acc: 0.5392
+2513.4s 482 Bound | F1: 0.5312 | Precision: 0.4225 | Recall: 0.7155
+2561.0s 484 === Epoch [49/150] | Train Loss: 0.2068 | Val Loss: 0.4727 | LR: 0.000081 ===
+2561.0s 485 Average Task Losses: Seg: 1.476 | Depth: 0.259 | Bound: 0.298
+2561.0s 486 Kendall Weights -> Seg: 0.448 | Depth: 1.368 | Bound: 1.364
+2561.0s 487 Kendall log_vars -> Seg: 0.110 | Depth: -1.006 | Bound: -1.004
+2561.0s 488 Depth | RMSE: 0.6680 | AbsRel: 0.1975 | δ1: 0.7007 | δ2: 0.9255 | δ3: 0.9823
+2561.0s 489 Seg   | mIoU: 0.2208 | Dice: 0.3219 | Pixel Acc: 0.5470
+2561.0s 490 Bound | F1: 0.5308 | Precision: 0.4175 | Recall: 0.7290
+2610.8s 494 === Epoch [50/150] | Train Loss: 0.2116 | Val Loss: 0.5576 | LR: 0.000080 ===
+2610.8s 495 Average Task Losses: Seg: 1.502 | Depth: 0.309 | Bound: 0.301
+2610.8s 496 Kendall Weights -> Seg: 0.450 | Depth: 1.368 | Bound: 1.364
+2610.8s 497 Kendall log_vars -> Seg: 0.106 | Depth: -1.006 | Bound: -1.004
+2610.8s 498 Depth | RMSE: 0.7478 | AbsRel: 0.2595 | δ1: 0.6226 | δ2: 0.8738 | δ3: 0.9652
+2610.8s 499 Seg   | mIoU: 0.2107 | Dice: 0.3117 | Pixel Acc: 0.5410
+2610.8s 500 Bound | F1: 0.5258 | Precision: 0.4080 | Recall: 0.7399
+2658.6s 502 === Epoch [51/150] | Train Loss: 0.2620 | Val Loss: 0.5316 | LR: 0.000080 ===
+2658.6s 503 Average Task Losses: Seg: 1.573 | Depth: 0.269 | Bound: 0.299
+2658.6s 504 Kendall Weights -> Seg: 0.447 | Depth: 1.368 | Bound: 1.364
+2658.6s 505 Kendall log_vars -> Seg: 0.112 | Depth: -1.006 | Bound: -1.004
+2658.6s 506 Depth | RMSE: 0.7011 | AbsRel: 0.1921 | δ1: 0.6835 | δ2: 0.9226 | δ3: 0.9801
+2658.6s 507 Seg   | mIoU: 0.1850 | Dice: 0.2806 | Pixel Acc: 0.4763
+2658.6s 508 Bound | F1: 0.5296 | Precision: 0.4195 | Recall: 0.7187
+2706.5s 510 === Epoch [52/150] | Train Loss: 0.2264 | Val Loss: 0.4941 | LR: 0.000079 ===
+2706.5s 511 Average Task Losses: Seg: 1.474 | Depth: 0.274 | Bound: 0.300
+2706.5s 512 Kendall Weights -> Seg: 0.447 | Depth: 1.368 | Bound: 1.364
+2706.5s 513 Kendall log_vars -> Seg: 0.113 | Depth: -1.006 | Bound: -1.004
+2706.5s 514 Depth | RMSE: 0.6889 | AbsRel: 0.2198 | δ1: 0.6757 | δ2: 0.9031 | δ3: 0.9767
+2706.5s 515 Seg   | mIoU: 0.2132 | Dice: 0.3153 | Pixel Acc: 0.5358
+2706.5s 516 Bound | F1: 0.5292 | Precision: 0.4179 | Recall: 0.7216
+2754.0s 518 === Epoch [53/150] | Train Loss: 0.2033 | Val Loss: 0.4761 | LR: 0.000078 ===
+2754.0s 519 Average Task Losses: Seg: 1.466 | Depth: 0.265 | Bound: 0.297
+2754.0s 520 Kendall Weights -> Seg: 0.449 | Depth: 1.368 | Bound: 1.364
+2754.0s 521 Kendall log_vars -> Seg: 0.108 | Depth: -1.006 | Bound: -1.004
+2754.0s 522 Depth | RMSE: 0.6796 | AbsRel: 0.1947 | δ1: 0.6795 | δ2: 0.9240 | δ3: 0.9824
+2754.0s 523 Seg   | mIoU: 0.2206 | Dice: 0.3228 | Pixel Acc: 0.5419
+2754.0s 524 Bound | F1: 0.5346 | Precision: 0.4239 | Recall: 0.7241
+2802.2s 527 === Epoch [54/150] | Train Loss: 0.2173 | Val Loss: 0.4871 | LR: 0.000077 ===
+2802.2s 528 Average Task Losses: Seg: 1.497 | Depth: 0.261 | Bound: 0.298
+2802.2s 529 Kendall Weights -> Seg: 0.452 | Depth: 1.368 | Bound: 1.364
+2802.2s 530 Kendall log_vars -> Seg: 0.102 | Depth: -1.006 | Bound: -1.004
+2802.2s 531 Depth | RMSE: 0.6763 | AbsRel: 0.1904 | δ1: 0.7044 | δ2: 0.9259 | δ3: 0.9820
+2802.2s 532 Seg   | mIoU: 0.2217 | Dice: 0.3258 | Pixel Acc: 0.5693
+2802.2s 533 Bound | F1: 0.5324 | Precision: 0.4242 | Recall: 0.7153
+2851.8s 537 === Epoch [55/150] | Train Loss: 0.2203 | Val Loss: 0.5232 | LR: 0.000076 ===
+2851.8s 538 Average Task Losses: Seg: 1.497 | Depth: 0.287 | Bound: 0.298
+2851.8s 539 Kendall Weights -> Seg: 0.455 | Depth: 1.368 | Bound: 1.364
+2851.8s 540 Kendall log_vars -> Seg: 0.095 | Depth: -1.006 | Bound: -1.004
+2851.8s 541 Depth | RMSE: 0.7036 | AbsRel: 0.2387 | δ1: 0.6509 | δ2: 0.8944 | δ3: 0.9729
+2851.8s 542 Seg   | mIoU: 0.2169 | Dice: 0.3173 | Pixel Acc: 0.5531
+2851.8s 543 Bound | F1: 0.5355 | Precision: 0.4353 | Recall: 0.6959
+2900.1s 546 === Epoch [56/150] | Train Loss: 0.1737 | Val Loss: 0.4768 | LR: 0.000075 ===
+2900.1s 547 Average Task Losses: Seg: 1.466 | Depth: 0.261 | Bound: 0.299
+2900.1s 548 Kendall Weights -> Seg: 0.458 | Depth: 1.368 | Bound: 1.364
+2900.1s 549 Kendall log_vars -> Seg: 0.088 | Depth: -1.006 | Bound: -1.004
+2900.1s 550 Depth | RMSE: 0.6838 | AbsRel: 0.1855 | δ1: 0.6957 | δ2: 0.9293 | δ3: 0.9827
+2900.1s 551 Seg   | mIoU: 0.2305 | Dice: 0.3353 | Pixel Acc: 0.5820
+2900.1s 552 Bound | F1: 0.5292 | Precision: 0.4143 | Recall: 0.7329
+2949.3s 555 === Epoch [57/150] | Train Loss: 0.1769 | Val Loss: 0.4908 | LR: 0.000074 ===
+2949.3s 556 Average Task Losses: Seg: 1.495 | Depth: 0.263 | Bound: 0.297
+2949.3s 557 Kendall Weights -> Seg: 0.461 | Depth: 1.368 | Bound: 1.364
+2949.3s 558 Kendall log_vars -> Seg: 0.082 | Depth: -1.006 | Bound: -1.004
+2949.3s 559 Depth | RMSE: 0.6773 | AbsRel: 0.1991 | δ1: 0.6988 | δ2: 0.9226 | δ3: 0.9811
+2949.3s 560 Seg   | mIoU: 0.2290 | Dice: 0.3347 | Pixel Acc: 0.5615
+2949.3s 561 Bound | F1: 0.5381 | Precision: 0.4367 | Recall: 0.7016
+2997.8s 564 === Epoch [58/150] | Train Loss: 0.1541 | Val Loss: 0.4798 | LR: 0.000073 ===
+2997.8s 565 Average Task Losses: Seg: 1.467 | Depth: 0.264 | Bound: 0.297
+2997.8s 566 Kendall Weights -> Seg: 0.464 | Depth: 1.368 | Bound: 1.364
+2997.8s 567 Kendall log_vars -> Seg: 0.075 | Depth: -1.006 | Bound: -1.004
+2997.8s 568 Depth | RMSE: 0.6895 | AbsRel: 0.1831 | δ1: 0.6890 | δ2: 0.9271 | δ3: 0.9836
+2997.8s 569 Seg   | mIoU: 0.2294 | Dice: 0.3337 | Pixel Acc: 0.5687
+2997.8s 570 Bound | F1: 0.5316 | Precision: 0.4172 | Recall: 0.7330
+3045.8s 572 === Epoch [59/150] | Train Loss: 0.1756 | Val Loss: 0.5321 | LR: 0.000072 ===
+3045.8s 573 Average Task Losses: Seg: 1.547 | Depth: 0.274 | Bound: 0.297
+3045.8s 574 Kendall Weights -> Seg: 0.467 | Depth: 1.368 | Bound: 1.364
+3045.8s 575 Kendall log_vars -> Seg: 0.068 | Depth: -1.006 | Bound: -1.004
+3045.8s 576 Depth | RMSE: 0.7184 | AbsRel: 0.1825 | δ1: 0.6864 | δ2: 0.9249 | δ3: 0.9822
+3045.8s 577 Seg   | mIoU: 0.2202 | Dice: 0.3242 | Pixel Acc: 0.5595
+3045.8s 578 Bound | F1: 0.5369 | Precision: 0.4319 | Recall: 0.7098
+3093.8s 580 === Epoch [60/150] | Train Loss: 0.1528 | Val Loss: 0.4894 | LR: 0.000071 ===
+3093.8s 581 Average Task Losses: Seg: 1.469 | Depth: 0.269 | Bound: 0.297
+3093.8s 582 Kendall Weights -> Seg: 0.470 | Depth: 1.368 | Bound: 1.364
+3093.8s 583 Kendall log_vars -> Seg: 0.062 | Depth: -1.006 | Bound: -1.004
+3093.8s 584 Depth | RMSE: 0.6729 | AbsRel: 0.2154 | δ1: 0.6840 | δ2: 0.9175 | δ3: 0.9791
+3093.8s 585 Seg   | mIoU: 0.2321 | Dice: 0.3379 | Pixel Acc: 0.5608
+3093.8s 586 Bound | F1: 0.5370 | Precision: 0.4318 | Recall: 0.7108
+3142.2s 589 === Epoch [61/150] | Train Loss: 0.1631 | Val Loss: 0.5084 | LR: 0.000070 ===
+3142.2s 590 Average Task Losses: Seg: 1.513 | Depth: 0.264 | Bound: 0.299
+3142.2s 591 Kendall Weights -> Seg: 0.472 | Depth: 1.368 | Bound: 1.364
+3142.2s 592 Kendall log_vars -> Seg: 0.057 | Depth: -1.006 | Bound: -1.004
+3142.2s 593 Depth | RMSE: 0.6737 | AbsRel: 0.2086 | δ1: 0.6925 | δ2: 0.9125 | δ3: 0.9795
+3142.2s 594 Seg   | mIoU: 0.2412 | Dice: 0.3477 | Pixel Acc: 0.5703
+3142.2s 595 Bound | F1: 0.5350 | Precision: 0.4301 | Recall: 0.7080
+3190.8s 598 === Epoch [62/150] | Train Loss: 0.1494 | Val Loss: 0.5116 | LR: 0.000069 ===
+3190.8s 599 Average Task Losses: Seg: 1.487 | Depth: 0.276 | Bound: 0.298
+3190.8s 600 Kendall Weights -> Seg: 0.475 | Depth: 1.368 | Bound: 1.364
+3190.8s 601 Kendall log_vars -> Seg: 0.051 | Depth: -1.006 | Bound: -1.004
+3190.8s 602 Depth | RMSE: 0.6875 | AbsRel: 0.2278 | δ1: 0.6680 | δ2: 0.9010 | δ3: 0.9734
+3190.8s 603 Seg   | mIoU: 0.2337 | Dice: 0.3384 | Pixel Acc: 0.5764
+3190.8s 604 Bound | F1: 0.5387 | Precision: 0.4510 | Recall: 0.6693
+3239.6s 607 === Epoch [63/150] | Train Loss: 0.1504 | Val Loss: 0.5176 | LR: 0.000068 ===
+3239.6s 608 Average Task Losses: Seg: 1.540 | Depth: 0.263 | Bound: 0.296
+3239.6s 609 Kendall Weights -> Seg: 0.477 | Depth: 1.368 | Bound: 1.364
+3239.6s 610 Kendall log_vars -> Seg: 0.046 | Depth: -1.006 | Bound: -1.004
+3239.6s 611 Depth | RMSE: 0.6716 | AbsRel: 0.2081 | δ1: 0.6964 | δ2: 0.9115 | δ3: 0.9783
+3239.6s 612 Seg   | mIoU: 0.2356 | Dice: 0.3421 | Pixel Acc: 0.5770
+3239.6s 613 Bound | F1: 0.5382 | Precision: 0.4326 | Recall: 0.7125
+3287.1s 615 === Epoch [64/150] | Train Loss: 0.1499 | Val Loss: 0.4924 | LR: 0.000067 ===
+3287.1s 616 Average Task Losses: Seg: 1.501 | Depth: 0.256 | Bound: 0.297
+3287.1s 617 Kendall Weights -> Seg: 0.479 | Depth: 1.368 | Bound: 1.364
+3287.1s 618 Kendall log_vars -> Seg: 0.043 | Depth: -1.006 | Bound: -1.004
+3287.1s 619 Depth | RMSE: 0.6604 | AbsRel: 0.1975 | δ1: 0.7026 | δ2: 0.9220 | δ3: 0.9808
+3287.1s 620 Seg   | mIoU: 0.2318 | Dice: 0.3379 | Pixel Acc: 0.5701
+3287.1s 621 Bound | F1: 0.5369 | Precision: 0.4308 | Recall: 0.7129
+3335.3s 623 === Epoch [65/150] | Train Loss: 0.1523 | Val Loss: 0.4963 | LR: 0.000066 ===
+3335.3s 624 Average Task Losses: Seg: 1.492 | Depth: 0.260 | Bound: 0.298
+3335.3s 625 Kendall Weights -> Seg: 0.481 | Depth: 1.368 | Bound: 1.364
+3335.3s 626 Kendall log_vars -> Seg: 0.040 | Depth: -1.006 | Bound: -1.004
+3335.3s 627 Depth | RMSE: 0.6772 | AbsRel: 0.1861 | δ1: 0.7111 | δ2: 0.9316 | δ3: 0.9833
+3335.3s 628 Seg   | mIoU: 0.2419 | Dice: 0.3501 | Pixel Acc: 0.5805
+3335.3s 629 Bound | F1: 0.5379 | Precision: 0.4404 | Recall: 0.6913
+3385.2s 633 === Epoch [66/150] | Train Loss: 0.1299 | Val Loss: 0.4997 | LR: 0.000065 ===
+3385.2s 634 Average Task Losses: Seg: 1.492 | Depth: 0.264 | Bound: 0.296
+3385.2s 635 Kendall Weights -> Seg: 0.483 | Depth: 1.368 | Bound: 1.364
+3385.2s 636 Kendall log_vars -> Seg: 0.035 | Depth: -1.006 | Bound: -1.004
+3385.2s 637 Depth | RMSE: 0.6758 | AbsRel: 0.2076 | δ1: 0.6937 | δ2: 0.9176 | δ3: 0.9786
+3385.2s 638 Seg   | mIoU: 0.2410 | Dice: 0.3487 | Pixel Acc: 0.5827
+3385.2s 639 Bound | F1: 0.5365 | Precision: 0.4278 | Recall: 0.7198
+3432.4s 641 === Epoch [67/150] | Train Loss: 0.1336 | Val Loss: 0.5106 | LR: 0.000064 ===
+3432.4s 642 Average Task Losses: Seg: 1.525 | Depth: 0.256 | Bound: 0.299
+3432.4s 643 Kendall Weights -> Seg: 0.486 | Depth: 1.368 | Bound: 1.364
+3432.4s 644 Kendall log_vars -> Seg: 0.029 | Depth: -1.006 | Bound: -1.004
+3432.4s 645 Depth | RMSE: 0.6694 | AbsRel: 0.1858 | δ1: 0.7091 | δ2: 0.9299 | δ3: 0.9841
+3432.4s 646 Seg   | mIoU: 0.2397 | Dice: 0.3477 | Pixel Acc: 0.5827
+3432.4s 647 Bound | F1: 0.5333 | Precision: 0.4258 | Recall: 0.7140
+3480.2s 649 === Epoch [68/150] | Train Loss: 0.1238 | Val Loss: 0.5139 | LR: 0.000063 ===
+3480.2s 650 Average Task Losses: Seg: 1.516 | Depth: 0.262 | Bound: 0.298
+3480.2s 651 Kendall Weights -> Seg: 0.488 | Depth: 1.368 | Bound: 1.364
+3480.2s 652 Kendall log_vars -> Seg: 0.024 | Depth: -1.006 | Bound: -1.004
+3480.2s 653 Depth | RMSE: 0.6766 | AbsRel: 0.1897 | δ1: 0.7030 | δ2: 0.9294 | δ3: 0.9824
+3480.2s 654 Seg   | mIoU: 0.2297 | Dice: 0.3361 | Pixel Acc: 0.5660
+3480.2s 655 Bound | F1: 0.5396 | Precision: 0.4473 | Recall: 0.6803
+3528.6s 658 === Epoch [69/150] | Train Loss: 0.1284 | Val Loss: 0.5001 | LR: 0.000062 ===
+3528.6s 659 Average Task Losses: Seg: 1.519 | Depth: 0.251 | Bound: 0.298
+3528.6s 660 Kendall Weights -> Seg: 0.490 | Depth: 1.368 | Bound: 1.364
+3528.6s 661 Kendall log_vars -> Seg: 0.021 | Depth: -1.006 | Bound: -1.004
+3528.6s 662 Depth | RMSE: 0.6497 | AbsRel: 0.1886 | δ1: 0.7195 | δ2: 0.9292 | δ3: 0.9836
+3528.6s 663 Seg   | mIoU: 0.2428 | Dice: 0.3524 | Pixel Acc: 0.5787
+3528.6s 664 Bound | F1: 0.5364 | Precision: 0.4363 | Recall: 0.6969
+3578.5s 668 === Epoch [70/150] | Train Loss: 0.1303 | Val Loss: 0.5013 | LR: 0.000060 ===
+3578.5s 669 Average Task Losses: Seg: 1.511 | Depth: 0.255 | Bound: 0.297
+3578.5s 670 Kendall Weights -> Seg: 0.492 | Depth: 1.368 | Bound: 1.364
+3578.5s 671 Kendall log_vars -> Seg: 0.016 | Depth: -1.006 | Bound: -1.004
+3578.5s 672 Depth | RMSE: 0.6579 | AbsRel: 0.1900 | δ1: 0.7144 | δ2: 0.9299 | δ3: 0.9835
+3578.5s 673 Seg   | mIoU: 0.2433 | Dice: 0.3519 | Pixel Acc: 0.5941
+3578.5s 674 Bound | F1: 0.5389 | Precision: 0.4387 | Recall: 0.6989
+3627.2s 677 === Epoch [71/150] | Train Loss: 0.1179 | Val Loss: 0.5294 | LR: 0.000059 ===
+3627.2s 678 Average Task Losses: Seg: 1.510 | Depth: 0.275 | Bound: 0.297
+3627.2s 679 Kendall Weights -> Seg: 0.494 | Depth: 1.368 | Bound: 1.364
+3627.2s 680 Kendall log_vars -> Seg: 0.012 | Depth: -1.006 | Bound: -1.004
+3627.2s 681 Depth | RMSE: 0.7138 | AbsRel: 0.1863 | δ1: 0.7010 | δ2: 0.9296 | δ3: 0.9824
+3627.2s 682 Seg   | mIoU: 0.2540 | Dice: 0.3634 | Pixel Acc: 0.5968
+3627.2s 683 Bound | F1: 0.5383 | Precision: 0.4374 | Recall: 0.7001
+3676.7s 686 === Epoch [72/150] | Train Loss: 0.1144 | Val Loss: 0.5172 | LR: 0.000058 ===
+3676.7s 687 Average Task Losses: Seg: 1.515 | Depth: 0.264 | Bound: 0.297
+3676.7s 688 Kendall Weights -> Seg: 0.496 | Depth: 1.368 | Bound: 1.364
+3676.7s 689 Kendall log_vars -> Seg: 0.007 | Depth: -1.006 | Bound: -1.004
+3676.7s 690 Depth | RMSE: 0.6929 | AbsRel: 0.1826 | δ1: 0.7074 | δ2: 0.9322 | δ3: 0.9847
+3676.7s 691 Seg   | mIoU: 0.2514 | Dice: 0.3600 | Pixel Acc: 0.6069
+3676.7s 692 Bound | F1: 0.5369 | Precision: 0.4309 | Recall: 0.7126
+3724.1s 694 === Epoch [73/150] | Train Loss: 0.1042 | Val Loss: 0.5547 | LR: 0.000057 ===
+3724.1s 695 Average Task Losses: Seg: 1.551 | Depth: 0.275 | Bound: 0.299
+3724.1s 696 Kendall Weights -> Seg: 0.499 | Depth: 1.368 | Bound: 1.364
+3724.1s 697 Kendall log_vars -> Seg: 0.003 | Depth: -1.006 | Bound: -1.004
+3724.1s 698 Depth | RMSE: 0.6836 | AbsRel: 0.2246 | δ1: 0.6700 | δ2: 0.9049 | δ3: 0.9771
+3724.1s 699 Seg   | mIoU: 0.2381 | Dice: 0.3466 | Pixel Acc: 0.5863
+3724.1s 700 Bound | F1: 0.5376 | Precision: 0.4379 | Recall: 0.6966
+3772.1s 702 === Epoch [74/150] | Train Loss: 0.1196 | Val Loss: 0.5118 | LR: 0.000056 ===
+3772.1s 703 Average Task Losses: Seg: 1.525 | Depth: 0.255 | Bound: 0.297
+3772.1s 704 Kendall Weights -> Seg: 0.500 | Depth: 1.368 | Bound: 1.364
+3772.1s 705 Kendall log_vars -> Seg: -0.001 | Depth: -1.006 | Bound: -1.004
+3772.1s 706 Depth | RMSE: 0.6641 | AbsRel: 0.1836 | δ1: 0.7235 | δ2: 0.9320 | δ3: 0.9839
+3772.1s 707 Seg   | mIoU: 0.2377 | Dice: 0.3448 | Pixel Acc: 0.5934
+3772.1s 708 Bound | F1: 0.5394 | Precision: 0.4339 | Recall: 0.7133
+3821.4s 711 === Epoch [75/150] | Train Loss: 0.1034 | Val Loss: 0.5112 | LR: 0.000055 ===
+3821.4s 712 Average Task Losses: Seg: 1.531 | Depth: 0.251 | Bound: 0.296
+3821.4s 713 Kendall Weights -> Seg: 0.502 | Depth: 1.368 | Bound: 1.364
+3821.4s 714 Kendall log_vars -> Seg: -0.005 | Depth: -1.006 | Bound: -1.004
+3821.4s 715 Depth | RMSE: 0.6504 | AbsRel: 0.1920 | δ1: 0.7185 | δ2: 0.9288 | δ3: 0.9829
+3821.4s 716 Seg   | mIoU: 0.2485 | Dice: 0.3570 | Pixel Acc: 0.6056
+3821.4s 717 Bound | F1: 0.5356 | Precision: 0.4237 | Recall: 0.7285
+3868.8s 719 === Epoch [76/150] | Train Loss: 0.0782 | Val Loss: 0.5263 | LR: 0.000054 ===
+3868.8s 720 Average Task Losses: Seg: 1.539 | Depth: 0.257 | Bound: 0.298
+3868.8s 721 Kendall Weights -> Seg: 0.504 | Depth: 1.368 | Bound: 1.364
+3868.8s 722 Kendall log_vars -> Seg: -0.009 | Depth: -1.006 | Bound: -1.004
+3868.8s 723 Depth | RMSE: 0.6686 | AbsRel: 0.1905 | δ1: 0.7183 | δ2: 0.9271 | δ3: 0.9815
+3868.8s 724 Seg   | mIoU: 0.2406 | Dice: 0.3475 | Pixel Acc: 0.5915
+3868.8s 725 Bound | F1: 0.5404 | Precision: 0.4447 | Recall: 0.6893
+3917.9s 728 === Epoch [77/150] | Train Loss: 0.0870 | Val Loss: 0.5270 | LR: 0.000053 ===
+3917.9s 729 Average Task Losses: Seg: 1.552 | Depth: 0.254 | Bound: 0.296
+3917.9s 730 Kendall Weights -> Seg: 0.506 | Depth: 1.368 | Bound: 1.364
+3917.9s 731 Kendall log_vars -> Seg: -0.012 | Depth: -1.006 | Bound: -1.004
+3917.9s 732 Depth | RMSE: 0.6603 | AbsRel: 0.1855 | δ1: 0.7235 | δ2: 0.9296 | δ3: 0.9828
+3917.9s 733 Seg   | mIoU: 0.2512 | Dice: 0.3597 | Pixel Acc: 0.5939
+3917.9s 734 Bound | F1: 0.5412 | Precision: 0.4454 | Recall: 0.6900
+3966.2s 737 === Epoch [78/150] | Train Loss: 0.0948 | Val Loss: 0.5281 | LR: 0.000052 ===
+3966.2s 738 Average Task Losses: Seg: 1.537 | Depth: 0.259 | Bound: 0.297
+3966.2s 739 Kendall Weights -> Seg: 0.507 | Depth: 1.368 | Bound: 1.364
+3966.2s 740 Kendall log_vars -> Seg: -0.015 | Depth: -1.006 | Bound: -1.004
+3966.2s 741 Depth | RMSE: 0.6707 | AbsRel: 0.1950 | δ1: 0.7143 | δ2: 0.9272 | δ3: 0.9811
+3966.2s 742 Seg   | mIoU: 0.2470 | Dice: 0.3559 | Pixel Acc: 0.5942
+3966.2s 743 Bound | F1: 0.5379 | Precision: 0.4336 | Recall: 0.7086
+4013.9s 745 === Epoch [79/150] | Train Loss: 0.0895 | Val Loss: 0.5837 | LR: 0.000051 ===
+4013.9s 746 Average Task Losses: Seg: 1.620 | Depth: 0.268 | Bound: 0.297
+4013.9s 747 Kendall Weights -> Seg: 0.509 | Depth: 1.368 | Bound: 1.364
+4013.9s 748 Kendall log_vars -> Seg: -0.017 | Depth: -1.006 | Bound: -1.004
+4013.9s 749 Depth | RMSE: 0.6765 | AbsRel: 0.2156 | δ1: 0.6895 | δ2: 0.9154 | δ3: 0.9775
+4013.9s 750 Seg   | mIoU: 0.2443 | Dice: 0.3520 | Pixel Acc: 0.5967
+4013.9s 751 Bound | F1: 0.5388 | Precision: 0.4315 | Recall: 0.7177
+4062.1s 753 === Epoch [80/150] | Train Loss: 0.0910 | Val Loss: 0.5337 | LR: 0.000049 ===
+4062.1s 754 Average Task Losses: Seg: 1.560 | Depth: 0.253 | Bound: 0.297
+4062.1s 755 Kendall Weights -> Seg: 0.511 | Depth: 1.368 | Bound: 1.364
+4062.1s 756 Kendall log_vars -> Seg: -0.021 | Depth: -1.006 | Bound: -1.004
+4062.1s 757 Depth | RMSE: 0.6645 | AbsRel: 0.1821 | δ1: 0.7295 | δ2: 0.9306 | δ3: 0.9837
+4062.1s 758 Seg   | mIoU: 0.2492 | Dice: 0.3576 | Pixel Acc: 0.6023
+4062.1s 759 Bound | F1: 0.5381 | Precision: 0.4312 | Recall: 0.7160
+4110.7s 762 === Epoch [81/150] | Train Loss: 0.0737 | Val Loss: 0.5259 | LR: 0.000048 ===
+4110.7s 763 Average Task Losses: Seg: 1.533 | Depth: 0.258 | Bound: 0.296
+4110.7s 764 Kendall Weights -> Seg: 0.512 | Depth: 1.368 | Bound: 1.364
+4110.7s 765 Kendall log_vars -> Seg: -0.025 | Depth: -1.006 | Bound: -1.004
+4110.7s 766 Depth | RMSE: 0.6624 | AbsRel: 0.2030 | δ1: 0.7042 | δ2: 0.9213 | δ3: 0.9798
+4110.7s 767 Seg   | mIoU: 0.2519 | Dice: 0.3607 | Pixel Acc: 0.6077
+4110.7s 768 Bound | F1: 0.5412 | Precision: 0.4435 | Recall: 0.6943
+4159.8s 771 === Epoch [82/150] | Train Loss: 0.0722 | Val Loss: 0.5243 | LR: 0.000047 ===
+4159.8s 772 Average Task Losses: Seg: 1.552 | Depth: 0.249 | Bound: 0.296
+4159.8s 773 Kendall Weights -> Seg: 0.514 | Depth: 1.368 | Bound: 1.364
+4159.8s 774 Kendall log_vars -> Seg: -0.027 | Depth: -1.006 | Bound: -1.004
+4159.8s 775 Depth | RMSE: 0.6497 | AbsRel: 0.1822 | δ1: 0.7289 | δ2: 0.9334 | δ3: 0.9836
+4159.8s 776 Seg   | mIoU: 0.2450 | Dice: 0.3539 | Pixel Acc: 0.6002
+4159.8s 777 Bound | F1: 0.5398 | Precision: 0.4372 | Recall: 0.7057
+4208.0s 779 === Epoch [83/150] | Train Loss: 0.1124 | Val Loss: 0.5489 | LR: 0.000046 ===
+4208.0s 780 Average Task Losses: Seg: 1.567 | Depth: 0.259 | Bound: 0.298
+4208.0s 781 Kendall Weights -> Seg: 0.515 | Depth: 1.368 | Bound: 1.364
+4208.0s 782 Kendall log_vars -> Seg: -0.030 | Depth: -1.006 | Bound: -1.004
+4208.0s 783 Depth | RMSE: 0.6641 | AbsRel: 0.1949 | δ1: 0.7077 | δ2: 0.9266 | δ3: 0.9814
+4208.0s 784 Seg   | mIoU: 0.2450 | Dice: 0.3542 | Pixel Acc: 0.5892
+4208.0s 785 Bound | F1: 0.5370 | Precision: 0.4297 | Recall: 0.7165
+4256.2s 787 === Epoch [84/150] | Train Loss: 0.1235 | Val Loss: 0.5212 | LR: 0.000045 ===
+4256.2s 788 Average Task Losses: Seg: 1.527 | Depth: 0.256 | Bound: 0.296
+4256.2s 789 Kendall Weights -> Seg: 0.514 | Depth: 1.368 | Bound: 1.364
+4256.2s 790 Kendall log_vars -> Seg: -0.027 | Depth: -1.006 | Bound: -1.004
+4256.2s 791 Depth | RMSE: 0.6563 | AbsRel: 0.1965 | δ1: 0.7112 | δ2: 0.9254 | δ3: 0.9823
+4256.2s 792 Seg   | mIoU: 0.2387 | Dice: 0.3465 | Pixel Acc: 0.5817
+4256.2s 793 Bound | F1: 0.5394 | Precision: 0.4344 | Recall: 0.7116
+4303.7s 795 === Epoch [85/150] | Train Loss: 0.0825 | Val Loss: 0.5166 | LR: 0.000044 ===
+4303.7s 796 Average Task Losses: Seg: 1.531 | Depth: 0.250 | Bound: 0.296
+4303.7s 797 Kendall Weights -> Seg: 0.515 | Depth: 1.368 | Bound: 1.364
+4303.7s 798 Kendall log_vars -> Seg: -0.029 | Depth: -1.006 | Bound: -1.004
+4303.7s 799 Depth | RMSE: 0.6508 | AbsRel: 0.1866 | δ1: 0.7158 | δ2: 0.9291 | δ3: 0.9844
+4303.7s 800 Seg   | mIoU: 0.2628 | Dice: 0.3737 | Pixel Acc: 0.6188
+4303.7s 801 Bound | F1: 0.5420 | Precision: 0.4443 | Recall: 0.6953
+4353.1s 805 === Epoch [86/150] | Train Loss: 0.0731 | Val Loss: 0.5271 | LR: 0.000043 ===
+4353.1s 806 Average Task Losses: Seg: 1.558 | Depth: 0.248 | Bound: 0.296
+4353.1s 807 Kendall Weights -> Seg: 0.516 | Depth: 1.368 | Bound: 1.364
+4353.1s 808 Kendall log_vars -> Seg: -0.032 | Depth: -1.006 | Bound: -1.004
+4353.1s 809 Depth | RMSE: 0.6427 | AbsRel: 0.1904 | δ1: 0.7218 | δ2: 0.9297 | δ3: 0.9822
+4353.1s 810 Seg   | mIoU: 0.2542 | Dice: 0.3649 | Pixel Acc: 0.6074
+4353.1s 811 Bound | F1: 0.5393 | Precision: 0.4314 | Recall: 0.7199
+4400.5s 813 === Epoch [87/150] | Train Loss: 0.0655 | Val Loss: 0.5423 | LR: 0.000042 ===
+4400.5s 814 Average Task Losses: Seg: 1.576 | Depth: 0.252 | Bound: 0.295
+4400.5s 815 Kendall Weights -> Seg: 0.518 | Depth: 1.368 | Bound: 1.364
+4400.5s 816 Kendall log_vars -> Seg: -0.035 | Depth: -1.006 | Bound: -1.004
+4400.5s 817 Depth | RMSE: 0.6484 | AbsRel: 0.1948 | δ1: 0.7154 | δ2: 0.9274 | δ3: 0.9824
+4400.5s 818 Seg   | mIoU: 0.2500 | Dice: 0.3604 | Pixel Acc: 0.6062
+4400.5s 819 Bound | F1: 0.5386 | Precision: 0.4262 | Recall: 0.7318
+4448.1s 821 === Epoch [88/150] | Train Loss: 0.0776 | Val Loss: 0.5266 | LR: 0.000041 ===
+4448.1s 822 Average Task Losses: Seg: 1.551 | Depth: 0.250 | Bound: 0.295
+4448.1s 823 Kendall Weights -> Seg: 0.519 | Depth: 1.368 | Bound: 1.364
+4448.1s 824 Kendall log_vars -> Seg: -0.038 | Depth: -1.006 | Bound: -1.004
+4448.1s 825 Depth | RMSE: 0.6572 | AbsRel: 0.1796 | δ1: 0.7273 | δ2: 0.9344 | δ3: 0.9839
+4448.1s 826 Seg   | mIoU: 0.2361 | Dice: 0.3435 | Pixel Acc: 0.5876
+4448.1s 827 Bound | F1: 0.5415 | Precision: 0.4390 | Recall: 0.7067
+4495.7s 829 === Epoch [89/150] | Train Loss: 0.0548 | Val Loss: 0.5417 | LR: 0.000039 ===
+4495.7s 830 Average Task Losses: Seg: 1.569 | Depth: 0.253 | Bound: 0.295
+4495.7s 831 Kendall Weights -> Seg: 0.521 | Depth: 1.368 | Bound: 1.364
+4495.7s 832 Kendall log_vars -> Seg: -0.041 | Depth: -1.006 | Bound: -1.004
+4495.7s 833 Depth | RMSE: 0.6669 | AbsRel: 0.1771 | δ1: 0.7239 | δ2: 0.9358 | δ3: 0.9852
+4495.7s 834 Seg   | mIoU: 0.2523 | Dice: 0.3616 | Pixel Acc: 0.6050
+4495.7s 835 Bound | F1: 0.5408 | Precision: 0.4366 | Recall: 0.7107
+4543.5s 837 === Epoch [90/150] | Train Loss: 0.0627 | Val Loss: 0.5682 | LR: 0.000038 ===
+4543.5s 838 Average Task Losses: Seg: 1.584 | Depth: 0.264 | Bound: 0.297
+4543.5s 839 Kendall Weights -> Seg: 0.522 | Depth: 1.368 | Bound: 1.364
+4543.5s 840 Kendall log_vars -> Seg: -0.044 | Depth: -1.006 | Bound: -1.004
+4543.5s 841 Depth | RMSE: 0.6579 | AbsRel: 0.2179 | δ1: 0.6879 | δ2: 0.9136 | δ3: 0.9770
+4543.5s 842 Seg   | mIoU: 0.2556 | Dice: 0.3656 | Pixel Acc: 0.5969
+4543.5s 843 Bound | F1: 0.5420 | Precision: 0.4462 | Recall: 0.6907
+4592.2s 846 === Epoch [91/150] | Train Loss: 0.0603 | Val Loss: 0.5621 | LR: 0.000037 ===
+4592.2s 847 Average Task Losses: Seg: 1.592 | Depth: 0.258 | Bound: 0.295
+4592.2s 848 Kendall Weights -> Seg: 0.524 | Depth: 1.368 | Bound: 1.364
+4592.2s 849 Kendall log_vars -> Seg: -0.046 | Depth: -1.006 | Bound: -1.004
+4592.2s 850 Depth | RMSE: 0.6860 | AbsRel: 0.1784 | δ1: 0.7159 | δ2: 0.9323 | δ3: 0.9846
+4592.2s 851 Seg   | mIoU: 0.2534 | Dice: 0.3618 | Pixel Acc: 0.6039
+4592.2s 852 Bound | F1: 0.5387 | Precision: 0.4276 | Recall: 0.7283
+4639.4s 854 === Epoch [92/150] | Train Loss: 0.0547 | Val Loss: 0.5536 | LR: 0.000036 ===
+4639.4s 855 Average Task Losses: Seg: 1.564 | Depth: 0.260 | Bound: 0.297
+4639.4s 856 Kendall Weights -> Seg: 0.525 | Depth: 1.368 | Bound: 1.364
+4639.4s 857 Kendall log_vars -> Seg: -0.049 | Depth: -1.006 | Bound: -1.004
+4639.4s 858 Depth | RMSE: 0.6696 | AbsRel: 0.2007 | δ1: 0.7043 | δ2: 0.9187 | δ3: 0.9791
+4639.4s 859 Seg   | mIoU: 0.2519 | Dice: 0.3610 | Pixel Acc: 0.6094
+4639.4s 860 Bound | F1: 0.5368 | Precision: 0.4276 | Recall: 0.7215
+4687.2s 862 === Epoch [93/150] | Train Loss: 0.0596 | Val Loss: 0.5496 | LR: 0.000035 ===
+4687.2s 863 Average Task Losses: Seg: 1.585 | Depth: 0.249 | Bound: 0.297
+4687.2s 864 Kendall Weights -> Seg: 0.525 | Depth: 1.368 | Bound: 1.364
+4687.2s 865 Kendall log_vars -> Seg: -0.050 | Depth: -1.006 | Bound: -1.004
+4687.2s 866 Depth | RMSE: 0.6469 | AbsRel: 0.1865 | δ1: 0.7233 | δ2: 0.9323 | δ3: 0.9827
+4687.2s 867 Seg   | mIoU: 0.2531 | Dice: 0.3618 | Pixel Acc: 0.6007
+4687.2s 868 Bound | F1: 0.5417 | Precision: 0.4402 | Recall: 0.7043
+4735.0s 870 === Epoch [94/150] | Train Loss: 0.0472 | Val Loss: 0.5754 | LR: 0.000034 ===
+4735.0s 871 Average Task Losses: Seg: 1.591 | Depth: 0.267 | Bound: 0.295
+4735.0s 872 Kendall Weights -> Seg: 0.526 | Depth: 1.368 | Bound: 1.364
+4735.0s 873 Kendall log_vars -> Seg: -0.052 | Depth: -1.006 | Bound: -1.004
+4735.0s 874 Depth | RMSE: 0.6665 | AbsRel: 0.2173 | δ1: 0.6912 | δ2: 0.9156 | δ3: 0.9785
+4735.0s 875 Seg   | mIoU: 0.2568 | Dice: 0.3656 | Pixel Acc: 0.6093
+4735.0s 876 Bound | F1: 0.5416 | Precision: 0.4365 | Recall: 0.7139
+4783.2s 878 === Epoch [95/150] | Train Loss: 0.0463 | Val Loss: 0.5836 | LR: 0.000033 ===
+4783.2s 879 Average Task Losses: Seg: 1.624 | Depth: 0.258 | Bound: 0.296
+4783.2s 880 Kendall Weights -> Seg: 0.528 | Depth: 1.368 | Bound: 1.364
+4783.2s 881 Kendall log_vars -> Seg: -0.054 | Depth: -1.006 | Bound: -1.004
+4783.2s 882 Depth | RMSE: 0.6718 | AbsRel: 0.1822 | δ1: 0.7060 | δ2: 0.9343 | δ3: 0.9861
+4783.2s 883 Seg   | mIoU: 0.2642 | Dice: 0.3755 | Pixel Acc: 0.6232
+4783.2s 884 Bound | F1: 0.5424 | Precision: 0.4484 | Recall: 0.6867
+4831.9s 888 === Epoch [96/150] | Train Loss: 0.0523 | Val Loss: 0.5666 | LR: 0.000032 ===
+4831.9s 889 Average Task Losses: Seg: 1.610 | Depth: 0.249 | Bound: 0.298
+4831.9s 890 Kendall Weights -> Seg: 0.529 | Depth: 1.368 | Bound: 1.364
+4831.9s 891 Kendall log_vars -> Seg: -0.056 | Depth: -1.006 | Bound: -1.004
+4831.9s 892 Depth | RMSE: 0.6397 | AbsRel: 0.1972 | δ1: 0.7198 | δ2: 0.9258 | δ3: 0.9814
+4831.9s 893 Seg   | mIoU: 0.2530 | Dice: 0.3631 | Pixel Acc: 0.6084
+4831.9s 894 Bound | F1: 0.5411 | Precision: 0.4465 | Recall: 0.6869
+4879.5s 896 === Epoch [97/150] | Train Loss: 0.0340 | Val Loss: 0.5620 | LR: 0.000031 ===
+4879.5s 897 Average Task Losses: Seg: 1.606 | Depth: 0.248 | Bound: 0.296
+4879.5s 898 Kendall Weights -> Seg: 0.530 | Depth: 1.368 | Bound: 1.364
+4879.5s 899 Kendall log_vars -> Seg: -0.059 | Depth: -1.006 | Bound: -1.004
+4879.5s 900 Depth | RMSE: 0.6391 | AbsRel: 0.1930 | δ1: 0.7200 | δ2: 0.9290 | δ3: 0.9826
+4879.5s 901 Seg   | mIoU: 0.2631 | Dice: 0.3748 | Pixel Acc: 0.6190
+4879.5s 902 Bound | F1: 0.5377 | Precision: 0.4269 | Recall: 0.7264
+4926.6s 904 === Epoch [98/150] | Train Loss: 0.0277 | Val Loss: 0.5828 | LR: 0.000030 ===
+4926.6s 905 Average Task Losses: Seg: 1.599 | Depth: 0.265 | Bound: 0.296
+4926.6s 906 Kendall Weights -> Seg: 0.532 | Depth: 1.368 | Bound: 1.364
+4926.6s 907 Kendall log_vars -> Seg: -0.061 | Depth: -1.006 | Bound: -1.004
+4926.6s 908 Depth | RMSE: 0.6637 | AbsRel: 0.2154 | δ1: 0.6881 | δ2: 0.9145 | δ3: 0.9794
+4926.6s 909 Seg   | mIoU: 0.2632 | Dice: 0.3725 | Pixel Acc: 0.6193
+4926.6s 910 Bound | F1: 0.5410 | Precision: 0.4386 | Recall: 0.7061
+4973.8s 912 === Epoch [99/150] | Train Loss: 0.0293 | Val Loss: 0.5617 | LR: 0.000029 ===
+4973.8s 913 Average Task Losses: Seg: 1.614 | Depth: 0.243 | Bound: 0.297
+4973.8s 914 Kendall Weights -> Seg: 0.533 | Depth: 1.368 | Bound: 1.364
+4973.8s 915 Kendall log_vars -> Seg: -0.064 | Depth: -1.006 | Bound: -1.004
+4973.8s 916 Depth | RMSE: 0.6302 | AbsRel: 0.1845 | δ1: 0.7282 | δ2: 0.9350 | δ3: 0.9847
+4973.8s 917 Seg   | mIoU: 0.2610 | Dice: 0.3717 | Pixel Acc: 0.6224
+4973.8s 918 Bound | F1: 0.5409 | Precision: 0.4399 | Recall: 0.7024
+5021.7s 920 === Epoch [100/150] | Train Loss: 0.0366 | Val Loss: 0.5637 | LR: 0.000028 ===
+5021.7s 921 Average Task Losses: Seg: 1.613 | Depth: 0.245 | Bound: 0.296
+5021.7s 922 Kendall Weights -> Seg: 0.534 | Depth: 1.368 | Bound: 1.364
+5021.7s 923 Kendall log_vars -> Seg: -0.066 | Depth: -1.006 | Bound: -1.004
+5021.7s 924 Depth | RMSE: 0.6363 | AbsRel: 0.1870 | δ1: 0.7265 | δ2: 0.9316 | δ3: 0.9833
+5021.7s 925 Seg   | mIoU: 0.2578 | Dice: 0.3668 | Pixel Acc: 0.6136
+5021.7s 926 Bound | F1: 0.5425 | Precision: 0.4436 | Recall: 0.6986
+5070.0s 929 === Epoch [101/150] | Train Loss: 0.0248 | Val Loss: 0.5714 | LR: 0.000027 ===
+5070.0s 930 Average Task Losses: Seg: 1.611 | Depth: 0.251 | Bound: 0.296
+5070.0s 931 Kendall Weights -> Seg: 0.535 | Depth: 1.368 | Bound: 1.364
+5070.0s 932 Kendall log_vars -> Seg: -0.067 | Depth: -1.006 | Bound: -1.004
+5070.0s 933 Depth | RMSE: 0.6464 | AbsRel: 0.1966 | δ1: 0.7174 | δ2: 0.9263 | δ3: 0.9812
+5070.0s 934 Seg   | mIoU: 0.2532 | Dice: 0.3623 | Pixel Acc: 0.6173
+5070.0s 935 Bound | F1: 0.5395 | Precision: 0.4309 | Recall: 0.7218
+5117.7s 937 === Epoch [102/150] | Train Loss: 0.0266 | Val Loss: 0.6106 | LR: 0.000026 ===
+5117.7s 938 Average Task Losses: Seg: 1.670 | Depth: 0.255 | Bound: 0.298
+5117.7s 939 Kendall Weights -> Seg: 0.536 | Depth: 1.368 | Bound: 1.364
+5117.7s 940 Kendall log_vars -> Seg: -0.069 | Depth: -1.006 | Bound: -1.004
+5117.7s 941 Depth | RMSE: 0.6565 | AbsRel: 0.1961 | δ1: 0.7134 | δ2: 0.9255 | δ3: 0.9806
+5117.7s 942 Seg   | mIoU: 0.2633 | Dice: 0.3726 | Pixel Acc: 0.6238
+5117.7s 943 Bound | F1: 0.5416 | Precision: 0.4463 | Recall: 0.6893
+5165.4s 945 === Epoch [103/150] | Train Loss: 0.0184 | Val Loss: 0.5671 | LR: 0.000025 ===
+5165.4s 946 Average Task Losses: Seg: 1.622 | Depth: 0.243 | Bound: 0.296
+5165.4s 947 Kendall Weights -> Seg: 0.537 | Depth: 1.368 | Bound: 1.364
+5165.4s 948 Kendall log_vars -> Seg: -0.071 | Depth: -1.006 | Bound: -1.004
+5165.4s 949 Depth | RMSE: 0.6379 | AbsRel: 0.1815 | δ1: 0.7270 | δ2: 0.9361 | δ3: 0.9846
+5165.4s 950 Seg   | mIoU: 0.2642 | Dice: 0.3749 | Pixel Acc: 0.6274
+5165.4s 951 Bound | F1: 0.5428 | Precision: 0.4446 | Recall: 0.6975
+5213.6s 954 === Epoch [104/150] | Train Loss: 0.0293 | Val Loss: 0.5934 | LR: 0.000024 ===
+5213.6s 955 Average Task Losses: Seg: 1.641 | Depth: 0.253 | Bound: 0.297
+5213.6s 956 Kendall Weights -> Seg: 0.538 | Depth: 1.368 | Bound: 1.364
+5213.6s 957 Kendall log_vars -> Seg: -0.073 | Depth: -1.006 | Bound: -1.004
+5213.6s 958 Depth | RMSE: 0.6491 | AbsRel: 0.2005 | δ1: 0.7101 | δ2: 0.9227 | δ3: 0.9815
+5213.6s 959 Seg   | mIoU: 0.2653 | Dice: 0.3757 | Pixel Acc: 0.6203
+5213.6s 960 Bound | F1: 0.5419 | Precision: 0.4408 | Recall: 0.7040
+5261.7s 963 === Epoch [105/150] | Train Loss: 0.0234 | Val Loss: 0.5864 | LR: 0.000023 ===
+5261.7s 964 Average Task Losses: Seg: 1.640 | Depth: 0.248 | Bound: 0.297
+5261.7s 965 Kendall Weights -> Seg: 0.539 | Depth: 1.368 | Bound: 1.364
+5261.7s 966 Kendall log_vars -> Seg: -0.074 | Depth: -1.006 | Bound: -1.004
+5261.7s 967 Depth | RMSE: 0.6486 | AbsRel: 0.1854 | δ1: 0.7241 | δ2: 0.9320 | δ3: 0.9840
+5261.7s 968 Seg   | mIoU: 0.2622 | Dice: 0.3728 | Pixel Acc: 0.6265
+5261.7s 969 Bound | F1: 0.5424 | Precision: 0.4436 | Recall: 0.6985
+5309.5s 971 === Epoch [106/150] | Train Loss: 0.0143 | Val Loss: 0.5857 | LR: 0.000022 ===
+5309.5s 972 Average Task Losses: Seg: 1.635 | Depth: 0.249 | Bound: 0.297
+5309.5s 973 Kendall Weights -> Seg: 0.539 | Depth: 1.368 | Bound: 1.364
+5309.5s 974 Kendall log_vars -> Seg: -0.076 | Depth: -1.006 | Bound: -1.004
+5309.5s 975 Depth | RMSE: 0.6410 | AbsRel: 0.1926 | δ1: 0.7168 | δ2: 0.9271 | δ3: 0.9836
+5309.5s 976 Seg   | mIoU: 0.2614 | Dice: 0.3718 | Pixel Acc: 0.6303
+5309.5s 977 Bound | F1: 0.5422 | Precision: 0.4441 | Recall: 0.6964
+5357.5s 979 === Epoch [107/150] | Train Loss: 0.0224 | Val Loss: 0.5892 | LR: 0.000021 ===
+5357.5s 980 Average Task Losses: Seg: 1.653 | Depth: 0.243 | Bound: 0.297
+5357.5s 981 Kendall Weights -> Seg: 0.541 | Depth: 1.368 | Bound: 1.364
+5357.5s 982 Kendall log_vars -> Seg: -0.078 | Depth: -1.006 | Bound: -1.004
+5357.5s 983 Depth | RMSE: 0.6372 | AbsRel: 0.1811 | δ1: 0.7340 | δ2: 0.9369 | δ3: 0.9844
+5357.5s 984 Seg   | mIoU: 0.2605 | Dice: 0.3709 | Pixel Acc: 0.6188
+5357.5s 985 Bound | F1: 0.5427 | Precision: 0.4453 | Recall: 0.6951
+5405.6s 988 === Epoch [108/150] | Train Loss: 0.0263 | Val Loss: 0.5787 | LR: 0.000021 ===
+5405.6s 989 Average Task Losses: Seg: 1.623 | Depth: 0.247 | Bound: 0.297
+5405.6s 990 Kendall Weights -> Seg: 0.541 | Depth: 1.368 | Bound: 1.364
+5405.6s 991 Kendall log_vars -> Seg: -0.079 | Depth: -1.006 | Bound: -1.004
+5405.6s 992 Depth | RMSE: 0.6493 | AbsRel: 0.1809 | δ1: 0.7239 | δ2: 0.9342 | δ3: 0.9850
+5405.6s 993 Seg   | mIoU: 0.2643 | Dice: 0.3747 | Pixel Acc: 0.6175
+5405.6s 994 Bound | F1: 0.5408 | Precision: 0.4383 | Recall: 0.7061
+5453.4s 996 === Epoch [109/150] | Train Loss: 0.0128 | Val Loss: 0.6072 | LR: 0.000020 ===
+5453.4s 997 Average Task Losses: Seg: 1.649 | Depth: 0.258 | Bound: 0.297
+5453.4s 998 Kendall Weights -> Seg: 0.542 | Depth: 1.368 | Bound: 1.364
+5453.4s 999 Kendall log_vars -> Seg: -0.081 | Depth: -1.006 | Bound: -1.004
+5453.4s 1000 Depth | RMSE: 0.6784 | AbsRel: 0.1778 | δ1: 0.7147 | δ2: 0.9365 | δ3: 0.9857
+5453.4s 1001 Seg   | mIoU: 0.2613 | Dice: 0.3716 | Pixel Acc: 0.6225
+5453.4s 1002 Bound | F1: 0.5414 | Precision: 0.4401 | Recall: 0.7039
+5501.0s 1004 === Epoch [110/150] | Train Loss: 0.0150 | Val Loss: 0.5844 | LR: 0.000019 ===
+5501.0s 1005 Average Task Losses: Seg: 1.637 | Depth: 0.246 | Bound: 0.296
+5501.0s 1006 Kendall Weights -> Seg: 0.543 | Depth: 1.368 | Bound: 1.364
+5501.0s 1007 Kendall log_vars -> Seg: -0.082 | Depth: -1.006 | Bound: -1.004
+5501.0s 1008 Depth | RMSE: 0.6503 | AbsRel: 0.1768 | δ1: 0.7284 | δ2: 0.9372 | δ3: 0.9859
+5501.0s 1009 Seg   | mIoU: 0.2652 | Dice: 0.3754 | Pixel Acc: 0.6268
+5501.0s 1010 Bound | F1: 0.5414 | Precision: 0.4383 | Recall: 0.7085
+5548.8s 1012 === Epoch [111/150] | Train Loss: 0.0074 | Val Loss: 0.5783 | LR: 0.000018 ===
+5548.8s 1013 Average Task Losses: Seg: 1.629 | Depth: 0.244 | Bound: 0.296
+5548.8s 1014 Kendall Weights -> Seg: 0.543 | Depth: 1.368 | Bound: 1.364
+5548.8s 1015 Kendall log_vars -> Seg: -0.083 | Depth: -1.006 | Bound: -1.004
+5548.8s 1016 Depth | RMSE: 0.6444 | AbsRel: 0.1773 | δ1: 0.7299 | δ2: 0.9372 | δ3: 0.9858
+5548.8s 1017 Seg   | mIoU: 0.2635 | Dice: 0.3730 | Pixel Acc: 0.6292
+5548.8s 1018 Bound | F1: 0.5429 | Precision: 0.4452 | Recall: 0.6960
+5597.3s 1021 === Epoch [112/150] | Train Loss: 0.0123 | Val Loss: 0.5926 | LR: 0.000017 ===
+5597.3s 1022 Average Task Losses: Seg: 1.640 | Depth: 0.251 | Bound: 0.296
+5597.3s 1023 Kendall Weights -> Seg: 0.544 | Depth: 1.368 | Bound: 1.364
+5597.3s 1024 Kendall log_vars -> Seg: -0.085 | Depth: -1.006 | Bound: -1.004
+5597.3s 1025 Depth | RMSE: 0.6660 | AbsRel: 0.1765 | δ1: 0.7300 | δ2: 0.9363 | δ3: 0.9857
+5597.3s 1026 Seg   | mIoU: 0.2629 | Dice: 0.3730 | Pixel Acc: 0.6254
+5597.3s 1027 Bound | F1: 0.5419 | Precision: 0.4374 | Recall: 0.7127
+5644.9s 1029 === Epoch [113/150] | Train Loss: 0.0122 | Val Loss: 0.5929 | LR: 0.000016 ===
+5644.9s 1030 Average Task Losses: Seg: 1.638 | Depth: 0.250 | Bound: 0.296
+5644.9s 1031 Kendall Weights -> Seg: 0.545 | Depth: 1.368 | Bound: 1.364
+5644.9s 1032 Kendall log_vars -> Seg: -0.087 | Depth: -1.006 | Bound: -1.004
+5644.9s 1033 Depth | RMSE: 0.6440 | AbsRel: 0.1985 | δ1: 0.7159 | δ2: 0.9244 | δ3: 0.9813
+5644.9s 1034 Seg   | mIoU: 0.2639 | Dice: 0.3747 | Pixel Acc: 0.6301
+5644.9s 1035 Bound | F1: 0.5417 | Precision: 0.4374 | Recall: 0.7119
+5693.3s 1037 === Epoch [114/150] | Train Loss: -0.0009 | Val Loss: 0.6019 | LR: 0.000015 ===
+5693.3s 1038 Average Task Losses: Seg: 1.675 | Depth: 0.240 | Bound: 0.298
+5693.3s 1039 Kendall Weights -> Seg: 0.546 | Depth: 1.368 | Bound: 1.364
+5693.3s 1040 Kendall log_vars -> Seg: -0.088 | Depth: -1.006 | Bound: -1.004
+5693.3s 1041 Depth | RMSE: 0.6297 | AbsRel: 0.1807 | δ1: 0.7338 | δ2: 0.9363 | δ3: 0.9854
+5693.3s 1042 Seg   | mIoU: 0.2673 | Dice: 0.3776 | Pixel Acc: 0.6269
+5693.3s 1043 Bound | F1: 0.5419 | Precision: 0.4445 | Recall: 0.6945
+5742.4s 1046 === Epoch [115/150] | Train Loss: 0.0038 | Val Loss: 0.5909 | LR: 0.000015 ===
+5742.4s 1047 Average Task Losses: Seg: 1.643 | Depth: 0.246 | Bound: 0.297
+5742.4s 1048 Kendall Weights -> Seg: 0.547 | Depth: 1.368 | Bound: 1.364
+5742.4s 1049 Kendall log_vars -> Seg: -0.089 | Depth: -1.006 | Bound: -1.004
+5742.4s 1050 Depth | RMSE: 0.6376 | AbsRel: 0.1902 | δ1: 0.7259 | δ2: 0.9306 | δ3: 0.9830
+5742.4s 1051 Seg   | mIoU: 0.2662 | Dice: 0.3758 | Pixel Acc: 0.6246
+5742.4s 1052 Bound | F1: 0.5413 | Precision: 0.4385 | Recall: 0.7078
+5789.9s 1054 === Epoch [116/150] | Train Loss: -0.0009 | Val Loss: 0.5929 | LR: 0.000014 ===
+5789.9s 1055 Average Task Losses: Seg: 1.649 | Depth: 0.244 | Bound: 0.297
+5789.9s 1056 Kendall Weights -> Seg: 0.547 | Depth: 1.368 | Bound: 1.364
+5789.9s 1057 Kendall log_vars -> Seg: -0.090 | Depth: -1.006 | Bound: -1.004
+5789.9s 1058 Depth | RMSE: 0.6330 | AbsRel: 0.1872 | δ1: 0.7340 | δ2: 0.9317 | δ3: 0.9833
+5789.9s 1059 Seg   | mIoU: 0.2593 | Dice: 0.3696 | Pixel Acc: 0.6231
+5789.9s 1060 Bound | F1: 0.5424 | Precision: 0.4423 | Recall: 0.7017
+5838.4s 1063 === Epoch [117/150] | Train Loss: 0.0095 | Val Loss: 0.6107 | LR: 0.000013 ===
+5838.4s 1064 Average Task Losses: Seg: 1.678 | Depth: 0.245 | Bound: 0.297
+5838.4s 1065 Kendall Weights -> Seg: 0.548 | Depth: 1.368 | Bound: 1.364
+5838.4s 1066 Kendall log_vars -> Seg: -0.091 | Depth: -1.006 | Bound: -1.004
+5838.4s 1067 Depth | RMSE: 0.6417 | AbsRel: 0.1846 | δ1: 0.7260 | δ2: 0.9321 | δ3: 0.9848
+5838.4s 1068 Seg   | mIoU: 0.2731 | Dice: 0.3836 | Pixel Acc: 0.6319
+5838.4s 1069 Bound | F1: 0.5424 | Precision: 0.4448 | Recall: 0.6954
+5887.2s 1072 === Epoch [118/150] | Train Loss: -0.0045 | Val Loss: 0.6047 | LR: 0.000013 ===
+5887.2s 1073 Average Task Losses: Seg: 1.670 | Depth: 0.245 | Bound: 0.296
+5887.2s 1074 Kendall Weights -> Seg: 0.548 | Depth: 1.368 | Bound: 1.364
+5887.2s 1075 Kendall log_vars -> Seg: -0.092 | Depth: -1.006 | Bound: -1.004
+5887.2s 1076 Depth | RMSE: 0.6337 | AbsRel: 0.1913 | δ1: 0.7240 | δ2: 0.9279 | δ3: 0.9829
+5887.2s 1077 Seg   | mIoU: 0.2669 | Dice: 0.3772 | Pixel Acc: 0.6339
+5887.2s 1078 Bound | F1: 0.5413 | Precision: 0.4371 | Recall: 0.7113
+5935.0s 1080 === Epoch [119/150] | Train Loss: -0.0011 | Val Loss: 0.6077 | LR: 0.000012 ===
+5935.0s 1081 Average Task Losses: Seg: 1.672 | Depth: 0.245 | Bound: 0.297
+5935.0s 1082 Kendall Weights -> Seg: 0.549 | Depth: 1.368 | Bound: 1.364
+5935.0s 1083 Kendall log_vars -> Seg: -0.094 | Depth: -1.006 | Bound: -1.004
+5935.0s 1084 Depth | RMSE: 0.6439 | AbsRel: 0.1779 | δ1: 0.7304 | δ2: 0.9367 | δ3: 0.9855
+5935.0s 1085 Seg   | mIoU: 0.2670 | Dice: 0.3774 | Pixel Acc: 0.6316
+5935.0s 1086 Bound | F1: 0.5422 | Precision: 0.4452 | Recall: 0.6939
+5983.1s 1088 === Epoch [120/150] | Train Loss: -0.0104 | Val Loss: 0.5903 | LR: 0.000011 ===
+5983.1s 1089 Average Task Losses: Seg: 1.654 | Depth: 0.240 | Bound: 0.296
+5983.1s 1090 Kendall Weights -> Seg: 0.550 | Depth: 1.368 | Bound: 1.364
+5983.1s 1091 Kendall log_vars -> Seg: -0.095 | Depth: -1.006 | Bound: -1.004
+5983.1s 1092 Depth | RMSE: 0.6268 | AbsRel: 0.1822 | δ1: 0.7353 | δ2: 0.9361 | δ3: 0.9845
+5983.1s 1093 Seg   | mIoU: 0.2626 | Dice: 0.3725 | Pixel Acc: 0.6325
+5983.1s 1094 Bound | F1: 0.5411 | Precision: 0.4357 | Recall: 0.7142
+6031.4s 1097 === Epoch [121/150] | Train Loss: -0.0072 | Val Loss: 0.6138 | LR: 0.000010 ===
+6031.4s 1098 Average Task Losses: Seg: 1.678 | Depth: 0.246 | Bound: 0.297
+6031.4s 1099 Kendall Weights -> Seg: 0.550 | Depth: 1.368 | Bound: 1.364
+6031.4s 1100 Kendall log_vars -> Seg: -0.096 | Depth: -1.006 | Bound: -1.004
+6031.4s 1101 Depth | RMSE: 0.6411 | AbsRel: 0.1878 | δ1: 0.7277 | δ2: 0.9312 | δ3: 0.9838
+6031.4s 1102 Seg   | mIoU: 0.2648 | Dice: 0.3746 | Pixel Acc: 0.6330
+6031.4s 1103 Bound | F1: 0.5402 | Precision: 0.4347 | Recall: 0.7137
+6079.8s 1105 === Epoch [122/150] | Train Loss: -0.0162 | Val Loss: 0.5997 | LR: 0.000010 ===
+6079.8s 1106 Average Task Losses: Seg: 1.657 | Depth: 0.244 | Bound: 0.297
+6079.8s 1107 Kendall Weights -> Seg: 0.551 | Depth: 1.368 | Bound: 1.364
+6079.8s 1108 Kendall log_vars -> Seg: -0.096 | Depth: -1.006 | Bound: -1.004
+6079.8s 1109 Depth | RMSE: 0.6375 | AbsRel: 0.1856 | δ1: 0.7275 | δ2: 0.9328 | δ3: 0.9843
+6079.8s 1110 Seg   | mIoU: 0.2645 | Dice: 0.3749 | Pixel Acc: 0.6244
+6079.8s 1111 Bound | F1: 0.5416 | Precision: 0.4401 | Recall: 0.7044
+6128.0s 1113 === Epoch [123/150] | Train Loss: -0.0172 | Val Loss: 0.6111 | LR: 0.000009 ===
+6128.0s 1114 Average Task Losses: Seg: 1.682 | Depth: 0.242 | Bound: 0.297
+6128.0s 1115 Kendall Weights -> Seg: 0.551 | Depth: 1.368 | Bound: 1.364
+6128.0s 1116 Kendall log_vars -> Seg: -0.097 | Depth: -1.006 | Bound: -1.004
+6128.0s 1117 Depth | RMSE: 0.6324 | AbsRel: 0.1838 | δ1: 0.7280 | δ2: 0.9341 | δ3: 0.9847
+6128.0s 1118 Seg   | mIoU: 0.2638 | Dice: 0.3742 | Pixel Acc: 0.6324
+6128.0s 1119 Bound | F1: 0.5426 | Precision: 0.4439 | Recall: 0.6981
+6176.2s 1121 === Epoch [124/150] | Train Loss: -0.0087 | Val Loss: 0.6173 | LR: 0.000009 ===
+6176.2s 1122 Average Task Losses: Seg: 1.683 | Depth: 0.246 | Bound: 0.297
+6176.2s 1123 Kendall Weights -> Seg: 0.552 | Depth: 1.368 | Bound: 1.364
+6176.2s 1124 Kendall log_vars -> Seg: -0.098 | Depth: -1.006 | Bound: -1.004
+6176.2s 1125 Depth | RMSE: 0.6388 | AbsRel: 0.1910 | δ1: 0.7273 | δ2: 0.9293 | δ3: 0.9823
+6176.2s 1126 Seg   | mIoU: 0.2627 | Dice: 0.3733 | Pixel Acc: 0.6296
+6176.2s 1127 Bound | F1: 0.5420 | Precision: 0.4422 | Recall: 0.7003
+6223.4s 1129 === Epoch [125/150] | Train Loss: -0.0089 | Val Loss: 0.6097 | LR: 0.000008 ===
+6223.4s 1130 Average Task Losses: Seg: 1.682 | Depth: 0.241 | Bound: 0.297
+6223.4s 1131 Kendall Weights -> Seg: 0.552 | Depth: 1.368 | Bound: 1.364
+6223.4s 1132 Kendall log_vars -> Seg: -0.098 | Depth: -1.006 | Bound: -1.004
+6223.4s 1133 Depth | RMSE: 0.6330 | AbsRel: 0.1804 | δ1: 0.7351 | δ2: 0.9361 | δ3: 0.9853
+6223.4s 1134 Seg   | mIoU: 0.2625 | Dice: 0.3721 | Pixel Acc: 0.6271
+6223.4s 1135 Bound | F1: 0.5417 | Precision: 0.4417 | Recall: 0.7009
+6272.0s 1137 === Epoch [126/150] | Train Loss: -0.0144 | Val Loss: 0.6100 | LR: 0.000007 ===
+6272.0s 1138 Average Task Losses: Seg: 1.678 | Depth: 0.243 | Bound: 0.297
+6272.0s 1139 Kendall Weights -> Seg: 0.552 | Depth: 1.368 | Bound: 1.364
+6272.0s 1140 Kendall log_vars -> Seg: -0.099 | Depth: -1.006 | Bound: -1.004
+6272.0s 1141 Depth | RMSE: 0.6319 | AbsRel: 0.1863 | δ1: 0.7287 | δ2: 0.9325 | δ3: 0.9839
+6272.0s 1142 Seg   | mIoU: 0.2673 | Dice: 0.3772 | Pixel Acc: 0.6282
+6272.0s 1143 Bound | F1: 0.5420 | Precision: 0.4413 | Recall: 0.7027
+6319.7s 1145 === Epoch [127/150] | Train Loss: -0.0153 | Val Loss: 0.6230 | LR: 0.000007 ===
+6319.7s 1146 Average Task Losses: Seg: 1.696 | Depth: 0.244 | Bound: 0.297
+6319.7s 1147 Kendall Weights -> Seg: 0.552 | Depth: 1.368 | Bound: 1.364
+6319.7s 1148 Kendall log_vars -> Seg: -0.099 | Depth: -1.006 | Bound: -1.004
+6319.7s 1149 Depth | RMSE: 0.6391 | AbsRel: 0.1853 | δ1: 0.7267 | δ2: 0.9315 | δ3: 0.9832
+6319.7s 1150 Seg   | mIoU: 0.2657 | Dice: 0.3758 | Pixel Acc: 0.6319
+6319.7s 1151 Bound | F1: 0.5426 | Precision: 0.4444 | Recall: 0.6971
+6367.8s 1153 === Epoch [128/150] | Train Loss: -0.0176 | Val Loss: 0.6040 | LR: 0.000006 ===
+6367.8s 1154 Average Task Losses: Seg: 1.669 | Depth: 0.242 | Bound: 0.296
+6367.8s 1155 Kendall Weights -> Seg: 0.553 | Depth: 1.368 | Bound: 1.364
+6367.8s 1156 Kendall log_vars -> Seg: -0.100 | Depth: -1.006 | Bound: -1.004
+6367.8s 1157 Depth | RMSE: 0.6340 | AbsRel: 0.1824 | δ1: 0.7310 | δ2: 0.9339 | δ3: 0.9845
+6367.8s 1158 Seg   | mIoU: 0.2644 | Dice: 0.3746 | Pixel Acc: 0.6313
+6367.8s 1159 Bound | F1: 0.5410 | Precision: 0.4370 | Recall: 0.7106
+6415.7s 1161 === Epoch [129/150] | Train Loss: -0.0236 | Val Loss: 0.6182 | LR: 0.000006 ===
+6415.7s 1162 Average Task Losses: Seg: 1.692 | Depth: 0.242 | Bound: 0.298
+6415.7s 1163 Kendall Weights -> Seg: 0.553 | Depth: 1.368 | Bound: 1.364
+6415.7s 1164 Kendall log_vars -> Seg: -0.100 | Depth: -1.006 | Bound: -1.004
+6415.7s 1165 Depth | RMSE: 0.6354 | AbsRel: 0.1796 | δ1: 0.7331 | δ2: 0.9349 | δ3: 0.9851
+6415.7s 1166 Seg   | mIoU: 0.2672 | Dice: 0.3770 | Pixel Acc: 0.6348
+6415.7s 1167 Bound | F1: 0.5421 | Precision: 0.4457 | Recall: 0.6922
+6463.0s 1169 === Epoch [130/150] | Train Loss: -0.0145 | Val Loss: 0.6100 | LR: 0.000005 ===
+6463.0s 1170 Average Task Losses: Seg: 1.677 | Depth: 0.242 | Bound: 0.297
+6463.0s 1171 Kendall Weights -> Seg: 0.553 | Depth: 1.368 | Bound: 1.364
+6463.0s 1172 Kendall log_vars -> Seg: -0.101 | Depth: -1.006 | Bound: -1.004
+6463.0s 1173 Depth | RMSE: 0.6310 | AbsRel: 0.1855 | δ1: 0.7333 | δ2: 0.9325 | δ3: 0.9836
+6463.0s 1174 Seg   | mIoU: 0.2623 | Dice: 0.3726 | Pixel Acc: 0.6306
+6463.0s 1175 Bound | F1: 0.5422 | Precision: 0.4431 | Recall: 0.6987
+6510.8s 1177 === Epoch [131/150] | Train Loss: -0.0228 | Val Loss: 0.6138 | LR: 0.000005 ===
+6510.8s 1178 Average Task Losses: Seg: 1.687 | Depth: 0.241 | Bound: 0.297
+6510.8s 1179 Kendall Weights -> Seg: 0.553 | Depth: 1.368 | Bound: 1.364
+6510.8s 1180 Kendall log_vars -> Seg: -0.101 | Depth: -1.006 | Bound: -1.004
+6510.8s 1181 Depth | RMSE: 0.6304 | AbsRel: 0.1834 | δ1: 0.7347 | δ2: 0.9328 | δ3: 0.9839
+6510.8s 1182 Seg   | mIoU: 0.2656 | Dice: 0.3760 | Pixel Acc: 0.6288
+6510.8s 1183 Bound | F1: 0.5427 | Precision: 0.4449 | Recall: 0.6962
+6558.2s 1185 === Epoch [132/150] | Train Loss: -0.0264 | Val Loss: 0.6078 | LR: 0.000005 ===
+6558.2s 1186 Average Task Losses: Seg: 1.674 | Depth: 0.241 | Bound: 0.297
+6558.2s 1187 Kendall Weights -> Seg: 0.553 | Depth: 1.368 | Bound: 1.364
+6558.2s 1188 Kendall log_vars -> Seg: -0.102 | Depth: -1.006 | Bound: -1.004
+6558.2s 1189 Depth | RMSE: 0.6307 | AbsRel: 0.1828 | δ1: 0.7333 | δ2: 0.9339 | δ3: 0.9846
+6558.2s 1190 Seg   | mIoU: 0.2652 | Dice: 0.3750 | Pixel Acc: 0.6306
+6558.2s 1191 Bound | F1: 0.5421 | Precision: 0.4443 | Recall: 0.6957
+6605.9s 1193 === Epoch [133/150] | Train Loss: -0.0231 | Val Loss: 0.6094 | LR: 0.000004 ===
+6605.9s 1194 Average Task Losses: Seg: 1.675 | Depth: 0.242 | Bound: 0.298
+6605.9s 1195 Kendall Weights -> Seg: 0.554 | Depth: 1.368 | Bound: 1.364
+6605.9s 1196 Kendall log_vars -> Seg: -0.102 | Depth: -1.006 | Bound: -1.004
+6605.9s 1197 Depth | RMSE: 0.6326 | AbsRel: 0.1811 | δ1: 0.7349 | δ2: 0.9346 | δ3: 0.9849
+6605.9s 1198 Seg   | mIoU: 0.2680 | Dice: 0.3781 | Pixel Acc: 0.6325
+6605.9s 1199 Bound | F1: 0.5423 | Precision: 0.4452 | Recall: 0.6940
+6653.9s 1201 === Epoch [134/150] | Train Loss: -0.0252 | Val Loss: 0.6177 | LR: 0.000004 ===
+6653.9s 1202 Average Task Losses: Seg: 1.691 | Depth: 0.242 | Bound: 0.297
+6653.9s 1203 Kendall Weights -> Seg: 0.554 | Depth: 1.368 | Bound: 1.364
+6653.9s 1204 Kendall log_vars -> Seg: -0.102 | Depth: -1.006 | Bound: -1.004
+6653.9s 1205 Depth | RMSE: 0.6333 | AbsRel: 0.1865 | δ1: 0.7277 | δ2: 0.9297 | δ3: 0.9835
+6653.9s 1206 Seg   | mIoU: 0.2664 | Dice: 0.3764 | Pixel Acc: 0.6324
+6653.9s 1207 Bound | F1: 0.5413 | Precision: 0.4385 | Recall: 0.7075
+6701.5s 1209 === Epoch [135/150] | Train Loss: -0.0376 | Val Loss: 0.6153 | LR: 0.000003 ===
+6701.5s 1210 Average Task Losses: Seg: 1.687 | Depth: 0.241 | Bound: 0.297
+6701.5s 1211 Kendall Weights -> Seg: 0.554 | Depth: 1.368 | Bound: 1.364
+6701.5s 1212 Kendall log_vars -> Seg: -0.103 | Depth: -1.006 | Bound: -1.004
+6701.5s 1213 Depth | RMSE: 0.6344 | AbsRel: 0.1818 | δ1: 0.7328 | δ2: 0.9334 | δ3: 0.9845
+6701.5s 1214 Seg   | mIoU: 0.2656 | Dice: 0.3758 | Pixel Acc: 0.6317
+6701.5s 1215 Bound | F1: 0.5422 | Precision: 0.4429 | Recall: 0.6995
+6749.6s 1217 === Epoch [136/150] | Train Loss: -0.0276 | Val Loss: 0.6220 | LR: 0.000003 ===
+6749.6s 1218 Average Task Losses: Seg: 1.695 | Depth: 0.243 | Bound: 0.297
+6749.6s 1219 Kendall Weights -> Seg: 0.554 | Depth: 1.368 | Bound: 1.364
+6749.6s 1220 Kendall log_vars -> Seg: -0.103 | Depth: -1.006 | Bound: -1.004
+6749.6s 1221 Depth | RMSE: 0.6333 | AbsRel: 0.1873 | δ1: 0.7289 | δ2: 0.9308 | δ3: 0.9836
+6749.6s 1222 Seg   | mIoU: 0.2671 | Dice: 0.3777 | Pixel Acc: 0.6337
+6749.6s 1223 Bound | F1: 0.5421 | Precision: 0.4409 | Recall: 0.7041
+6797.2s 1225 === Epoch [137/150] | Train Loss: -0.0282 | Val Loss: 0.6187 | LR: 0.000003 ===
+6797.2s 1226 Average Task Losses: Seg: 1.685 | Depth: 0.244 | Bound: 0.297
+6797.2s 1227 Kendall Weights -> Seg: 0.554 | Depth: 1.368 | Bound: 1.364
+6797.2s 1228 Kendall log_vars -> Seg: -0.103 | Depth: -1.006 | Bound: -1.004
+6797.2s 1229 Depth | RMSE: 0.6381 | AbsRel: 0.1869 | δ1: 0.7267 | δ2: 0.9301 | δ3: 0.9832
+6797.2s 1230 Seg   | mIoU: 0.2679 | Dice: 0.3790 | Pixel Acc: 0.6348
+6797.2s 1231 Bound | F1: 0.5425 | Precision: 0.4448 | Recall: 0.6957
+6844.6s 1233 === Epoch [138/150] | Train Loss: -0.0233 | Val Loss: 0.6265 | LR: 0.000003 ===
+6844.6s 1234 Average Task Losses: Seg: 1.706 | Depth: 0.241 | Bound: 0.298
+6844.6s 1235 Kendall Weights -> Seg: 0.554 | Depth: 1.368 | Bound: 1.364
+6844.6s 1236 Kendall log_vars -> Seg: -0.103 | Depth: -1.006 | Bound: -1.004
+6844.6s 1237 Depth | RMSE: 0.6354 | AbsRel: 0.1780 | δ1: 0.7314 | δ2: 0.9363 | δ3: 0.9853
+6844.6s 1238 Seg   | mIoU: 0.2661 | Dice: 0.3764 | Pixel Acc: 0.6301
+6844.6s 1239 Bound | F1: 0.5417 | Precision: 0.4425 | Recall: 0.6986
+6892.3s 1241 === Epoch [139/150] | Train Loss: -0.0301 | Val Loss: 0.6199 | LR: 0.000002 ===
+6892.3s 1242 Average Task Losses: Seg: 1.691 | Depth: 0.243 | Bound: 0.297
+6892.3s 1243 Kendall Weights -> Seg: 0.555 | Depth: 1.368 | Bound: 1.364
+6892.3s 1244 Kendall log_vars -> Seg: -0.104 | Depth: -1.006 | Bound: -1.004
+6892.3s 1245 Depth | RMSE: 0.6349 | AbsRel: 0.1832 | δ1: 0.7309 | δ2: 0.9331 | δ3: 0.9845
+6892.3s 1246 Seg   | mIoU: 0.2680 | Dice: 0.3784 | Pixel Acc: 0.6353
+6892.3s 1247 Bound | F1: 0.5423 | Precision: 0.4420 | Recall: 0.7018
+6939.8s 1249 === Epoch [140/150] | Train Loss: -0.0220 | Val Loss: 0.6165 | LR: 0.000002 ===
+6939.8s 1250 Average Task Losses: Seg: 1.683 | Depth: 0.243 | Bound: 0.297
+6939.8s 1251 Kendall Weights -> Seg: 0.555 | Depth: 1.368 | Bound: 1.364
+6939.8s 1252 Kendall log_vars -> Seg: -0.104 | Depth: -1.006 | Bound: -1.004
+6939.8s 1253 Depth | RMSE: 0.6347 | AbsRel: 0.1866 | δ1: 0.7310 | δ2: 0.9301 | δ3: 0.9828
+6939.8s 1254 Seg   | mIoU: 0.2654 | Dice: 0.3765 | Pixel Acc: 0.6325
+6939.8s 1255 Bound | F1: 0.5420 | Precision: 0.4410 | Recall: 0.7036
+6988.4s 1257 === Epoch [141/150] | Train Loss: -0.0310 | Val Loss: 0.6224 | LR: 0.000002 ===
+6988.4s 1258 Average Task Losses: Seg: 1.696 | Depth: 0.243 | Bound: 0.297
+6988.4s 1259 Kendall Weights -> Seg: 0.555 | Depth: 1.368 | Bound: 1.364
+6988.4s 1260 Kendall log_vars -> Seg: -0.104 | Depth: -1.006 | Bound: -1.004
+6988.4s 1261 Depth | RMSE: 0.6385 | AbsRel: 0.1835 | δ1: 0.7288 | δ2: 0.9319 | δ3: 0.9842
+6988.4s 1262 Seg   | mIoU: 0.2684 | Dice: 0.3789 | Pixel Acc: 0.6351
+6988.4s 1263 Bound | F1: 0.5414 | Precision: 0.4396 | Recall: 0.7050
+7036.6s 1265 === Epoch [142/150] | Train Loss: -0.0247 | Val Loss: 0.6256 | LR: 0.000002 ===
+7036.6s 1266 Average Task Losses: Seg: 1.702 | Depth: 0.242 | Bound: 0.297
+7036.6s 1267 Kendall Weights -> Seg: 0.555 | Depth: 1.368 | Bound: 1.364
+7036.6s 1268 Kendall log_vars -> Seg: -0.104 | Depth: -1.006 | Bound: -1.004
+7036.6s 1269 Depth | RMSE: 0.6360 | AbsRel: 0.1827 | δ1: 0.7309 | δ2: 0.9330 | δ3: 0.9846
+7036.6s 1270 Seg   | mIoU: 0.2667 | Dice: 0.3768 | Pixel Acc: 0.6337
+7036.6s 1271 Bound | F1: 0.5424 | Precision: 0.4437 | Recall: 0.6979
+7084.5s 1273 === Epoch [143/150] | Train Loss: -0.0282 | Val Loss: 0.6260 | LR: 0.000001 ===
+7084.5s 1274 Average Task Losses: Seg: 1.700 | Depth: 0.243 | Bound: 0.298
+7084.5s 1275 Kendall Weights -> Seg: 0.555 | Depth: 1.368 | Bound: 1.364
+7084.5s 1276 Kendall log_vars -> Seg: -0.104 | Depth: -1.006 | Bound: -1.004
+7084.5s 1277 Depth | RMSE: 0.6350 | AbsRel: 0.1850 | δ1: 0.7298 | δ2: 0.9312 | δ3: 0.9840
+7084.5s 1278 Seg   | mIoU: 0.2679 | Dice: 0.3786 | Pixel Acc: 0.6354
+7084.5s 1279 Bound | F1: 0.5424 | Precision: 0.4448 | Recall: 0.6956
+7132.5s 1281 === Epoch [144/150] | Train Loss: -0.0303 | Val Loss: 0.6209 | LR: 0.000001 ===
+7132.5s 1282 Average Task Losses: Seg: 1.695 | Depth: 0.241 | Bound: 0.298
+7132.5s 1283 Kendall Weights -> Seg: 0.555 | Depth: 1.368 | Bound: 1.364
+7132.5s 1284 Kendall log_vars -> Seg: -0.104 | Depth: -1.006 | Bound: -1.004
+7132.5s 1285 Depth | RMSE: 0.6360 | AbsRel: 0.1793 | δ1: 0.7313 | δ2: 0.9350 | δ3: 0.9853
+7132.5s 1286 Seg   | mIoU: 0.2663 | Dice: 0.3759 | Pixel Acc: 0.6360
+7132.5s 1287 Bound | F1: 0.5421 | Precision: 0.4429 | Recall: 0.6991
+7180.8s 1289 === Epoch [145/150] | Train Loss: -0.0287 | Val Loss: 0.6163 | LR: 0.000001 ===
+7180.8s 1290 Average Task Losses: Seg: 1.677 | Depth: 0.246 | Bound: 0.297
+7180.8s 1291 Kendall Weights -> Seg: 0.555 | Depth: 1.368 | Bound: 1.364
+7180.8s 1292 Kendall log_vars -> Seg: -0.104 | Depth: -1.006 | Bound: -1.004
+7180.8s 1293 Depth | RMSE: 0.6386 | AbsRel: 0.1923 | δ1: 0.7261 | δ2: 0.9277 | δ3: 0.9818
+7180.8s 1294 Seg   | mIoU: 0.2655 | Dice: 0.3756 | Pixel Acc: 0.6361
+7180.8s 1295 Bound | F1: 0.5417 | Precision: 0.4401 | Recall: 0.7046
+7181.4s 1296 Early stop triggered.

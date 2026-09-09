@@ -1,0 +1,10 @@
+=================================================================
+       TwinForge Training Summary: drop_head (151 Epochs)
+=================================================================
+  • Best Depth δ1:       0.7171 (Epoch 145)
+  • Best Depth RMSE:     0.6600 (Epoch 145)
+  • Best Depth AbsRel:   0.1855 (Epoch 86)
+  • Best Seg mIoU:       0.2705 (Epoch 135)
+  • Best Seg Dice:       0.3808
+  • Min Val Loss:        0.8736 (Epoch 41)
+=================================================================

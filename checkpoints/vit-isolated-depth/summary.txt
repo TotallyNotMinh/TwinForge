@@ -1,0 +1,10 @@
+=================================================================
+       TwinForge Training Summary: checkpoints (Epoch 144/150)
+=================================================================
+  • Best Depth δ1:       0.7572 (Epoch 119)
+  • Best Depth δ2:       0.9494 (Epoch 119)
+  • Best Depth δ3:       0.9891 (Epoch 119)
+  • Best Depth RMSE:     0.6136 (Epoch 119)
+  • Best Depth AbsRel:   0.1694 (Epoch 119)
+  • Min Val Loss:        2.2341 (Epoch 119)
+=================================================================

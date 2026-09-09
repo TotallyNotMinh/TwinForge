@@ -1,0 +1,12 @@
+=================================================================
+       TwinForge Training Summary: resnet50_clamped_kendall (151 Epochs)
+=================================================================
+  • Best Depth δ1:       0.7186 (Epoch 128)
+  • Best Depth RMSE:     0.6613 (Epoch 116)
+  • Best Depth AbsRel:   0.1851 (Epoch 101)
+  • Best Seg mIoU:       0.2929 (Epoch 131)
+  • Best Seg Dice:       0.4059
+  • Best Bound F1:       0.5473 (Epoch 111)
+  • Best Bound Recall:   0.7934
+  • Min Val Loss:        0.4599 (Epoch 31)
+=================================================================
