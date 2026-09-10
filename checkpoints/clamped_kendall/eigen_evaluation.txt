@@ -1,0 +1,18 @@
+======================================================================
+       NYU Depth V2 - Standard Eigen Protocol Evaluation (Run 1)
+======================================================================
+  • Checkpoint:     checkpoints/clamped_kendall/best_depth.pth
+  • Model:          ResNet34 + Shared FPN + Late Heads
+  • Input Size:     (288, 384)
+  • Split:          val (654 images)
+  • Protocol:       Eigen Crop [45:471, 41:601] on raw 480x640 depth GT
+======================================================================
+  Threshold δ < 1.25  (↑):  0.5104
+  Threshold δ < 1.25² (↑):  0.8123
+  Threshold δ < 1.25³ (↑):  0.9351
+  RMSE [m]            (↓):  0.9347
+  Absolute Relative   (↓):  0.2858
+  Segmentation mIoU   (↑):  0.1561
+  Segmentation Dice   (↑):  0.2472
+  Pixel Accuracy      (↑):  0.5186
+======================================================================

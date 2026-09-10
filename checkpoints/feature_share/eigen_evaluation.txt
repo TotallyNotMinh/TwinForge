@@ -1,0 +1,18 @@
+======================================================================
+       NYU Depth V2 - Standard Eigen Protocol Evaluation (Run 6)
+======================================================================
+  • Checkpoint:     checkpoints/feature_share/best_depth.pth
+  • Model:          ResNet34 + CrossTask SE-Gate Interaction
+  • Input Size:     (288, 384)
+  • Split:          val (654 images)
+  • Protocol:       Eigen Crop [45:471, 41:601] on raw 480x640 depth GT
+======================================================================
+  Threshold δ < 1.25  (↑):  0.5027
+  Threshold δ < 1.25² (↑):  0.8037
+  Threshold δ < 1.25³ (↑):  0.9318
+  RMSE [m]            (↓):  0.9594
+  Absolute Relative   (↓):  0.2936
+  Segmentation mIoU   (↑):  0.1568
+  Segmentation Dice   (↑):  0.2479
+  Pixel Accuracy      (↑):  0.5199
+======================================================================

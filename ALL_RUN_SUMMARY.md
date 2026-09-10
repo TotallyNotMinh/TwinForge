@@ -1,29 +1,31 @@
 # TwinForge: Comprehensive Multi-Task Run & Architecture Benchmark
 
-This document provides an exhaustive, comparative summary of all 14 experimental runs completed in the TwinForge project across its development branches. It details the model architectures, lineage from parent branches, parameter and compute profiles (FLOPs/MACs), loss formulations, training dynamics, and empirical performance across depth estimation, semantic segmentation, and boundary detection on the NYUv2 dataset.
+This document provides an exhaustive, comparative summary of all 15 experimental runs completed in the TwinForge project across its development branches. It details the model architectures, lineage from parent branches, parameter and compute profiles (FLOPs/MACs), loss formulations, training dynamics, and empirical performance across depth estimation, semantic segmentation, and boundary detection on the NYUv2 dataset.
 
 ---
 
 ## 1. Master Benchmark & Computational Overview
 
-| # | Run Name | Git Branch | Input Res | Encoder Backbone | Decoder Architecture | Tasks | Total Params | Trainable Params | Mult-Adds (GMac) | Best Depth $\delta_1$ ($\uparrow$) | Best Depth RMSE [m] ($\downarrow$) | Best Seg mIoU ($\uparrow$) | Best Bound F1 ($\uparrow$) | Min Val Loss | Epochs (Trained) |
-|---|:---|:---|:---:|:---|:---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| 1 | **`clamped_kendall`** | `origin/main` | $288 \times 384$ | ResNet34 (Unfrozen) | Shared FPN + Late Heads | Depth, Seg, Bound | 25.48M | 25.48M (100%) | 30.08 | 0.7353 (Ep 120) | 0.6268 (Ep 120) | 0.2731 (Ep 117) | 0.5429 (Ep 111) | 0.4703 (Ep 43) | 146 (0–145) |
-| 2 | **`isolated_depth`** | `depth-only-baseline` | $288 \times 384$ | ResNet34 (Unfrozen) | FPN + Depth Head Only | Depth Only | 25.48M | 25.48M (100%) | 30.08 | 0.7248 (Ep 139) | 0.6470 (Ep 116) | N/A | N/A | 0.4812 (Ep 139) | 151 (0–150) |
-| 3 | **`isolated_seg`** | `segment-only-baseline` | $288 \times 384$ | ResNet34 (Unfrozen) | FPN + Seg Head Only | Seg Only | 25.48M | 25.48M (100%) | 30.08 | N/A | N/A | 0.2754 (Ep 118) | N/A | 1.2111 (Ep 18) | 144 (0–143) |
-| 4 | **`drop_head`** | `drop-boundary-head` | $288 \times 384$ | ResNet34 (Unfrozen) | FPN + CrossTask Gate | Depth, Seg | 25.75M | 25.75M (100%) | 31.04 | 0.7171 (Ep 145) | 0.6600 (Ep 145) | 0.2705 (Ep 135) | N/A | 0.8736 (Ep 41) | 151 (0–150) |
-| 5 | **`earlier_split`** | `earlier-head-branching` | $288 \times 384$ | ResNet34 (Unfrozen) | Early Split at `up3` + SE-Gates | Depth, Seg, Bound | 26.08M | 26.08M (100%) | 40.29 | 0.7213 (Ep 82) | 0.6653 (Ep 79) | 0.2618 (Ep 97) | 0.5472 (Ep 116) | 0.4707 (Ep 40) | 140 (0–139) |
-| 6 | **`feature_share`** | `cross-task-interaction` | $288 \times 384$ | ResNet34 (Unfrozen) | CrossTask SE-Gate Interaction | Depth, Seg, Bound | 26.09M | 26.09M (100%) | 40.29 | 0.7285 (Ep 120) | 0.6536 (Ep 107) | 0.2489 (Ep 108) | **0.5523** (Ep 87) | 0.4733 (Ep 52) | 146 (0–145) |
-| 7 | **`feature_share_with_segmentation_factor`** | `cross-task-interaction` | $288 \times 384$ | ResNet34 (Unfrozen) | CrossTask SE-Gate + $2.0\times$ Seg Loss | Depth, Seg, Bound | 26.09M | 26.09M (100%) | 40.29 | 0.7163 (Ep 119) | 0.6692 (Ep 119) | 0.2887 (Ep 126) | 0.5493 (Ep 80) | 0.7851 (Ep 39) | 151 (0–150) |
-| 8 | **`resnet50_clamped_kendall`** | `resnet50_clamped_kendall` | $288 \times 384$ | ResNet50 (Unfrozen) | Shared FPN + Late Heads | Depth, Seg, Bound | 33.56M | 33.56M (100%) | 33.69 | 0.7186 (Ep 128) | 0.6613 (Ep 116) | 0.2929 (Ep 131) | 0.5473 (Ep 111) | **0.4599** (Ep 31) | 151 (0–150) |
-| 9 | **`vit`** | `vit-approach` | $384 \times 512$ | ResNet50 (Unfrozen) | ViT Patch + Cross-Attn + All-MLP | Depth, Seg | 45.42M | 45.42M (100%) | 38.52 | 0.6696 (Ep 148) | 0.7498 (Ep 104) | 0.3220 (Ep 76) | N/A | 2.1266 (Ep 16) | 151 (0–150) |
-| 10 | **`vit_fixed_weight`** | `vit-fixed-weighting` | $384 \times 512$ | ResNet50 (Unfrozen) | ViT Patch + Cross-Attn + All-MLP | Depth, Seg | 45.42M | 45.42M (100%) | 38.52 | 0.6702 (Ep 120) | 0.7457 (Ep 141) | 0.3142 (Ep 73) | N/A | 5.2342 (Ep 20) | 146 (0–145, Early Stop) |
-| 11 | **`vit-orientation-fixed`** | `vit-fixed-weighting` | $384 \times 512$ | ResNet50 (Unfrozen) | ViT Patch + Cross-Attn (Fixed Orientation) | Depth, Seg | 46.04M | 46.04M (100%) | 38.52 | **0.7596** (Ep 121) | **0.6108** (Ep 121) | 0.4005 (Ep 70) | N/A | 4.3281 (Ep 25) | 141 (0–140) |
-| 12 | **`vit-isolated-depth`** | `vit-isolated-depth` | $384 \times 512$ | ResNet50 (Unfrozen) | ViT Patch + Cross-Attn (Depth Only) | Depth Only | 46.04M | 46.04M (100%) | 38.52 | 0.7572 (Ep 119) | 0.6136 (Ep 119) | N/A | N/A | 2.2341 (Ep 119) | 145 (0–144) |
-| 13 | **`vit-full-res`** | `main` | $480 \times 640$ | ResNet50 (Unfrozen) | ViT Full Res + Spatial Dropout + All-MLP | Depth, Seg | 46.04M | 46.04M (100%) | 60.20 | 0.7477 (Ep 128) | 0.6312 (Ep 107) | 0.4081 (Ep 136) | N/A | 4.7163 (Ep 128) | 151 (0–150) |
-| 14 | **`vit-increase-regularization`** | `main` | $384 \times 512$ | ResNet50 (Frozen stem..L2) | ViT Patch + Multi-scale Regs + Strong Aug | Depth, Seg | 45.68M | 44.24M (96.8%) | 38.52 | 0.7496 (Ep 139) | 0.6282 (Ep 106) | **0.4126** (Ep 131) | N/A | 4.6680 (Ep 128) | 151 (0–150) |
+| # | Run Name | Git Branch | Input Res | Encoder Backbone | Decoder Architecture | Tasks | Total Params | Trainable Params | Mult-Adds (GMac) | Best Depth $\delta_1$ ($\uparrow$) | Best Depth RMSE [m] ($\downarrow$) | Eigen Protocol Depth $\delta_1$ / RMSE [m] | Best Seg mIoU ($\uparrow$) | Best Bound F1 ($\uparrow$) | Min Val Loss | Epochs (Trained) |
+|---|:---|:---|:---:|:---|:---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| 1 | **`clamped_kendall`** | `origin/main` | $288 \times 384$ | ResNet34 (Unfrozen) | Shared FPN + Late Heads | Depth, Seg, Bound | 25.48M | 25.48M (100%) | 30.08 | 0.7353 (Ep 120) | 0.6268 (Ep 120) | 0.5104 / 0.9347m | 0.2731 (Ep 117) | 0.5429 (Ep 111) | 0.4703 (Ep 43) | 146 (0–145) |
+| 2 | **`isolated_depth`** | `depth-only-baseline` | $288 \times 384$ | ResNet34 (Unfrozen) | FPN + Depth Head Only | Depth Only | 25.48M | 25.48M (100%) | 30.08 | 0.7248 (Ep 139) | 0.6470 (Ep 116) | *Checkpoint not available* | N/A | N/A | 0.4812 (Ep 139) | 151 (0–150) |
+| 3 | **`isolated_seg`** | `segment-only-baseline` | $288 \times 384$ | ResNet34 (Unfrozen) | FPN + Seg Head Only | Seg Only | 25.48M | 25.48M (100%) | 30.08 | N/A | N/A | *Checkpoint not available* | 0.2754 (Ep 118) | N/A | 1.2111 (Ep 18) | 144 (0–143) |
+| 4 | **`drop_head`** | `drop-boundary-head` | $288 \times 384$ | ResNet34 (Unfrozen) | FPN + CrossTask Gate | Depth, Seg | 25.75M | 25.75M (100%) | 31.04 | 0.7171 (Ep 145) | 0.6600 (Ep 145) | *Checkpoint not available* | 0.2705 (Ep 135) | N/A | 0.8736 (Ep 41) | 151 (0–150) |
+| 5 | **`earlier_split`** | `earlier-head-branching` | $288 \times 384$ | ResNet34 (Unfrozen) | Early Split at `up3` + SE-Gates | Depth, Seg, Bound | 26.08M | 26.08M (100%) | 40.29 | 0.7213 (Ep 82) | 0.6653 (Ep 79) | 0.5101 / 0.9261m | 0.2618 (Ep 97) | 0.5472 (Ep 116) | 0.4707 (Ep 40) | 140 (0–139) |
+| 6 | **`feature_share`** | `cross-task-interaction` | $288 \times 384$ | ResNet34 (Unfrozen) | CrossTask SE-Gate Interaction | Depth, Seg, Bound | 26.09M | 26.09M (100%) | 40.29 | 0.7285 (Ep 120) | 0.6536 (Ep 107) | 0.5027 / 0.9594m | 0.2489 (Ep 108) | **0.5523** (Ep 87) | 0.4733 (Ep 52) | 146 (0–145) |
+| 7 | **`feature_share_with_segmentation_factor`** | `cross-task-interaction` | $288 \times 384$ | ResNet34 (Unfrozen) | CrossTask SE-Gate + $2.0\times$ Seg Loss | Depth, Seg, Bound | 26.09M | 26.09M (100%) | 40.29 | 0.7163 (Ep 119) | 0.6692 (Ep 119) | 0.4923 / 0.9685m | 0.2887 (Ep 126) | 0.5493 (Ep 80) | 0.7851 (Ep 39) | 151 (0–150) |
+| 8 | **`resnet50_clamped_kendall`** | `resnet50_clamped_kendall` | $288 \times 384$ | ResNet50 (Unfrozen) | Shared FPN + Late Heads | Depth, Seg, Bound | 33.56M | 33.56M (100%) | 33.69 | 0.7186 (Ep 128) | 0.6613 (Ep 116) | *Checkpoint not available* | 0.2929 (Ep 131) | 0.5473 (Ep 111) | **0.4599** (Ep 31) | 151 (0–150) |
+| 9 | **`vit`** | `vit-approach` | $384 \times 512$ | ResNet50 (Unfrozen) | ViT Patch + Cross-Attn + All-MLP | Depth, Seg | 45.42M | 45.42M (100%) | 38.52 | 0.6696 (Ep 148) | 0.7498 (Ep 104) | *Checkpoint not available* | 0.3220 (Ep 76) | N/A | 2.1266 (Ep 16) | 151 (0–150) |
+| 10 | **`vit_fixed_weight`** | `vit-fixed-weighting` | $384 \times 512$ | ResNet50 (Unfrozen) | ViT Patch + Cross-Attn + All-MLP | Depth, Seg | 45.42M | 45.42M (100%) | 38.52 | 0.6702 (Ep 120) | 0.7457 (Ep 141) | *Checkpoint not available* | 0.3142 (Ep 73) | N/A | 5.2342 (Ep 20) | 146 (0–145, Early Stop) |
+| 11 | **`vit-orientation-fixed`** | `vit-fixed-weighting` | $384 \times 512$ | ResNet50 (Unfrozen) | ViT Patch + Cross-Attn (Fixed Orientation) | Depth, Seg | 46.04M | 46.04M (100%) | 38.52 | 0.7596 (Ep 121) | 0.6108 (Ep 121) | **0.7593** / **0.5478m** | 0.4005 (Ep 70) | N/A | 4.3281 (Ep 25) | 141 (0–140) |
+| 12 | **`vit-isolated-depth`** | `vit-isolated-depth` | $384 \times 512$ | ResNet50 (Unfrozen) | ViT Patch + Cross-Attn (Depth Only) | Depth Only | 46.04M | 46.04M (100%) | 38.52 | 0.7572 (Ep 119) | 0.6136 (Ep 119) | *Checkpoint not available* | N/A | N/A | 2.2341 (Ep 119) | 145 (0–144) |
+| 13 | **`vit-full-res`** | `main` | $480 \times 640$ | ResNet50 (Unfrozen) | ViT Full Res + Spatial Dropout + All-MLP | Depth, Seg | 46.04M | 46.04M (100%) | 60.20 | 0.7477 (Ep 128) | 0.6312 (Ep 107) | *Checkpoint not available* | 0.4081 (Ep 136) | N/A | 4.7163 (Ep 128) | 151 (0–150) |
+| 14 | **`vit-increase-regularization`** | `main` | $384 \times 512$ | ResNet50 (Frozen stem..L2) | ViT Patch + Multi-scale Regs + Strong Aug | Depth, Seg | 45.68M | 44.24M (96.8%) | 38.52 | 0.7496 (Ep 139) | 0.6282 (Ep 106) | *Checkpoint not available* | 0.4126 (Ep 131) | N/A | 4.6680 (Ep 128) | 151 (0–150) |
+| 15 | **`dinov2-backbone`** | `dinov2-vit-s-backbone` | $392 \times 518$ | Frozen DINOv2 / Depth Anything V2 ViT-S | ViT Patch + Cross-Attn + All-MLP | Depth, Seg | 45.75M | 23.69M (51.8%) | 24.91 | **0.9096** (Ep 88) | **0.3755** (Ep 88) | *Pending checkpoint download* | **0.5384** (Ep 131) | N/A | **3.3814** (Ep 89) | 151 (0–150) |
 
-*Note: Runs 1–13 used full end-to-end training (`freeze=False`). Run 14 froze the stem and layers 1–2 of ResNet50 to control memorization. Mult-Adds (Multiply-Accumulate operations) were benchmarked via `torchinfo` with batch size 1 at the respective training input resolutions.*
+*Note: Runs 1–13 used full end-to-end training (`freeze=False`). Run 14 froze the stem and layers 1–2 of ResNet50 to control memorization. Run 15 froze the Depth Anything V2 ViT-S encoder (`freeze=True`), training only the multi-scale projection layers and MultiHeadDecoder. Mult-Adds (Multiply-Accumulate operations) were benchmarked via `torchinfo` with batch size 1 at the respective training input resolutions.*
+*Eigen Protocol Benchmark: Standard evaluation using Eigen crop [45:471, 41:601] against raw 480x640 ground truth depth on the 654 validation images. Evaluated on all checkpoints physically present on disk; checkpoints for runs 2–4, 8–10, and 12–14 were not retained in local storage.*
 
 ---
 
@@ -47,16 +49,19 @@ graph TD
     ViTOri --> ViTIso["vit-isolated-depth <br/> <b>vit-isolated-depth</b> <br/> (Single-task Depth ViT Baseline, 384x512)"]
     ViTOri --> ViTFull["main (commits 886ecb0..b7f43a6) <br/> <b>vit-full-res</b> <br/> (Full Res 480x640 + Regs + Grad Accum)"]
     ViTFull --> ViTReg["main (commits 4f55505..83418a2) <br/> <b>vit-increase-regularization</b> <br/> (384x512, Early Freeze, Heavy Aug, Regs)"]
+    ViTReg --> DinoV2["dinov2-vit-s-backbone (commits cb10a5b..00607bd) <br/> <b>dinov2-backbone</b> <br/> (Depth Anything V2 ViT-S, 392x518)"]
 
     classDef baseline fill:#e1f5fe,stroke:#0288d1,stroke-width:2px;
     classDef vit fill:#fff3e0,stroke:#f57c00,stroke-width:2px;
     classDef vitbest fill:#e8f5e9,stroke:#2e7d32,stroke-width:2.5px;
+    classDef dinobest fill:#e0f2f1,stroke:#00796b,stroke-width:3px;
     classDef abl fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px;
     
     class Main,IsoDepth,IsoSeg baseline;
     class DropBound,EarlySplit,CrossTask,CrossTaskScale,ResNet50 abl;
     class ViTApp,ViTFix,ViTIso vit;
     class ViTOri,ViTFull,ViTReg vitbest;
+    class DinoV2 dinobest;
 ```
 
 ---
@@ -88,6 +93,7 @@ graph TD
   * **Depth:** $\delta_1 = 0.7353$ (Ep 120), $\delta_2 = 0.9372$ (Ep 110), $\delta_3 = 0.9861$ (Ep 95), $\text{RMSE} = 0.6268$m (Ep 120), $\text{AbsRel} = 0.1765$ (Ep 112).
   * **Seg:** $\text{mIoU} = 0.2731$ (Ep 117), $\text{Dice} = 0.3836$ (Ep 117), $\text{Pixel Acc} = 0.6361$ (Ep 145).
   * **Bound:** $\text{F1} = 0.5429$ (Ep 111), $\text{Prec} = 0.4510$, $\text{Recall} = 0.7900$ (Ep 17).
+  * **Eigen Protocol Benchmark (Raw 480x640 Depth + Eigen Crop):** $\delta_1 = 0.5104$, $\text{RMSE} = 0.9347\text{m}$, $\text{AbsRel} = 0.2858$, $\text{mIoU} = 0.1561$.
 * **Key Takeaway:** Provided strong depth estimation baselines for ResNet models ($\delta_1 = 0.7353$, $\text{RMSE} = 0.6268$m). Joint boundary supervision served as an essential structural prior.
 
 ---
@@ -137,6 +143,7 @@ graph TD
   * **Depth:** $\delta_1 = 0.7213$ (Ep 82), $\text{RMSE} = 0.6653$m (Ep 79).
   * **Seg:** $\text{mIoU} = 0.2618$ (Ep 97), $\text{Dice} = 0.3735$ (Ep 95).
   * **Bound:** $\text{F1} = 0.5472$ (Ep 116).
+  * **Eigen Protocol Benchmark (Raw 480x640 Depth + Eigen Crop):** $\delta_1 = 0.5101$, $\text{RMSE} = 0.9261\text{m}$, $\text{AbsRel} = 0.2825$, $\text{mIoU} = 0.1520$.
 * **Key Takeaway:** Early branching was counterproductive. Seg mIoU dropped to $0.2618$ while compute surged by +10.2 GMac.
 
 ---
@@ -149,6 +156,7 @@ graph TD
   * **Depth:** $\delta_1 = 0.7285$ (Ep 120), $\text{RMSE} = 0.6536$m (Ep 107).
   * **Seg:** $\text{mIoU} = 0.2489$ (Ep 108), $\text{Dice} = 0.3561$ (Ep 108).
   * **Bound:** $\text{F1} = \mathbf{0.5523}$ (Ep 87).
+  * **Eigen Protocol Benchmark (Raw 480x640 Depth + Eigen Crop):** $\delta_1 = 0.5027$, $\text{RMSE} = 0.9594\text{m}$, $\text{AbsRel} = 0.2936$, $\text{mIoU} = 0.1568$.
 * **Key Takeaway:** Boundary and depth gradients dominated the gates, suppressing segmentation gradients and dropping mIoU to $0.2489$.
 
 ---
@@ -161,6 +169,7 @@ graph TD
   * **Depth:** $\delta_1 = 0.7163$ (Ep 119), $\text{RMSE} = 0.6692$m (Ep 119).
   * **Seg:** $\text{mIoU} = 0.2887$ (Ep 126), $\text{Dice} = 0.4000$ (Ep 126), $\text{Pixel Acc} = 0.6899$ (Ep 146).
   * **Bound:** $\text{F1} = 0.5493$ (Ep 80).
+  * **Eigen Protocol Benchmark (Raw 480x640 Depth + Eigen Crop):** $\delta_1 = 0.4923$, $\text{RMSE} = 0.9685\text{m}$, $\text{AbsRel} = 0.3032$, $\text{mIoU} = 0.1658$.
 * **Key Takeaway:** $2\times$ segmentation loss scaling recovered segmentation performance ($0.2489 \rightarrow 0.2887$, +16.0% relative).
 
 ---
@@ -220,6 +229,7 @@ graph TD
 * **Best Scores:**
   * **Depth:** $\delta_1 = \mathbf{0.7596}$ (Ep 121), $\delta_2 = \mathbf{0.9507}$ (Ep 121), $\delta_3 = \mathbf{0.9899}$ (Ep 121), $\text{RMSE} = \mathbf{0.6108}$m (Ep 121), $\text{AbsRel} = \mathbf{0.1655}$ (Ep 139).
   * **Seg:** $\text{mIoU} = 0.4005$ (Ep 70), $\text{Dice} = 0.5497$ (Ep 70), $\text{Pixel Acc} = 0.6867$ (Ep 129).
+  * **Eigen Protocol Benchmark (Raw 480x640 Depth + Eigen Crop):** $\delta_1 = \mathbf{0.7593}$ (Ep 121), $\text{RMSE} = \mathbf{0.5478}\text{m}$ (Ep 121), $\text{AbsRel} = 0.1688$, $\text{mIoU} = 0.3957$ (Ep 121) / $\mathbf{0.4005}$ (Ep 70).
 * **Key Takeaway:** **The single most impactful update in the repository.** Correcting spatial orientation caused metrics to leap across the board:
   * Depth $\delta_1$ jumped from $0.6702 \rightarrow \mathbf{0.7596}$ (+0.0894), setting the **all-time project record for Depth Estimation**.
   * Depth RMSE dropped from $0.7457\text{m} \rightarrow \mathbf{0.6108}\text{m}$ (a 13.5 cm improvement).
@@ -289,11 +299,41 @@ graph TD
   * Segmentation continuously improved throughout training (peaking at Ep 131) instead of suffering early plateau/decay.
 * **Best Scores:**
   * **Depth:** $\delta_1 = 0.7496$ (Ep 139), $\delta_2 = 0.9489$ (Ep 139), $\delta_3 = 0.9899$ (Ep 139), $\text{RMSE} = 0.6282$m (Ep 106) / 0.6354m (Ep 139), $\text{AbsRel} = 0.1687$ (Ep 139).
-  * **Seg:** $\text{mIoU} = \mathbf{0.4126}$ (Ep 131), $\text{Dice} = \mathbf{0.5628}$ (Ep 131), $\text{Pixel Acc} = \mathbf{0.6934}$ (Ep 142) / 0.6923 (Ep 131).
+  * **Seg:** $\text{mIoU} = 0.4126$ (Ep 131), $\text{Dice} = 0.5628$ (Ep 131), $\text{Pixel Acc} = 0.6934$ (Ep 142) / 0.6923 (Ep 131).
 * **Key Takeaway & Critical Critique:**
-  * **All-Time Semantic Segmentation Record:** Achieved **0.4126** mIoU, **0.5628** Dice, and **0.6934** Pixel Acc, surpassing all prior models in the project.
+  * **Peak Semantic Performance with CNN Encoder:** Achieved $0.4126$ mIoU and $0.6934$ Pixel Acc, outperforming all prior ResNet-based models.
   * **Strictly Dominates Full-Res Run:** Outperformed `vit-full-res` across every single metric while requiring 35.7% fewer GMacs and training significantly faster.
   * **The Geometric Augmentation vs. Metric Depth Dilemma:** Depth accuracy ($\delta_1 = 0.7496$, $\text{RMSE} = 0.6282$m) remained below `vit-orientation-fixed` ($0.7596$ / $0.6108$m). Aggressive zooming (`scale=(0.6, 1.0)`) alters apparent object dimensions without scaling ground truth distance labels, corrupting metric depth cues while boosting semantic scale-invariance.
+
+---
+
+### Run 15: `dinov2-backbone` (Depth Anything V2 Pretrained ViT-S Backbone)
+* **Branch:** [`dinov2-vit-s-backbone`](file:///home/totallynotminh/Documents/TwinForge/checkpoints/dinov2-backbone) (Commits `cb10a5b`, `00607bd`)
+* **What Changed vs Run 14:**
+  * **Encoder Paradigm Shift:** Completely replaced the CNN ResNet50 encoder with a **DINOv2 ViT-S** backbone pre-trained via **Depth Anything V2** (`depth_anything_v2_vits.pth`).
+  * **Encoder Freezing:** The entire 12-block ViT-S transformer backbone (embed dim=384, 6 heads, ~22.06M parameters) was fully frozen (`freeze=True`), running in `eval()` mode with zero backpropagation into backbone weights.
+  * **Multi-Scale Feature Adapters:** Tapped intermediate representations from transformer blocks `[2, 5, 8, 11]`, projecting them through $1 \times 1$ convs + BatchNorm + ReLU (`proj1` through `proj5`) to hierarchical channel dimensions ($64, 256, 512, 1024, 2048$), emulating stages `f1` through `f5` for the cross-attention decoder.
+  * **Optimized Attention:** Replaced naive dot-product attention with PyTorch 2.x `F.scaled_dot_product_attention` for accelerated memory and compute efficiency.
+  * **Resolution Adaptation:** Adjusted input resolution to **$392 \times 518$** to satisfy the ViT patch size divisibility constraint (patch size 14: $392/14 = 28$, $518/14 = 37$).
+  * **Maintained Multi-Task ViT Decoder:** Retained the 8-head `MultiHeadDecoder` with fixed 1:1 loss weighting ($L_{seg} + 1.0 \times L_{depth}$).
+* **Parameters & MACs:** 45.75M Total | **23.69M Trainable (51.8%)** | **24.91 GMac** ($392 \times 518$).
+  * Compute slashed by **-35.3%** compared to ResNet50 ViT ($38.52 \to 24.91$ GMac) and **-58.6%** compared to `vit-full-res` (60.20 GMac).
+* **Training Dynamics:**
+  * Ran all 151 epochs (0–150).
+  * **Minimal Generalization Gap (1.05):** Minimum validation loss reached **3.3814** at Epoch 89 (Train loss: 2.5427), finishing at Train: 2.3430 / Val: 3.3922 at Epoch 150. Divergence gap ended at only **$\approx 1.05$** (compared to 3.99 in Run 11 and 2.15 in Run 14).
+  * **Ultra-Fast Early Convergence:** Depth $\delta_1$ reached $0.7934$ by Epoch 2—already surpassing the 150-epoch peak of every previous model in the repository.
+* **Best Scores:**
+  * **Depth:** $\delta_1 = \mathbf{0.9096}$ (Ep 88), $\delta_2 = \mathbf{0.9895}$ (Ep 88), $\delta_3 = \mathbf{0.9977}$ (Ep 88), $\text{RMSE} = \mathbf{0.3755}$m (Ep 88), $\text{AbsRel} = \mathbf{0.1017}$ (Ep 88), $\text{SqRel} = \mathbf{0.0527}$ (Ep 88), $\text{RMSElog} = \mathbf{0.1287}$ (Ep 88), $\text{log10} = \mathbf{0.0434}$ (Ep 88).
+  * **Seg:** $\text{mIoU} = \mathbf{0.5384}$ (Ep 131), $\text{Dice} = \mathbf{0.6781}$ (Ep 131), $\text{Pixel Acc} = \mathbf{0.7806}$ (Ep 131).
+  * **Min Val Loss:** **3.3814** (Ep 89).
+* **Key Takeaway & Critical Critique:**
+  * **All-Time Project Records Shattered Across Every Task:**
+    * Depth $\delta_1$ leaped from $0.7596 \to \mathbf{0.9096}$ (+15.00 percentage points / +19.7% relative improvement).
+    * Depth RMSE plummeted from $0.6108\text{m} \to \mathbf{0.3755}\text{m}$ (an astonishing **23.53 cm reduction in error**, -38.5% relative).
+    * Semantic segmentation mIoU leaped from $0.4126 \to \mathbf{0.5384}$ (+12.58 percentage points / +30.5% relative improvement).
+    * Segmentation Pixel Accuracy surged from $0.6934 \to \mathbf{0.7806}$.
+  * **The Power of Foundation Depth Priors:** Freezing a vision foundation model pre-trained on massive synthetic and real datasets provided rich, scale-aware geometric priors and dense semantic tokens that the previous CNN backbones could not discover from only 795 NYUv2 training images.
+  * **Efficiency Breakthrough:** Achieved these unprecedented benchmarks while running at only 24.91 GMac and training only 23.69M parameters, proving that encoder representation quality completely dominates raw architecture capacity or decoder parameter count.
 
 ---
 
@@ -308,9 +348,9 @@ Comparing Runs 1, 2, and 4 demonstrated that high-frequency edge supervision act
 ### Discovery 2: Spatial Orientation Was the Hidden Bottleneck
 Prior to Run 11, ViT models were believed to suffer an inherent inductive bias deficiency on continuous depth estimation ($\delta_1 \approx 0.670$, $\text{RMSE} \approx 0.746$m). 
 Fixing the transposed image loading bug in Run 11 immediately revealed that the ViT Cross-Attention architecture is actually **superior to ResNet on both tasks simultaneously**:
-* **Depth $\delta_1$:** $0.7353$ (Best ResNet) $\rightarrow$ **$0.7596$** (`vit-orientation-fixed`)
-* **Depth RMSE:** $0.6268$m (Best ResNet) $\rightarrow$ **$0.6108$m** (`vit-orientation-fixed`)
-* **Seg mIoU:** $0.2929$ (Best ResNet) $\rightarrow$ $0.4005$ (`vit-orientation-fixed`) $\rightarrow$ $0.4081$ (`vit-full-res`) $\rightarrow$ **$0.4126$** (`vit-increase-regularization`)
+* **Depth $\delta_1$:** $0.7353$ (Best ResNet) $\rightarrow$ $0.7596$ (`vit-orientation-fixed`)
+* **Depth RMSE:** $0.6268$m (Best ResNet) $\rightarrow$ $0.6108$m (`vit-orientation-fixed`)
+* **Seg mIoU:** $0.2929$ (Best ResNet) $\rightarrow$ $0.4005$ (`vit-orientation-fixed`) $\rightarrow$ $0.4081$ (`vit-full-res`) $\rightarrow$ $0.4126$ (`vit-increase-regularization`)
 
 ### Discovery 3: Multi-Task Gradient Dynamics (Kendall vs. Fixed)
 * **Kendall Uncertainty Loss:** Tended to dynamically overweight segmentation ($2.94:1.00$), leading to severe cross-entropy overconfidence and high validation loss.
@@ -319,7 +359,7 @@ Fixing the transposed image loading bug in Run 11 immediately revealed that the 
 ### Discovery 4: Resolution Scaling & Quadratic Compute Penalty
 Moving from $384 \times 512$ to full native resolution ($480 \times 640$) in Run 13 increased scale 1 tokens from 1,344 to 2,120:
 $$\left(\frac{2120}{1344}\right)^2 \approx 2.49\times \text{ attention operations}$$
-This increased total GMacs from 38.52 to 60.20 due to quadratic attention overhead on the enlarged token grid. Yet depth accuracy degraded ($\Delta -0.0119$ $\delta_1$) and segmentation gained less than $1\%$ mIoU. **$384 \times 512$ remains the optimal resolution pareto-frontier.**
+This increased total GMacs from 38.52 to 60.20 due to quadratic attention overhead on the enlarged token grid. Yet depth accuracy degraded ($\Delta -0.0119$ $\delta_1$) and segmentation gained less than $1\%$ mIoU. **$384 \times 512$ (or $392 \times 518$) remains the optimal resolution pareto-frontier.**
 
 ### Discovery 5: Overfitting Control via Architectural Freezing & Regularization
 In unconstrained runs (`vit-orientation-fixed`), train-val divergence reached an alarming gap of **3.99** (Train 1.00 vs Val 4.99). In Run 14 (`vit-increase-regularization`), combining early encoder freezing (`stem`, `layer1`, `layer2`), spatial/positional dropouts, label smoothing, and heavy augmentations successfully constrained the final gap to **2.15**, allowing segmentation mIoU to steadily climb to an all-time record of **0.4126**.
@@ -327,20 +367,26 @@ In unconstrained runs (`vit-orientation-fixed`), train-val divergence reached an
 ### Discovery 6: The Geometric vs. Photometric Augmentation Trade-off
 Photometric perturbations (jittering brightness, contrast, saturation, hue) and spatial dropout provide pure regularization benefit with zero geometric distortion. In contrast, heavy geometric transforms (rotation up to $\pm 8^\circ$ and unscaled random cropping down to $0.6$) improve scale/rotation invariance for semantic segmentation but corrupt the perspective geometry and metric scale necessary for monocular depth estimation.
 
+### Discovery 7: The Foundation Model Paradigm Shift (DINOv2 / Depth Anything V2 Backbone)
+Transitioning from standard supervised ImageNet pretraining (ResNet50) to a foundation vision transformer pre-trained on multi-dataset depth representations (Depth Anything V2 / DINOv2 ViT-S) produced the largest single-step performance leap across the entire project lifespan:
+* **Depth $\delta_1$:** $0.7596 \rightarrow \mathbf{0.9096}$ (+15.00 pp)
+* **Depth RMSE:** $0.6108\text{m} \rightarrow \mathbf{0.3755\text{m}}$ (-38.5% error reduction)
+* **Seg mIoU:** $0.4126 \rightarrow \mathbf{0.5384}$ (+12.58 pp)
+* **Min Val Loss:** $4.3281 \rightarrow \mathbf{3.3814}$
+* **Generalization Gap:** Compressed from $3.99 \rightarrow \mathbf{1.05}$
+* **Compute (GMac):** Slashed from $38.52 \rightarrow \mathbf{24.91}$ GMac (-35.3%)
+
+Crucially, freezing the foundation backbone completely bypassed the severe data-scarcity bottleneck of NYUv2 (795 training images). While ResNet encoders rapidly memorized pixel configurations, the frozen ViT-S backbone provided linearly separable, viewpoint-invariant tokens that allowed the `MultiHeadDecoder` to learn multi-task relationships without degrading depth or segmentation.
+
 ---
 
 ## 5. Architectural Recommendations for Next Experiments
 
-1. **Decouple or Calibrate Depth-Safe Geometric Augmentations:**
-   * In [`data/augment.py`](file:///home/totallynotminh/Documents/TwinForge/data/augment.py), tighten `RandomResizedCrop` scale from `(0.6, 1.0)` back to `(0.8, 1.0)` with $p=0.5$ (or scale depth ground truth by $Z \times \sqrt{\text{scale}}$ upon zooming) and restrict rotation to $[-3.0^\circ, 3.0^\circ]$ with $p=0.4$.
-   * Retain the strong photometric jitter and dropouts that enabled the segmentation record.
-2. **Replace Hard Encoder Freezing with 3-Tier Differential Learning Rates:**
-   * Instead of hard freezing `stem`, `layer1`, and `layer2` (which locks early spatial edge filters), train them with a slow learning rate in [`scripts/train.py`](file:///home/totallynotminh/Documents/TwinForge/scripts/train.py):
-     * `stem`, `layer1`, `layer2`: $1\times 10^{-5}$
-     * `layer3`, `layer4`: $1\times 10^{-4}$ (weight decay $5\times 10^{-3}$)
-     * MultiHeadDecoder: $2\times 10^{-4}$ (weight decay $1\times 10^{-4}$)
-   * This retains low-level adaptation for depth gradients while preventing catastrophic memorization.
-3. **Re-test Lightweight Boundary Supervision in ViT:**
-   * Now that orientation is aligned and segmentation is stable at $>0.41$ mIoU, adding a lightweight boundary auxiliary head on the fused multi-scale features can restore sharp depth edge discontinuities and push $\delta_1$ past $0.765$.
-4. **Prune High-Resolution Scale 1 Tokens in ViT Decoder:**
-   * Scale 1 ($96 \times 128$) consumes $1,344$ tokens alone. Replacing full self-attention at Scale 1 with windowed local attention or a depthwise separable convolution will drop GMacs below 25 GMac and accelerate training.
+1. **Parameter-Efficient Fine-Tuning (PEFT / LoRA) on ViT-S Backbone:**
+   * While fully freezing the backbone yielded remarkable results, introducing low-rank adaptation (LoRA) or unfreezing only the final two transformer blocks (blocks 10–11) with a minimal learning rate ($5\times 10^{-6}$) may adapt domain-specific indoor spatial geometry and push $\delta_1$ past $0.920$.
+2. **Multi-Scale Feature Adapter Optimization:**
+   * Currently, stages `f1` through `f5` are projected via simple $1 \times 1$ convs from blocks `[2, 5, 8, 11]`. Replacing these with lightweight residual adapters or multi-kernel depthwise convolutions could enhance high-frequency edge detail for both tasks.
+3. **Re-evaluate Cross-Task Interaction on Foundation Tokens:**
+   * In earlier ResNet runs, cross-task SE-gates caused task interference. With high-quality DINOv2 representations, re-testing bidirectional attention or cross-task gating between depth and segmentation tokens may foster complementary feature exchange.
+4. **Benchmark Larger Foundation Variants (ViT-B / ViT-L):**
+   * The current ViT-S backbone operates at only 24.91 GMac. Testing Depth Anything V2 ViT-Base (dim=768) could evaluate whether scaling foundation model capacity unlocks further gains toward $\delta_1 > 0.93$ and mIoU $> 0.58$.
