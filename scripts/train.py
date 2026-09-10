@@ -75,21 +75,22 @@ def load_checkpoint(checkpoint_path, device, model, optimizer, scheduler, scaler
 
         model.load_state_dict(checkpoint["model_state_dict"])
 
-        optimizer.load_state_dict(checkpoint["optimizer_state_dict"])
-
-        scheduler.load_state_dict(checkpoint["scheduler_state_dict"])
-
-        if scaler is not None and "scaler_state_dict" in checkpoint:
-            scaler.load_state_dict(
-                checkpoint["scaler_state_dict"]
-            )
-
-        start_epoch = checkpoint["epoch"] + 1
-
-        best_depth_delta1 = checkpoint["best_depth_delta1"]
-        best_seg_miou = checkpoint["best_seg_miou"]
-
-        epochs_without_improvement = checkpoint["epochs_without_improvement"]
+        try:
+            optimizer.load_state_dict(checkpoint["optimizer_state_dict"])
+            scheduler.load_state_dict(checkpoint["scheduler_state_dict"])
+            start_epoch = checkpoint["epoch"] + 1
+            if scaler is not None and "scaler_state_dict" in checkpoint:
+                scaler.load_state_dict(checkpoint["scaler_state_dict"])
+            best_depth_delta1 = checkpoint.get("best_depth_delta1", 0.0)
+            best_seg_miou = checkpoint.get("best_seg_miou", 0.0)
+            epochs_without_improvement = checkpoint.get("epochs_without_improvement", 0)
+        except ValueError as e:
+            print(f"Notice: Optimizer state incompatible ({e}).")
+            print("Warm-starting model weights only; initializing fresh optimizer, scheduler, and starting from Epoch 0.")
+            start_epoch = 0
+            best_depth_delta1 = 0.0
+            best_seg_miou = 0.0
+            epochs_without_improvement = 0
 
         print(f"Resume training:")
         print(f"  Starting epoch:              {start_epoch}")
