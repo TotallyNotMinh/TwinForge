@@ -147,7 +147,7 @@ def train():
     patience = 25
     epochs_without_improvement = 0
     resize = (392, 518) # Divisible by 14 as per ViT-S requirement
-    encoder_lr = 1e-4
+    encoder_lr = 1e-5
     decoder_lr = 2e-4
     depth_weight = 1.0
     device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -206,7 +206,7 @@ def train():
 
     # ============== Model ==============
     
-    model = TwinForge(NUM_CLASSES, NUM_HEADS, tok_dim=TOKEN_DIM, size=resize, freeze=True).to(device)
+    model = TwinForge(NUM_CLASSES, NUM_HEADS, tok_dim=TOKEN_DIM, size=resize, freeze_early=True, freeze=False).to(device)
 
     # ============== Optimizer and Schedulers ==============
     
