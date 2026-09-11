@@ -93,7 +93,7 @@ class DinoVisionTransformer(nn.Module):
             return self.pos_embed
 
         cache_key = (w, h, x.device)
-        if cache_key in self._pos_embed_cache:
+        if not self.pos_embed.requires_grad and cache_key in self._pos_embed_cache:
             return self._pos_embed_cache[cache_key]
 
         class_pos_embed = self.pos_embed[:, 0]
@@ -107,7 +107,9 @@ class DinoVisionTransformer(nn.Module):
         patch_pos_embed = F.interpolate(patch_pos_embed, size=(h0, w0), mode="bicubic", align_corners=False)
         patch_pos_embed = patch_pos_embed.permute(0, 2, 3, 1).reshape(1, -1, dim)
         pos_embed = torch.cat((class_pos_embed.unsqueeze(0), patch_pos_embed), dim=1)
-        self._pos_embed_cache[cache_key] = pos_embed
+        if not self.pos_embed.requires_grad:
+            pos_embed = pos_embed.detach()
+            self._pos_embed_cache[cache_key] = pos_embed
         return pos_embed
 
     def forward_features(self, x: torch.Tensor, out_indices=(2, 5, 8, 11)):
@@ -175,6 +177,9 @@ class DepthAnythingEncoder(nn.Module):
             for blk in self.vit.blocks[:6]:
                 for p in blk.parameters():
                     p.requires_grad = False
+            self.vit.pos_embed.requires_grad = False
+        else:
+            self.vit.pos_embed.requires_grad = False
 
     def train(self, mode: bool = True):
         super().train(mode)

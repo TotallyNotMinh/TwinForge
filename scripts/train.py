@@ -75,21 +75,22 @@ def load_checkpoint(checkpoint_path, device, model, optimizer, scheduler, scaler
 
         model.load_state_dict(checkpoint["model_state_dict"])
 
-        optimizer.load_state_dict(checkpoint["optimizer_state_dict"])
-
-        scheduler.load_state_dict(checkpoint["scheduler_state_dict"])
-
-        if scaler is not None and "scaler_state_dict" in checkpoint:
-            scaler.load_state_dict(
-                checkpoint["scaler_state_dict"]
-            )
-
-        start_epoch = checkpoint["epoch"] + 1
-
-        best_depth_delta1 = checkpoint["best_depth_delta1"]
-        best_seg_miou = checkpoint["best_seg_miou"]
-
-        epochs_without_improvement = checkpoint["epochs_without_improvement"]
+        try:
+            optimizer.load_state_dict(checkpoint["optimizer_state_dict"])
+            scheduler.load_state_dict(checkpoint["scheduler_state_dict"])
+            start_epoch = checkpoint["epoch"] + 1
+            if scaler is not None and "scaler_state_dict" in checkpoint:
+                scaler.load_state_dict(checkpoint["scaler_state_dict"])
+            best_depth_delta1 = checkpoint.get("best_depth_delta1", 0.0)
+            best_seg_miou = checkpoint.get("best_seg_miou", 0.0)
+            epochs_without_improvement = checkpoint.get("epochs_without_improvement", 0)
+        except ValueError as e:
+            print(f"Notice: Optimizer state incompatible ({e}).")
+            print("Warm-starting model weights only; initializing fresh optimizer, scheduler, and starting from Epoch 0.")
+            start_epoch = 0
+            best_depth_delta1 = 0.0
+            best_seg_miou = 0.0
+            epochs_without_improvement = 0
 
         print(f"Resume training:")
         print(f"  Starting epoch:              {start_epoch}")
@@ -147,7 +148,7 @@ def train():
     patience = 25
     epochs_without_improvement = 0
     resize = (392, 518) # Divisible by 14 as per ViT-S requirement
-    encoder_lr = 1e-4
+    encoder_lr = 1e-5
     decoder_lr = 2e-4
     depth_weight = 1.0
     device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -206,15 +207,20 @@ def train():
 
     # ============== Model ==============
     
-    model = TwinForge(NUM_CLASSES, NUM_HEADS, tok_dim=TOKEN_DIM, size=resize, freeze=True).to(device)
+    model = TwinForge(NUM_CLASSES, NUM_HEADS, tok_dim=TOKEN_DIM, size=resize, freeze=False).to(device)
 
     # ============== Optimizer and Schedulers ==============
     
-    trainable_encoder = [layer for layer in model.encoder.parameters() if layer.requires_grad]
-    optimizer = torch.optim.AdamW([
-        {"params": trainable_encoder, "lr": encoder_lr, "weight_decay": 5e-3},
-        {"params": model.decoder.parameters(), "lr": decoder_lr},
-    ], weight_decay=1e-4)    
+    vit_params = [p for p in model.encoder.vit.parameters() if p.requires_grad]
+    proj_params = [p for name, p in model.encoder.named_parameters() if not name.startswith("vit") and p.requires_grad]
+    decoder_params = [p for p in model.decoder.parameters() if p.requires_grad]
+
+    param_groups = []
+    if vit_params:
+        param_groups.append({"params": vit_params, "lr": encoder_lr, "weight_decay": 5e-3})
+    param_groups.append({"params": proj_params + decoder_params, "lr": decoder_lr})
+
+    optimizer = torch.optim.AdamW(param_groups, weight_decay=1e-4)    
 
 
     # Warm up with Linear scheduler then move to Consine Annealing
