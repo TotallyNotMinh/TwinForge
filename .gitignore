@@ -18,3 +18,6 @@ GEMINI.md
 # Checkpoints
 *.pth
 *.zip
+
+# Encoder weights
+encoder_weights/
