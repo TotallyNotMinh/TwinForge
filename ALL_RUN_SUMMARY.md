@@ -325,7 +325,7 @@ graph TD
   * **Resolution Adaptation:** Adjusted input resolution to **$392 \times 518$** to satisfy the ViT patch size divisibility constraint (patch size 14: $392/14 = 28$, $518/14 = 37$).
   * **Maintained Multi-Task ViT Decoder:** Retained the 8-head `MultiHeadDecoder` with fixed 1:1 loss weighting ($L_{seg} + 1.0 \times L_{depth}$).
 * **Parameters & MACs:** 45.75M Total | **23.69M Trainable (51.8%)** | **24.91 GMac** ($392 \times 518$).
-  * Compute slashed by **-35.3%** compared to ResNet50 ViT ($38.52 \to 24.91$ GMac) and **-58.6%** compared to `vit-full-res` (60.20 GMac).
+  * Compute slashed by **-35.3%** compared to ResNet50 ViT ($38.52 \to 24.91$ GMac at comparable ~0.20 Mpx resolution) and **-58.6%** compared to `vit-full-res` (60.20 GMac, where the reduction reflects both architectural efficiency and spatial resolution scaling).
 * **Training Dynamics:**
   * Ran all 151 epochs (0–150).
   * **Minimal Generalization Gap (1.05):** Minimum validation loss reached **3.3814** at Epoch 89 (Train loss: 2.5427), finishing at Train: 2.3430 / Val: 3.3922 at Epoch 150. Divergence gap ended at only **$\approx 1.05$** (compared to 3.99 in Run 11 and 2.15 in Run 14).
@@ -412,11 +412,12 @@ graph TD
     * `best_depth.zip` (Ep 60): $\delta_1 = 0.9079$, $\text{RMSE} = 0.3774\text{m}$, $\text{AbsRel} = 0.1042$, $\text{mIoU} = 0.5624$, $\text{Pixel Acc} = 0.7914$.
     * `best_seg.zip` (Ep 116): $\delta_1 = 0.8970$, $\text{RMSE} = 0.3778\text{m}$, $\text{AbsRel} = 0.1094$, $\text{mIoU} = \mathbf{0.5722}$, $\text{Pixel Acc} = \mathbf{0.8004}$.
 * **Key Takeaway & Critical Critique:**
-  * **Strong Performance, but Early-Freeze Retains the Advantage:** Run 18 achieved competitive results with **0.5722 mIoU** and **0.8004 pixel accuracy**, proving that decoupling projection layer learning rates allows effective gradient propagation to adaptation stages.
-  * **Low-Level Representation Drift:** Comparing Run 18 (fully unfrozen) to Run 17 (blocks 0–5 frozen):
-    * Run 17 remains superior: $\delta_1 = 0.9103$ vs $0.9079$, $\text{RMSE} = 0.3683$m vs $0.3774$m, and $\text{mIoU} = 0.5761$ vs $0.5722$.
-    * On the small NYUv2 dataset (795 training samples), unfreezing the earliest transformer blocks (0–5) introduces slight representation drift into fundamental low-level edge/texture features, which are already near-optimal in the foundation model.
-    * **Conclusion:** The optimal strategy for DINOv2 ViT-S adaptation on small datasets is **early-layer freezing (blocks 0–5 frozen, blocks 6–11 fine-tuned)** rather than full 12-block end-to-end unfreezing.
+  * **Competitive Performance, but Early-Freeze Shows an Edge:** Run 18 achieved strong performance with **0.5722 mIoU** and **0.8004 pixel accuracy**, confirming that decoupling projection layer learning rates permits gradients to flow effectively into the adaptation layers without catastrophic forgetting.
+  * **Narrow Gap and Confounding Optimization Dynamics:** Comparing Run 18 (fully unfrozen) to Run 17 (blocks 0–5 frozen):
+    * The observed metric delta is small: $\Delta \delta_1 = -0.0024$ ($0.9079$ vs $0.9103$), $\Delta\text{RMSE} = +0.0091\text{m}$ ($0.3774\text{m}$ vs $0.3683\text{m}$), and $\Delta\text{mIoU} = -0.0039$ ($0.5722$ vs $0.5761$).
+    * **Low-Level Representation Drift Hypothesis:** On the compact NYUv2 dataset (795 training samples), unfreezing the earliest transformer blocks (0–5) likely allows low-level edge/texture representations—already near-optimal from large-scale foundation pretraining—to undergo mild drift.
+    * **Confounding Factors (Optimization Horizon & Capacity):** Importantly, Run 18 stopped early at Epoch 142 due to early stopping (`patience=25`), whereas Run 17 and Run 19 completed all 151 epochs. Unfreezing all 12 blocks expanded the trainable parameter landscape by $+31.7\%$ (from 34.34M to 45.22M parameters) at `encoder_lr = 1e-5`. The expanded optimization search space combined with fewer effective epochs may have contributed to stopping before finding an optimal joint minimum.
+    * **Practical Takeaway:** Early-layer freezing (blocks 0–5 frozen, blocks 6–11 fine-tuned) offers a more parameter-efficient, faster-converging, and empirically robust adaptation regime on small-sample multi-task regimes, while guarding against potential drift in low-level vision tokens.
 
 ---
 
@@ -455,12 +456,19 @@ Comparing Runs 1, 2, and 4 demonstrated that high-frequency edge supervision act
 * **2-Task Depth + Seg (`drop_head`):** $\delta_1 = 0.7171$
 * **3-Task Depth + Seg + Bound (`clamped_kendall`):** $\delta_1 = 0.7353$
 
-### Discovery 2: Spatial Orientation Was the Hidden Bottleneck
-Prior to Run 11, ViT models were believed to suffer an inherent inductive bias deficiency on continuous depth estimation ($\delta_1 \approx 0.670$, $\text{RMSE} \approx 0.746$m). 
-Fixing the transposed image loading bug in Run 11 immediately revealed that the ViT Cross-Attention architecture is actually **superior to ResNet on both tasks simultaneously**:
-* **Depth $\delta_1$:** $0.7353$ (Best ResNet) $\rightarrow$ $0.7596$ (`vit-orientation-fixed`)
-* **Depth RMSE:** $0.6268$m (Best ResNet) $\rightarrow$ $0.6108$m (`vit-orientation-fixed`)
-* **Seg mIoU:** $0.2929$ (Best ResNet) $\rightarrow$ $0.4005$ (`vit-orientation-fixed`) $\rightarrow$ $0.4081$ (`vit-full-res`) $\rightarrow$ $0.4126$ (`vit-increase-regularization`)
+### Discovery 2: Spatial Orientation Was the Hidden Bottleneck & Multi-Factor Ablation
+Prior to Run 11, ViT models appeared to suffer an inductive bias deficiency on continuous depth estimation ($\delta_1 \approx 0.670$, $\text{RMSE} \approx 0.746\text{m}$). Disentangling the sequential ablation across Runs 9, 10, and 11 separates data orientation from other concurrent modifications:
+
+1. **Run 9 $\rightarrow$ Run 10 (Loss Weighting & Boundary Mask Ablation):**
+   * Switching from dynamic Kendall uncertainty to fixed 1:1 weighting and fixing the pairwise depth boundary mask in Run 10 yielded **negligible depth changes** ($\delta_1 = 0.6696 \to 0.6702$, $\text{RMSE} = 0.7498\text{m} \to 0.7457\text{m}$) and a slight dip in segmentation ($0.3220 \to 0.3142\text{ mIoU}$). This confirmed that loss rebalancing alone did not resolve the depth bottleneck.
+2. **Run 10 $\rightarrow$ Run 11 (Isolated Orientation Fix):**
+   * Correcting the inverted spatial axis indexing in `data/nyuv2.py` ($W \times H \times C \to H \times W \times C$) under identical $384 \times 512$ resolution and 1:1 loss weighting isolated the true impact of spatial alignment:
+     * **Depth $\delta_1$:** $0.6702 \rightarrow \mathbf{0.7596}$ ($+0.0894$)
+     * **Depth RMSE:** $0.7457\text{m} \rightarrow \mathbf{0.6108\text{m}}$ ($-13.49\text{ cm}$)
+     * **Seg mIoU:** $0.3142 \rightarrow \mathbf{0.4005}$ ($+0.0863$ / $+27.5\%$ relative)
+   * The severe misalignment had previously forced the cross-attention decoder to correlate orthogonal spatial axes.
+3. **Contextualizing vs. ResNet Baselines (Compound System Effects):**
+   * Comparing Run 11 to earlier ResNet baselines (e.g., Run 4: $\delta_1 = 0.7353$, $\text{RMSE} = 0.6268\text{m}$; Run 8: $\text{mIoU} = 0.3344$) demonstrates a comprehensive win for the transformer setup. However, this macro-level gain is a **compound system improvement**: it combines higher spatial resolution ($384 \times 512$ vs $288 \times 384$), the `CrossTaskRefinementBlock` with All-MLP fusion, modern loss formulations (SILog + Lovasz-Softmax), and correct orientation. The orientation fix was the essential unblocker that enabled these architectural components to function as designed.
 
 ### Discovery 3: Multi-Task Gradient Dynamics (Kendall vs. Fixed)
 * **Kendall Uncertainty Loss:** Tended to dynamically overweight segmentation ($2.94:1.00$), leading to severe cross-entropy overconfidence and high validation loss.
@@ -469,7 +477,7 @@ Fixing the transposed image loading bug in Run 11 immediately revealed that the 
 ### Discovery 4: Resolution Scaling & Quadratic Compute Penalty
 Moving from $384 \times 512$ to full native resolution ($480 \times 640$) in Run 13 increased scale 1 tokens from 1,344 to 2,120:
 $$\left(\frac{2120}{1344}\right)^2 \approx 2.49\times \text{ attention operations}$$
-This increased total GMacs from 38.52 to 60.20 due to quadratic attention overhead on the enlarged token grid. Yet depth accuracy degraded ($\Delta -0.0119$ $\delta_1$) and segmentation gained less than $1\%$ mIoU. **$384 \times 512$ (or $392 \times 518$) remains the optimal resolution pareto-frontier.**
+This increased total GMacs from 38.52 to 60.20 ($+56.3\%$). Notably, the normalized compute density remained flat at $\approx 196.0$ GMac/Mpx ($38.52\text{ GMac} / 0.197\text{ Mpx} \approx 60.20\text{ GMac} / 0.307\text{ Mpx}$), demonstrating that this compute surge was driven by spatial pixel count and attention token scaling rather than architectural modification. Yet depth accuracy degraded ($\Delta -0.0119$ $\delta_1$) and segmentation gained less than $1\%$ mIoU ($0.4005 \to 0.4081$). **$384 \times 512$ (or $392 \times 518$) remains the optimal resolution pareto-frontier.**
 
 ### Discovery 5: Overfitting Control via Architectural Freezing & Regularization
 In unconstrained runs (`vit-orientation-fixed`), train-val divergence reached an alarming gap of **3.99** (Train 1.00 vs Val 4.99). In Run 14 (`vit-increase-regularization`), combining early encoder freezing (`stem`, `layer1`, `layer2`), spatial/positional dropouts, label smoothing, and heavy augmentations successfully constrained the final gap to **2.15**, allowing segmentation mIoU to steadily climb to an all-time record of **0.4126**.
@@ -484,7 +492,12 @@ Transitioning from standard supervised ImageNet pretraining (ResNet50) to a foun
 * **Seg mIoU:** $0.4126 \rightarrow \mathbf{0.5813}$ (+16.87 pp)
 * **Min Val Loss:** $4.3281 \rightarrow \mathbf{3.3001}$
 * **Generalization Gap:** Compressed from $3.99 \rightarrow \mathbf{1.05}$
-* **Compute (GMac):** Slashed from $38.52 \rightarrow \mathbf{24.91}$ GMac (-35.3%)
+* **Compute Efficiency (Architectural vs. Resolution Disentanglement):**
+  * **Raw GMac:** Reduced from $38.52 \to \mathbf{24.91}$ GMac ($-35.3\%$) relative to the $384 \times 512$ ResNet50 baseline.
+  * **Resolution Disentanglement:** The DINOv2 input resolution ($392 \times 518 = 203,056$ px) contains **$+3.28\%$ more pixels** than the $384 \times 512$ grid ($196,608$ px). Comparing normalized compute reveals a **$37.4\%$ reduction in compute density**:
+    $$\text{ResNet50 + ViT-Decoder } (384 \times 512): \quad \frac{38.52\text{ GMac}}{0.1966\text{ Mpx}} = 195.9\text{ GMac/Mpx}$$
+    $$\text{DINOv2 ViT-S + Decoder } (392 \times 518): \quad \frac{24.91\text{ GMac}}{0.2031\text{ Mpx}} = \mathbf{122.7}\text{ GMac/Mpx}$$
+  * This confirms that the compute savings are genuinely architectural—stemming from ViT-S patch projection replacing ResNet50's computationally heavy early residual stages—and not an artifact of spatial downsampling. (In contrast, comparisons against the 60.20 GMac of Run 13 primarily reflect resolution scaling to $480 \times 640$ native resolution).
 
 Crucially, freezing the foundation backbone completely bypassed the severe data-scarcity bottleneck of NYUv2 (795 training images). While ResNet encoders rapidly memorized pixel configurations, the frozen ViT-S backbone provided linearly separable, viewpoint-invariant tokens that allowed the `MultiHeadDecoder` to learn multi-task relationships without degrading depth or segmentation.
 
@@ -496,10 +509,11 @@ Tracking the five Depth Anything V2 ViT-S experiments reveals a decisive progres
 * **Fully Unfrozen (All 12 Blocks) + Decoupled Proj LR (Run 18, `dino-v2-backbone-unfreeze-fixed-projection-layers`):** mIoU = `0.5722` | $\delta_1 = 0.9079$ | RMSE = `0.3774m` | Min Val Loss = `3.3703`
 * **Early Freeze (Blocks 6–11) + Decoupled Proj LR (Run 19, `dino-v2-backbone-early-freeze-fixed-projection-layers`):** mIoU = $\mathbf{0.5813}$ | $\delta_1 = \mathbf{0.9112}$ | RMSE = $\mathbf{0.3650m}$ | Min Val Loss = $\mathbf{3.3001}$
 
-**Core Insight:** The five-way ablation definitively answers both architectural questions:
-1. **Early Freeze Beats Full Unfreeze:** Keeping blocks 0–5 frozen prevents feature drift in low-level geometric and texture primitives on small datasets (NYUv2), outperforming full unfreezing by **+0.91 pp mIoU** and **-1.24 cm depth RMSE**.
+**Core Insight:** The five-way ablation clarifies key training and architectural dynamics:
+1. **Early Freeze vs. Full Unfreeze Comparison:** Early freezing of blocks 0–5 consistently holds the highest scores, outperforming full unfreezing (Run 18) by **+0.91 pp mIoU** and **-1.24 cm depth RMSE** when paired with decoupled projection learning rates (Run 19), and by **+0.39 pp mIoU** and **-0.91 cm depth RMSE** even under throttled projection learning rates (Run 17).
+   * *Mechanism & Confounders:* While low-level representation drift on the small 795-image training set is the primary hypothesis, optimization horizon is an acknowledged confounder: Run 18 stopped at Epoch 142 via early stopping (`patience=25`), whereas Runs 17 and 19 trained for all 151 epochs. Unfreezing 10.88M additional parameters expanded the optimization space, which may have required a different schedule or learning rate warmup to converge fully.
 2. **Decoupled Projection Learning Rates Are Essential:** Training adaptation layers (`proj1`–`proj5`) at `2e-4` rather than throttling them at `1e-5` allows multi-scale features to adapt rapidly, boosting mIoU by **+0.52 pp** over throttled early-freeze (Run 17) and breaking past **0.58 mIoU**.
-3. **The Winning Formula:** Early-freeze foundation ViT (`blocks 0–5` frozen, `blocks 6–11` @ `1e-5`) combined with decoupled projection and decoder optimization (`proj` + `decoder` @ `2e-4`) represents the optimal multi-task architecture on this benchmark.
+3. **The Winning Formula:** Early-freeze foundation ViT (`blocks 0–5` frozen, `blocks 6–11` @ `1e-5`) combined with decoupled projection and decoder optimization (`proj` + `decoder` @ `2e-4`) represents the optimal and most reliable multi-task architecture on this benchmark.
 
 ---
 
