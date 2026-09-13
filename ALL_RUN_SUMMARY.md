@@ -24,7 +24,7 @@ This document provides an exhaustive, comparative summary of all 19 experimental
 | 14 | **`vit-increase-regularization`** | `main` | $384 \times 512$ | ResNet50 (Frozen stem..L2) | ViT Patch + Multi-scale Regs + Strong Aug | Depth, Seg | 45.68M | 44.24M (96.8%) | 38.52 | 0.7496 (Ep 139) | 0.6282 (Ep 106) | *Checkpoint not available* | 0.4126 (Ep 131) | N/A | 4.6680 (Ep 128) | 151 (0–150) |
 | 15 | **`dinov2-backbone`** | `dinov2-vit-s-backbone` | $392 \times 518$ | Frozen DINOv2 / Depth Anything V2 ViT-S | ViT Patch + Cross-Attn + All-MLP | Depth, Seg | 45.75M | 23.69M (51.8%) | 24.91 | 0.9096 (Ep 88) | 0.3755 (Ep 88) | 0.9096 / 0.3755m | 0.5384 (Ep 131) | N/A | 3.3814 (Ep 89) | 151 (0–150) |
 | 16 | **`dino-v2-backbone-early-freeze`** | `dinov2-vit-s-backbone` | $392 \times 518$ | DINOv2 ViT-S (Early Freeze, Blocks 6–11 Fine-Tuned, Warm-start) | ViT Patch + Cross-Attn + All-MLP | Depth, Seg | 45.74M | 34.34M (75.1%) | 24.91 | 0.9084 (Ep 90) | 0.3778 (Ep 90) | 0.9082 / 0.3766m | 0.5652 (Ep 138) | N/A | 3.3394 (Ep 94) | 151 (0–150) |
-| 17 | **`dinov2-backbone-unfreeze`** | `dinov2-vit-s-backbone` | $392 \times 518$ | DINOv2 ViT-S (Early Freeze, Blocks 6–11 Fine-Tuned, Scratch) | ViT Patch + Cross-Attn + All-MLP | Depth, Seg | 45.74M | 34.34M (75.1%) | 24.91 | 0.9103 (Ep 102) | 0.3683 (Ep 102) | 0.9095 / 0.3681m | 0.5761 (Ep 133) | N/A | 3.3068 (Ep 87) | 151 (0–150) |
+| 17 | **`dino-v2-backbone-early-freeze-scratch`** *(folder: `dinov2-backbone-unfreeze`)* | `dinov2-vit-s-backbone` | $392 \times 518$ | DINOv2 ViT-S (Early Freeze, Blocks 6–11 Fine-Tuned, Scratch) | ViT Patch + Cross-Attn + All-MLP | Depth, Seg | 45.74M | 34.34M (75.1%) | 24.91 | 0.9103 (Ep 102) | 0.3683 (Ep 102) | 0.9095 / 0.3681m | 0.5761 (Ep 133) | N/A | 3.3068 (Ep 87) | 151 (0–150) |
 | 18 | **`dino-v2-backbone-unfreeze-fixed-projection-layers`** | `dinov2-vit-s-backbone` | $392 \times 518$ | DINOv2 ViT-S (Fully Unfrozen, Proj @ 2e-4) | ViT Patch + Cross-Attn + All-MLP | Depth, Seg | 45.75M | 45.22M (98.9%) | 24.91 | 0.9079 (Ep 60) | 0.3774 (Ep 60) | 0.9079 / 0.3774m | 0.5722 (Ep 116) | N/A | 3.3703 (Ep 97) | 142 (0–141, Early Stop) |
 | 19 | **`dino-v2-backbone-early-freeze-fixed-projection-layers`** | `dinov2-vit-s-backbone` | $392 \times 518$ | DINOv2 ViT-S (Early Freeze, Proj @ 2e-4) | ViT Patch + Cross-Attn + All-MLP | Depth, Seg | 45.74M | 34.34M (75.1%) | 24.91 | **0.9112** (Ep 123) | **0.3650** (Ep 123) | **0.9112** / **0.3650m** | **0.5813** (Ep 133) | N/A | **3.3001** (Ep 97) | 151 (0–150) |
 
@@ -55,7 +55,7 @@ graph TD
     ViTFull --> ViTReg["main (commits 4f55505..83418a2) <br/> <b>vit-increase-regularization</b> <br/> (384x512, Early Freeze, Heavy Aug, Regs)"]
     ViTReg --> DinoV2["dinov2-vit-s-backbone (commits cb10a5b..00607bd) <br/> <b>dinov2-backbone</b> <br/> (Depth Anything V2 ViT-S, 392x518, Frozen)"]
     DinoV2 --> DinoEarly["dinov2-vit-s-backbone (commit 84bfafb) <br/> <b>dino-v2-backbone-early-freeze</b> <br/> (Blocks 6-11 Fine-tuned, Warm-started)"]
-    DinoV2 --> DinoUnfreeze["dinov2-vit-s-backbone (commit 2d8946c) <br/> <b>dinov2-backbone-unfreeze</b> <br/> (Early Freeze, Blocks 6-11 Fine-Tuned, Scratch)"]
+    DinoV2 --> DinoEarlyScratch["dinov2-vit-s-backbone (commit 2d8946c) <br/> <b>dino-v2-backbone-early-freeze-scratch</b> <br/> (Early Freeze Blocks 6-11, Scratch, Proj @ 1e-5)"]
     DinoV2 --> DinoUnfreezeFix["dinov2-vit-s-backbone (commit 6a227ea) <br/> <b>dino-v2-backbone-unfreeze-fixed-projection-layers</b> <br/> (Fully Unfrozen, Proj Decoupled @ 2e-4)"]
     DinoV2 --> DinoEarlyFix["dinov2-vit-s-backbone (commit f226b2b) <br/> <b>dino-v2-backbone-early-freeze-fixed-projection-layers</b> <br/> (Early Freeze Blocks 6-11, Proj Decoupled @ 2e-4)"]
 
@@ -368,7 +368,7 @@ graph TD
 
 ---
 
-### Run 17: `dinov2-backbone-unfreeze` (Blocks 6–11 Fine-Tuning from Scratch)
+### Run 17: `dino-v2-backbone-early-freeze-scratch` (Legacy folder: `dinov2-backbone-unfreeze`, Blocks 6–11 Fine-Tuning from Scratch)
 * **Branch:** [`dinov2-vit-s-backbone`](file:///home/totallynotminh/Documents/TwinForge/checkpoints/dinov2-backbone-unfreeze) (Commit `2d8946c`)
 * **What Changed vs Run 16:**
   * **Trained from Scratch with Early Freezing:** Although designated `unfreeze`, commit `2d8946c` retained `freeze_early=True` in `scripts/train.py`. Weight verification against baseline confirmed that `patch_embed` and blocks 0–5 remained completely frozen ($0.0$ weight diff), while blocks 6–11 were actively fine-tuned.
@@ -505,11 +505,14 @@ Crucially, freezing the foundation backbone completely bypassed the severe data-
 Tracking the five Depth Anything V2 ViT-S experiments reveals a decisive progression:
 * **Fully Frozen (Run 15, `dinov2-backbone`):** mIoU = `0.5384` | $\delta_1 = 0.9096$ | RMSE = `0.3755m` | Min Val Loss = `3.3814`
 * **Early Freeze (Blocks 6–11), Warm-Started, Throttled Proj (Run 16, `dino-v2-backbone-early-freeze`):** mIoU = `0.5652` | $\delta_1 = 0.9084$ | RMSE = `0.3778m` | Min Val Loss = `3.3394`
-* **Early Freeze (Blocks 6–11), Scratch, Throttled Proj (Run 17, `dinov2-backbone-unfreeze`):** mIoU = `0.5761` | $\delta_1 = 0.9103$ | RMSE = `0.3683m` | Min Val Loss = `3.3068`
+* **Early Freeze (Blocks 6–11), Scratch, Throttled Proj (Run 17, `dino-v2-backbone-early-freeze-scratch`, folder `dinov2-backbone-unfreeze`):** mIoU = `0.5761` | $\delta_1 = 0.9103$ | RMSE = `0.3683m` | Min Val Loss = `3.3068`
 * **Fully Unfrozen (All 12 Blocks) + Decoupled Proj LR (Run 18, `dino-v2-backbone-unfreeze-fixed-projection-layers`):** mIoU = `0.5722` | $\delta_1 = 0.9079$ | RMSE = `0.3774m` | Min Val Loss = `3.3703`
 * **Early Freeze (Blocks 6–11) + Decoupled Proj LR (Run 19, `dino-v2-backbone-early-freeze-fixed-projection-layers`):** mIoU = $\mathbf{0.5813}$ | $\delta_1 = \mathbf{0.9112}$ | RMSE = $\mathbf{0.3650m}$ | Min Val Loss = $\mathbf{3.3001}$
 
-**Core Insight:** The five-way ablation clarifies key training and architectural dynamics:
+**Core Insight & Naming Disambiguation:**
+> [!NOTE]
+> **Naming Disambiguation (Run 17 vs. Run 18 vs. Run 19):** Run 17 was historically saved in folder `dinov2-backbone-unfreeze`, creating the false impression that it was fully unfrozen and that Run 18 was its direct "fixed projection" counterpart. Checkpoint tensor analysis and commit `2d8946c` confirm that Run 17 had `freeze_early=True` (blocks 0–5 frozen at 0.0 weight delta). Thus, the true apples-to-apples comparison for decoupled projection layers is between **Run 17** (throttled proj @ 1e-5) and **Run 19** (decoupled proj @ 2e-4), where fixing projection layers yields a clean **+0.52 pp mIoU** improvement. Run 18 represents the sole trial where all 12 blocks were genuinely unfrozen.
+
 1. **Early Freeze vs. Full Unfreeze Comparison:** Across our experiments, early freezing of blocks 0–5 achieved higher scores than the single fully unfrozen baseline (Run 18), leading by **+0.91 pp mIoU** and **-1.24 cm RMSE** under matched decoupled projection LRs (Run 19), and by **+0.39 pp mIoU** and **-0.91 cm RMSE** under throttled projection LRs (Run 17).
    * *Mechanism & Shared Confounder:* While low-level representation drift on the small 795-image training set is the primary hypothesis, both comparisons share an identical optimization budget confounder: Run 18 is the sole full-unfreeze trial, and it stopped early at Epoch 142 (`patience=25`) while navigating $+31.7\%$ more trainable parameters (45.22M vs 34.34M) at `encoder_lr = 1e-5`, whereas Runs 17 and 19 completed the full 151-epoch schedule. Establishing representation drift as definitive rather than a working hypothesis would require an unconstrained 151-epoch full-unfreeze replication.
 2. **Decoupled Projection Learning Rates Are Essential:** Training adaptation layers (`proj1`–`proj5`) at `2e-4` rather than throttling them at `1e-5` allows multi-scale features to adapt rapidly, boosting mIoU by **+0.52 pp** over throttled early-freeze (Run 17) and breaking past **0.58 mIoU**.
