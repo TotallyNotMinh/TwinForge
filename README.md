@@ -59,8 +59,8 @@ The architecture is intentionally left open so that different approaches can be 
 
     - [ ] **Phase 1: Multi-Task Scene Perception (2D/2.5D)**
       - [x] Design multi-task neural network architecture (Depth, Semantics, Boundaries)
-      - [ ] Train multi-task model on indoor RGB-D benchmarks (NYU Depth V2)
-      - [ ] Jointly predict metric depth, semantic segmentation, and object boundaries from single RGB frames
+      - [x] Train multi-task model on indoor RGB-D benchmarks (NYU Depth V2)
+      - [x] Jointly predict metric depth and semantic segmentation from single RGB frames
 
     - [ ] **Phase 2: Single-View 3D Object & Scene Lifting**
       - [ ] Unproject 2.5D predictions (depth + intrinsics) into metric 3D point clouds
