@@ -5,7 +5,7 @@ TwinForge                                               [1, 41, 288, 384]       
 ├─DepthAnythingEncoder: 1-1                             [1, 2048, 9, 12]          --
 │    └─DinoVisionTransformer: 2-1                       --                        527,616
 │    │    └─PatchEmbed: 3-1                             [1, 384, 21, 28]          (226,176)
-│    │    └─ModuleList: 3-2                             --                        (21,302,784)
+│    │    └─ModuleList: 3-2                             --                        21,302,784
 │    └─Sequential: 2-2                                  [1, 64, 21, 28]           --
 │    │    └─Conv2d: 3-3                                 [1, 64, 21, 28]           24,576
 │    │    └─BatchNorm2d: 3-4                            [1, 64, 21, 28]           128
@@ -106,8 +106,8 @@ TwinForge                                               [1, 41, 288, 384]       
 │    │    └─Sequential: 3-72                            [1, 41, 72, 96]           595,241
 =========================================================================================================
 Total params: 45,738,794
-Trainable params: 23,682,218
-Non-trainable params: 22,056,576
+Trainable params: 34,861,226
+Non-trainable params: 10,877,568
 Total mult-adds (Units.GIGABYTES): 13.72
 =========================================================================================================
 Input size (MB): 1.33
