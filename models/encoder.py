@@ -73,7 +73,7 @@ class PatchEmbed(nn.Module):
 
 
 class DinoVisionTransformer(nn.Module):
-    def __init__(self, patch_size: int = 14, embed_dim: int = 384, depth: int = 12, num_heads: int = 6, mlp_ratio: float = 4.0):
+    def __init__(self, patch_size: int = 14, embed_dim: int = 768, depth: int = 12, num_heads: int = 12, mlp_ratio: float = 4.0):
         super().__init__()
         self.patch_size = patch_size
         self.embed_dim = embed_dim
@@ -132,12 +132,12 @@ class DinoVisionTransformer(nn.Module):
 
 class DepthAnythingEncoder(nn.Module):
     """
-    ViT-S encoder pre-trained on Depth Anything V2 (DINOv2 backbone).
+    ViT-B encoder pre-trained on Depth Anything V2 (DINOv2 backbone).
     Extracts intermediate features and adapts them to multi-scale representations.
     """
     def __init__(
         self,
-        checkpoint_path: str = "baseline/depth_anything_v2_vits.pth",
+        checkpoint_path: str = "encoder_weights/depth_anything_v2_vitb.pth",
         pretrained: bool = True,
         freeze: bool = True,
         freeze_early: bool = False,
@@ -154,16 +154,16 @@ class DepthAnythingEncoder(nn.Module):
                 ckpt = torch.load(str(ckpt_path), map_location="cpu", weights_only=True)
                 encoder_state = {k.replace("pretrained.", ""): v for k, v in ckpt.items() if k.startswith("pretrained.")}
                 self.vit.load_state_dict(encoder_state)
-                print(f"Loaded Depth Anything V2 ViT-S weights from {ckpt_path}")
+                print(f"Loaded Depth Anything V2 ViT-B weights from {ckpt_path}")
             else:
                 print(f"Warning: Checkpoint not found at {ckpt_path}, initializing randomly.")
 
         # Multi-scale feature adaptation layers (emulating f1..f5 for compatibility)
-        self.proj1 = nn.Sequential(nn.Conv2d(384, 64, 1, bias=False), nn.BatchNorm2d(64), nn.ReLU(inplace=True))
-        self.proj2 = nn.Sequential(nn.Conv2d(384, 256, 1, bias=False), nn.BatchNorm2d(256), nn.ReLU(inplace=True))
-        self.proj3 = nn.Sequential(nn.Conv2d(384, 512, 1, bias=False), nn.BatchNorm2d(512), nn.ReLU(inplace=True))
-        self.proj4 = nn.Sequential(nn.Conv2d(384, 1024, 1, bias=False), nn.BatchNorm2d(1024), nn.ReLU(inplace=True))
-        self.proj5 = nn.Sequential(nn.Conv2d(384, 2048, 1, bias=False), nn.BatchNorm2d(2048), nn.ReLU(inplace=True))
+        self.proj1 = nn.Sequential(nn.Conv2d(768, 64, 1, bias=False), nn.BatchNorm2d(64), nn.ReLU(inplace=True))
+        self.proj2 = nn.Sequential(nn.Conv2d(768, 256, 1, bias=False), nn.BatchNorm2d(256), nn.ReLU(inplace=True))
+        self.proj3 = nn.Sequential(nn.Conv2d(768, 512, 1, bias=False), nn.BatchNorm2d(512), nn.ReLU(inplace=True))
+        self.proj4 = nn.Sequential(nn.Conv2d(768, 1024, 1, bias=False), nn.BatchNorm2d(1024), nn.ReLU(inplace=True))
+        self.proj5 = nn.Sequential(nn.Conv2d(768, 2048, 1, bias=False), nn.BatchNorm2d(2048), nn.ReLU(inplace=True))
 
         self.out_indices = out_indices
         self.freeze = freeze
