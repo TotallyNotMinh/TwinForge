@@ -169,9 +169,11 @@ class DepthAnythingEncoder(nn.Module):
         self.freeze = freeze
 
         if freeze:
+            print("Encoder completely frozen.")
             for p in self.vit.parameters():
                 p.requires_grad = False
         elif freeze_early:
+            print("Encoder partially frozen.")
             for p in self.vit.patch_embed.parameters():
                 p.requires_grad = False
             for blk in self.vit.blocks[:6]:
