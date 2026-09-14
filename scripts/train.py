@@ -220,7 +220,7 @@ def train():
 
     # ============== Model ==============
     
-    model = TwinForge(NUM_CLASSES, NUM_HEADS, tok_dim=TOKEN_DIM, size=resize, freeze=True).to(device)
+    model = TwinForge(NUM_CLASSES, NUM_HEADS, tok_dim=TOKEN_DIM, size=resize, freeze=False, freeze_early=True).to(device)
 
     # ============== Optimizer and Schedulers ==============
     
