@@ -7,7 +7,7 @@ from torch.utils.data import DataLoader
 from tqdm import tqdm
 import os
 from data import NYUv2Dataset
-from losses import SegmentLoss, DepthLoss
+from losses import SegmentLoss, DepthLoss, BoundaryLoss
 from models import TwinForge
 from metrics import MultiTaskMetrics
 import argparse
@@ -35,7 +35,7 @@ def seed_worker(worker_id):
     np.random.seed(worker_seed)
     random.seed(worker_seed)
 
-def save_checkpoint(checkpoint_dir, checkpoint_name, epoch, model, optimizer, scheduler, best_depth_delta1, best_seg_miou, epochs_without_improvement, scaler):
+def save_checkpoint(checkpoint_dir, checkpoint_name, epoch, model, optimizer, scheduler, best_depth_delta1, best_seg_miou, best_bound_f1, epochs_without_improvement, scaler):
     os.makedirs(checkpoint_dir, exist_ok=True)
     checkpoint_save_path = os.path.join(checkpoint_dir, checkpoint_name)
     checkpoint = {
@@ -51,6 +51,7 @@ def save_checkpoint(checkpoint_dir, checkpoint_name, epoch, model, optimizer, sc
         # Best metrics
         "best_depth_delta1": best_depth_delta1,
         "best_seg_miou": best_seg_miou,
+        "best_bound_f1": best_bound_f1,
 
         # Early stopping
         "epochs_without_improvement": epochs_without_improvement
@@ -65,7 +66,7 @@ def save_checkpoint(checkpoint_dir, checkpoint_name, epoch, model, optimizer, sc
 def load_checkpoint(checkpoint_path, device, model, optimizer, scheduler, scaler):
     if checkpoint_path is None:
         print("No checkpoint detected")
-        return 0, 0.0, 0.0, 0  # Default values
+        return 0, 0.0, 0.0, 0.0, 0  # Default values
     
     else:
         checkpoint = torch.load(
@@ -88,6 +89,7 @@ def load_checkpoint(checkpoint_path, device, model, optimizer, scheduler, scaler
 
         best_depth_delta1 = checkpoint["best_depth_delta1"]
         best_seg_miou = checkpoint["best_seg_miou"]
+        best_boundary_f1 = checkpoint["best_bound_f1"]
 
         epochs_without_improvement = checkpoint["epochs_without_improvement"]
 
@@ -95,10 +97,11 @@ def load_checkpoint(checkpoint_path, device, model, optimizer, scheduler, scaler
         print(f"  Starting epoch:              {start_epoch}")
         print(f"  Best depth δ1:               {best_depth_delta1:.4f}")
         print(f"  Best segmentation mIoU:      {best_seg_miou:.4f}")
+        print(f"  Best boundary F1:             {best_boundary_f1:.4f}")
         print(f"  Epochs without improvement:   {epochs_without_improvement}")
         print(f"  Current LR:                   {optimizer.param_groups[0]['lr']:.8f}")
             
-    return start_epoch, best_depth_delta1, best_seg_miou, epochs_without_improvement
+    return start_epoch, best_depth_delta1, best_seg_miou, best_boundary_f1, epochs_without_improvement
     
 def save_summary(checkpoint_dir, best_records, current_epoch, total_epochs):
     os.makedirs(checkpoint_dir, exist_ok=True)
@@ -128,6 +131,11 @@ def save_summary(checkpoint_dir, best_records, current_epoch, total_epochs):
         lines.append(f"  • Best Seg Dice:       {best_records['seg_dice'][0]:.4f} (Epoch {best_records['seg_dice'][1]})")
         lines.append(f"  • Best Seg Pixel Acc:  {best_records['seg_pixel_acc'][0]:.4f} (Epoch {best_records['seg_pixel_acc'][1]})")
 
+    if "bound_f1" in best_records and best_records["bound_f1"][1] is not None:
+        lines.append(f"  • Best Bound F1:       {best_records['bound_f1'][0]:.4f} (Epoch {best_records['bound_f1'][1]})")
+        lines.append(f"  • Best Bound Recall:   {best_records['bound_recall'][0]:.4f} (Epoch {best_records['bound_recall'][1]})")
+        lines.append(f"  • Best Bound Precision {best_records['bound_precision'][0]:.4f} (Epoch {best_records['bound_precision'][1]})")
+
     if "min_val_loss" in best_records and best_records["min_val_loss"][1] is not None:
         lines.append(f"  • Min Val Loss:        {best_records['min_val_loss'][0]:.4f} (Epoch {best_records['min_val_loss'][1]})")
     lines.append("=" * 65)
@@ -150,11 +158,13 @@ def train():
     encoder_lr = 1e-4
     decoder_lr = 2e-4
     depth_weight = 1.0
+    bound_weight = 5.0
     device = "cuda" if torch.cuda.is_available() else "cpu"
     checkpoint_path = args.checkpoint_path
     checkpoint_dir = args.checkpoint_dir
     start_epoch = 0
 
+    best_bound_f1 = 0
     best_seg_miou = 0
     best_depth_delta1 = 0
     best_records = {
@@ -169,12 +179,16 @@ def train():
         "seg_miou": (0.0, None),
         "seg_dice": (0.0, None),
         "seg_pixel_acc": (0.0, None),
+        "bound_f1": (0.0, None),
+        "bound_recall": (0.0, None),
+        "bound_precision": (0.0, None),
         "min_val_loss": (999.0, None)
     }
 
     # ============== Losses ==============
     crit_seg = SegmentLoss().to(device)
     crit_depth = DepthLoss().to(device)
+    crit_bound = BoundaryLoss().to(device)
 
     # ============== Load dataset ==============
 
@@ -227,7 +241,7 @@ def train():
     metrics = MultiTaskMetrics(num_classes=NUM_CLASSES)
 
     # ============== Resume Training ==============
-    start_epoch, best_depth_delta1, best_seg_miou, epochs_without_improvement = load_checkpoint(checkpoint_path, device, model, optimizer, scheduler, scaler)
+    start_epoch, best_depth_delta1, best_seg_miou, best_bound_f1, epochs_without_improvement = load_checkpoint(checkpoint_path, device, model, optimizer, scheduler, scaler)
 
     if device == "cuda":
         torch.backends.cudnn.benchmark = True
@@ -242,18 +256,20 @@ def train():
         optimizer.zero_grad()  # Reset before loop
 
         train_pbar = tqdm(train_loader, desc=f"Epoch [{epoch:02d}/{EPOCHS:02d}] (Train)", leave=False)
-        for batch_idx, (images, depths, labels) in enumerate(train_pbar):
+        for batch_idx, (images, depths, labels, bounds) in enumerate(train_pbar):
             images = images.to(device, non_blocking=True)
             depths = depths.unsqueeze(1).float().to(device, non_blocking=True)
             labels = labels.long().to(device, non_blocking=True)
+            bounds = bounds.long().to(device, non_blocking=True)
 
             with torch.amp.autocast("cuda", enabled=(device == "cuda")):
-                pred_seg, pred_depth = model(images)
+                pred_seg, pred_depth, pred_bound = model(images)
 
                 seg_loss = crit_seg(pred_seg, labels)
                 depth_loss = crit_depth(pred_depth, depths, labels)
+                bound_loss = crit_bound(pred_bound, bounds)
 
-                tol_loss = seg_loss + depth_weight * depth_loss
+                tol_loss = seg_loss + depth_weight * depth_loss + bound_loss * bound_weight
                 # Scale loss down by accumulation steps
                 loss_to_backward = tol_loss / accum_steps
 
@@ -279,48 +295,56 @@ def train():
         running_val_loss = 0.0
         running_seg_loss = 0.0
         running_depth_loss = 0.0
+        running_bound_loss = 0.0
 
         metrics.reset()
         model.eval()
         val_pbar = tqdm(val_loader, desc=f"Epoch [{epoch:02d}/{EPOCHS:02d}] (Val)  ", leave=False)
         with torch.no_grad():
-            for images, depths, labels in val_pbar:
+            for images, depths, labels, bounds in val_pbar:
                 images = images.to(device, non_blocking=True)
                 depths = depths.unsqueeze(1).float().to(device, non_blocking=True)
                 labels = labels.long().to(device, non_blocking=True)
+                bounds = bounds.long().to(device, non_blocking=True)
 
                 with torch.amp.autocast("cuda", enabled=(device == "cuda")):
-                    pred_seg, pred_depth = model(images)
+                    pred_seg, pred_depth, pred_bound = model(images)
 
                     depths_loss = F.interpolate(depths, size=resize, mode="bilinear", align_corners=False) if depths.shape[-2:] != resize else depths
                     seg_loss = crit_seg(pred_seg, labels)
                     depth_loss = crit_depth(pred_depth, depths_loss, labels)
+                    bound_loss = crit_bound(pred_bound, bounds)
 
-                    tol_loss = seg_loss + depth_weight * depth_loss
+                    tol_loss = seg_loss + depth_weight * depth_loss + bound_weight * bound_loss
 
                 metrics.update(
                     pred_seg,
                     pred_depth,
+                    pred_bound,
                     labels,
                     depths,
+                    bounds
                 )
 
                 running_val_loss += tol_loss.item()
                 running_depth_loss += depth_loss.item()
                 running_seg_loss += seg_loss.item()
+                running_bound_loss += bound_loss.item()
                 val_pbar.set_postfix({"val_loss": f"{tol_loss.item():.4f}"})
 
             avg_val_loss = running_val_loss / len(val_loader)
             avg_seg_loss = running_seg_loss / len(val_loader)
             avg_depth_loss = running_depth_loss / len(val_loader)
+            avg_bound_loss = running_bound_loss / len(val_loader)
 
         # ============== Log ==============
         val_results = metrics.compute()
         total_depth = val_results["depth"]
         total_seg = val_results["segmentation"]
+        total_bound = val_results["boundary"]
 
         print(f"\n === Epoch [{epoch:02d}/{EPOCHS:02d}] | Train Loss: {avg_train_loss:.4f} | Val Loss: {avg_val_loss:.4f} | LR: {scheduler.get_last_lr()[0]:.6f} === ")
-        print(f"Validation Task Losses: Seg: {avg_seg_loss:.3f} | Depth: {avg_depth_loss:.3f} (depth_weight: {depth_weight})")
+        print(f"Validation Task Losses: Seg: {avg_seg_loss:.3f} | Depth: {avg_depth_loss:.3f} (depth_weight: {depth_weight}) | Bound: {avg_bound_loss:.3f} (bound_weight: {bound_weight})" )
 
         print(
             f"Depth | "
@@ -341,8 +365,15 @@ def train():
             f"Pixel Acc: {total_seg['pixel_acc']:.4f}"
         )
 
+        print(
+            f"Bound   | "
+            f"F1: {total_bound['f1']:.4f} | "
+            f"Recall: {total_bound['recall']:.4f} | "
+            f"Precision: {total_bound['precision']:.4f}"
+        )
+
         # ============== Save current checkpoint ============== 
-        save_checkpoint(checkpoint_dir, "checkpoint.pth", epoch, model, optimizer, scheduler, best_depth_delta1, best_seg_miou, epochs_without_improvement, scaler)
+        save_checkpoint(checkpoint_dir, "checkpoint.pth", epoch, model, optimizer, scheduler, best_depth_delta1, best_seg_miou, best_bound_f1, epochs_without_improvement, scaler)
 
         # ============== Save best checkpoint for each task ==============
         improved = False
@@ -357,7 +388,7 @@ def train():
             best_records["depth_rmse"] = (total_depth['rmse'], epoch)
             best_records["depth_rmselog"] = (total_depth['rmse_log'], epoch)
             best_records["depth_log10"] = (total_depth['log10'], epoch)
-            save_checkpoint(checkpoint_dir, "best_depth.pth", epoch, model, optimizer, scheduler, best_depth_delta1, best_seg_miou, epochs_without_improvement, scaler)
+            save_checkpoint(checkpoint_dir, "best_depth.pth", epoch, model, optimizer, scheduler, best_depth_delta1, best_seg_miou, best_bound_f1, epochs_without_improvement, scaler)
             print(f"--> Saved new best DEPTH checkpoint.")
             improved = True
 
@@ -366,8 +397,17 @@ def train():
             best_records["seg_miou"] = (total_seg['miou'], epoch)
             best_records["seg_dice"] = (total_seg['dice'], epoch)
             best_records["seg_pixel_acc"] = (total_seg['pixel_acc'], epoch)
-            save_checkpoint(checkpoint_dir, "best_seg.pth", epoch, model, optimizer, scheduler, best_depth_delta1, best_seg_miou, epochs_without_improvement, scaler)
+            save_checkpoint(checkpoint_dir, "best_seg.pth", epoch, model, optimizer, scheduler, best_depth_delta1, best_seg_miou, best_bound_f1, epochs_without_improvement, scaler)
             print(f"--> Saved new best SEG checkpoint.")
+            improved = True
+
+        if total_bound['f1'] > best_bound_f1:
+            best_bound_f1 = total_bound['f1'] 
+            best_records["bound_f1"] = (total_bound['f1'], epoch)
+            best_records["bound_recall"] = (total_bound['recall'], epoch)
+            best_records["bound_precision"] = (total_bound['precision'], epoch)
+            save_checkpoint(checkpoint_dir, "best_bound.pth", epoch, model, optimizer, scheduler, best_depth_delta1, best_seg_miou, best_bound_f1, epochs_without_improvement, scaler)
+            print(f"--> Saved new best BOUND checkpoint.")
             improved = True
 
         if avg_val_loss < best_records["min_val_loss"][0]:
