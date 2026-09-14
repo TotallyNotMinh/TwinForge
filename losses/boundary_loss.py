@@ -8,5 +8,7 @@ class BoundaryLoss(nn.Module):
         self.criterion = nn.BCEWithLogitsLoss()
 
     def forward(self, pred, target):
+        target = target.float()
+        if target.dim() == 3 and pred.dim() == 4:
+            target = target.unsqueeze(1)
         return 0.5 * self.criterion(pred, target) + 0.5 * binary_dice_loss(pred, target)
-    
