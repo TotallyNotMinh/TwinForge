@@ -99,7 +99,7 @@ class DepthDecoder(nn.Module):
 
 
 class BounndaryDecoder(nn.Module):
-    def __init__(self, tok_dim, num_labels=2, embed_dim=128):
+    def __init__(self, tok_dim, num_labels=1, embed_dim=128):
         super().__init__()
         self.proj3 = nn.Sequential(nn.Conv2d(512 + tok_dim, embed_dim, kernel_size=1, bias=False), nn.BatchNorm2d(embed_dim), nn.ReLU(inplace=True))
         self.proj2 = nn.Sequential(nn.Conv2d(256 + tok_dim, embed_dim, kernel_size=1, bias=False), nn.BatchNorm2d(embed_dim), nn.ReLU(inplace=True))
