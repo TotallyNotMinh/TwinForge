@@ -23,11 +23,13 @@ class CrossTaskRefinementBlock(nn.Module):
         super().__init__()
         self.depth_cross = TransformerBlock(tok_dim, num_heads)
         self.segment_cross = TransformerBlock(tok_dim, num_heads)
+        self.boundary_cross = TransformerBlock(tok_dim, num_heads)
 
-    def forward(self, depth_token, segment_token):
-        d_out = self.depth_cross(depth_token, context=segment_token)
-        s_out = self.segment_cross(segment_token, context=depth_token)
-        return d_out, s_out
+    def forward(self, depth_token, segment_token, boundary_token):
+        d_out = self.depth_cross(depth_token, context=torch.concat([segment_token, boundary_token], dim=1))
+        s_out = self.segment_cross(segment_token, context=torch.concat([depth_token, boundary_token], dim=1))
+        b_out = self.boundary_cross(boundary_token, context=torch.concat([segment_token, segment_token], dim=1))
+        return d_out, s_out, b_out
 
 class SegmentDecoder(nn.Module):
     def __init__(self, tok_dim, num_labels, embed_dim=128):
@@ -96,6 +98,38 @@ class DepthDecoder(nn.Module):
         return self.min_depth + (self.max_depth - self.min_depth) * torch.sigmoid(out)
 
 
+class BounndaryDecoder(nn.Module):
+    def __init__(self, tok_dim, num_labels=2, embed_dim=128):
+        super().__init__()
+        self.proj3 = nn.Sequential(nn.Conv2d(512 + tok_dim, embed_dim, kernel_size=1, bias=False), nn.BatchNorm2d(embed_dim), nn.ReLU(inplace=True))
+        self.proj2 = nn.Sequential(nn.Conv2d(256 + tok_dim, embed_dim, kernel_size=1, bias=False), nn.BatchNorm2d(embed_dim), nn.ReLU(inplace=True))
+
+        # Industry standard All-MLP linear fusion (1x1 Conv)
+        self.fuse = nn.Sequential(
+            nn.Conv2d(embed_dim * 4, tok_dim, kernel_size=1, bias=False),
+            nn.BatchNorm2d(tok_dim),
+            nn.ReLU(inplace=True),
+            nn.Dropout2d(0.2)
+        )
+
+        self.out = nn.Sequential(
+            nn.Conv2d(tok_dim * 2, 128, kernel_size=3, padding=1),
+            nn.ReLU(inplace=True),
+            nn.Dropout2d(0.3),
+            nn.Conv2d(128, num_labels, kernel_size=1)
+        )
+
+    def forward(self, vit_segment_self, p5, p4, tokens, features):
+        target_size = features["f2"].shape[-2:]  # Standard 1/4 resolution
+
+        p3 = F.interpolate(self.proj3(torch.cat([tokens["b3"], features["f3"]], dim=1)), size=target_size, mode="bilinear", align_corners=False)
+        p2 = self.proj2(torch.cat([tokens["b2"], features["f2"]], dim=1))
+
+        fused = self.fuse(torch.cat([p5, p4, p3, p2], dim=1))
+        vit_self = F.interpolate(vit_segment_self, size=target_size, mode="bilinear", align_corners=False)
+        return self.out(torch.cat([vit_self, fused], dim=1))
+
+
 class MultiHeadDecoder(nn.Module):
     def __init__(self, num_labels, tok_dim, num_heads, size=(384, 512), embed_dim=128, freeze=False):
         super().__init__()
@@ -111,6 +145,8 @@ class MultiHeadDecoder(nn.Module):
         self.patch_embedder3 = PatchEmbeder(512, tok_dim, patch_size=4)
         self.patch_embedder4 = PatchEmbeder(1024, tok_dim, patch_size=3)
         self.patch_embedder5 = PatchEmbeder(2048, tok_dim, patch_size=3)
+
+        self.positional_dropout = nn.Dropout(0.1)
 
         self.pos_embed1 = nn.Parameter(torch.randn(1, tok_dim, H // (2 * 6), W // (2 * 6)) * 0.02)
         self.pos_embed2 = nn.Parameter(torch.randn(1, tok_dim, H // (4 * 4), W // (4 * 4)) * 0.02)
@@ -128,30 +164,30 @@ class MultiHeadDecoder(nn.Module):
 
         self.fuse_transformer_depth_self = TransformerBlock(tok_dim, num_heads)
         self.fuse_transformer_segment_self = TransformerBlock(tok_dim, num_heads)
+        self.fuse_transformer_boundary_self = TransformerBlock(tok_dim, num_heads)
 
         # Multi-stage mutual cross-task refinement (2 iterations)
         self.cross_layers = nn.ModuleList([
-            CrossTaskRefinementBlock(tok_dim, num_heads) for _ in range(2)
+            CrossTaskRefinementBlock(tok_dim, num_heads) for _ in range(3)
         ])
 
         # Shared high-level semantic & context decoders (dec5 and dec4)
         self.shared_proj5 = nn.Sequential(
-            nn.Conv2d(2048 + tok_dim * 2, embed_dim, kernel_size=1, bias=False),
+            nn.Conv2d(2048 + tok_dim * 3, embed_dim, kernel_size=1, bias=False),
             nn.BatchNorm2d(embed_dim),
             nn.ReLU(inplace=True),
             nn.Dropout2d(0.2)
         )
         self.shared_proj4 = nn.Sequential(
-            nn.Conv2d(1024 + tok_dim * 2, embed_dim, kernel_size=1, bias=False),
+            nn.Conv2d(1024 + tok_dim * 3, embed_dim, kernel_size=1, bias=False),
             nn.BatchNorm2d(embed_dim),
             nn.ReLU(inplace=True),
             nn.Dropout2d(0.2)
         )
 
-        self.positional_dropout = nn.Dropout(0.1)
-
         self.segment_dec = SegmentDecoder(tok_dim, num_labels, embed_dim=embed_dim)
         self.depth_dec = DepthDecoder(tok_dim, embed_dim=embed_dim)
+        self.boundary_dec = BounndaryDecoder(tok_dim, embed_dim=embed_dim)
 
     def _get_pos_embed(self, pos_param, h, w):
         if pos_param.shape[-2:] == (h, w):
@@ -202,12 +238,14 @@ class MultiHeadDecoder(nn.Module):
         # Self Attention
         depth_token_self = self.fuse_transformer_depth_self(joint_multi_layer_token)
         segment_token_self = self.fuse_transformer_segment_self(joint_multi_layer_token)
+        boundary_token_self = self.fuse_transformer_boundary_self(joint_multi_layer_token)
 
         # Multi-stage mutual cross-task refinement
         depth_token_cross = depth_token_self
         segment_token_cross = segment_token_self
+        boundary_token_cross = boundary_token_self
         for cross_layer in self.cross_layers:
-            depth_token_cross, segment_token_cross = cross_layer(depth_token_cross, segment_token_cross)
+            depth_token_cross, segment_token_cross, boundary_token_cross = cross_layer(depth_token_cross, segment_token_cross, boundary_token_cross)
 
         # Dynamic Token Slices
         s1_idx = 0
@@ -219,44 +257,56 @@ class MultiHeadDecoder(nn.Module):
         # Scale 1 from Self-Attention
         d1 = depth_token_self[:, s1_idx : s1_idx + l1, :].transpose(1, 2).contiguous().view(B, self.tok_dim, h1, w1)
         s1 = segment_token_self[:, s1_idx : s1_idx + l1, :].transpose(1, 2).contiguous().view(B, self.tok_dim, h1, w1)
+        b1 = boundary_token_self[:, s1_idx : s1_idx + l1, :].transpose(1, 2).contiguous().view(B, self.tok_dim, h1, w1)
 
         # Scales 5 down to 2 from Cross-Attention
         d5 = depth_token_cross[:, s5_idx : s5_idx + l5, :].transpose(1, 2).contiguous().view(B, self.tok_dim, h5, w5)
         s5 = segment_token_cross[:, s5_idx : s5_idx + l5, :].transpose(1, 2).contiguous().view(B, self.tok_dim, h5, w5)
+        b5 = boundary_token_cross[:, s5_idx : s5_idx + l5, :].transpose(1, 2).contiguous().view(B, self.tok_dim, h5, w5)
 
         d4 = depth_token_cross[:, s4_idx : s4_idx + l4, :].transpose(1, 2).contiguous().view(B, self.tok_dim, h4, w4)
         s4 = segment_token_cross[:, s4_idx : s4_idx + l4, :].transpose(1, 2).contiguous().view(B, self.tok_dim, h4, w4)
+        b4 = boundary_token_cross[:, s4_idx : s4_idx + l4, :].transpose(1, 2).contiguous().view(B, self.tok_dim, h4, w4)
 
         d3 = depth_token_cross[:, s3_idx : s3_idx + l3, :].transpose(1, 2).contiguous().view(B, self.tok_dim, h3, w3)
         s3 = segment_token_cross[:, s3_idx : s3_idx + l3, :].transpose(1, 2).contiguous().view(B, self.tok_dim, h3, w3)
+        b3 = boundary_token_cross[:, s3_idx : s3_idx + l3, :].transpose(1, 2).contiguous().view(B, self.tok_dim, h3, w3)
 
         d2 = depth_token_cross[:, s2_idx : s2_idx + l2, :].transpose(1, 2).contiguous().view(B, self.tok_dim, h2, w2)
         s2 = segment_token_cross[:, s2_idx : s2_idx + l2, :].transpose(1, 2).contiguous().view(B, self.tok_dim, h2, w2)
+        b2 = boundary_token_cross[:, s2_idx : s2_idx + l2, :].transpose(1, 2).contiguous().view(B, self.tok_dim, h2, w2)
+
 
         # Single direct interpolation to match feature maps
         d5 = F.interpolate(d5, size=features["f5"].shape[-2:], mode="bilinear", align_corners=False)
         s5 = F.interpolate(s5, size=features["f5"].shape[-2:], mode="bilinear", align_corners=False)
+        b5 = F.interpolate(b5, size=features["f5"].shape[-2:], mode="bilinear", align_corners=False)
 
         d4 = F.interpolate(d4, size=features["f4"].shape[-2:], mode="bilinear", align_corners=False)
         s4 = F.interpolate(s4, size=features["f4"].shape[-2:], mode="bilinear", align_corners=False)
+        b4 = F.interpolate(b4, size=features["f4"].shape[-2:], mode="bilinear", align_corners=False)
 
         d3 = F.interpolate(d3, size=features["f3"].shape[-2:], mode="bilinear", align_corners=False)
         s3 = F.interpolate(s3, size=features["f3"].shape[-2:], mode="bilinear", align_corners=False)
+        b3 = F.interpolate(b3, size=features["f3"].shape[-2:], mode="bilinear", align_corners=False)
 
         d2 = F.interpolate(d2, size=features["f2"].shape[-2:], mode="bilinear", align_corners=False)
         s2 = F.interpolate(s2, size=features["f2"].shape[-2:], mode="bilinear", align_corners=False)
+        b2 = F.interpolate(b2, size=features["f2"].shape[-2:], mode="bilinear", align_corners=False)
 
         target_size = features["f2"].shape[-2:]  # Standard 1/4 resolution
-        shared_p5 = F.interpolate(self.shared_proj5(torch.cat([d5, s5, features["f5"]], dim=1)), size=target_size, mode="bilinear", align_corners=False)
-        shared_p4 = F.interpolate(self.shared_proj4(torch.cat([d4, s4, features["f4"]], dim=1)), size=target_size, mode="bilinear", align_corners=False)
+        shared_p5 = F.interpolate(self.shared_proj5(torch.cat([d5, s5, b5, features["f5"]], dim=1)), size=target_size, mode="bilinear", align_corners=False)
+        shared_p4 = F.interpolate(self.shared_proj4(torch.cat([d4, s4, b4, features["f4"]], dim=1)), size=target_size, mode="bilinear", align_corners=False)
 
         depth_tokens = {"d3": d3, "d2": d2}
         segment_tokens = {"s3": s3, "s2": s2}
+        bonudary_tokens = {"b3": b3, "b2": b2}
 
         depth_logits = self.depth_dec(d1, shared_p5, shared_p4, depth_tokens, features)
         segment_logits = self.segment_dec(s1, shared_p5, shared_p4, segment_tokens, features)
+        boundary_logits = self.boundary_dec(b1, shared_p5, shared_p4, bonudary_tokens, features)
 
-        return depth_logits, segment_logits
+        return depth_logits, segment_logits, boundary_logits
 
 if __name__ == "__main__":
     model = MultiHeadDecoder(tok_dim=128, num_heads=4, num_labels=40)

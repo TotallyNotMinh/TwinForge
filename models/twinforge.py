@@ -19,13 +19,14 @@ class TwinForge(nn.Module):
 
     def forward(self, x):
         features = self.encoder(x)
-        depth_logits, segment_logits = self.decoder(features)
+        depth_logits, segment_logits, boundary_logits = self.decoder(features)
 
         # Upsample by 2x back to input image resolution 
         segment_logits = F.interpolate(segment_logits, size=x.shape[-2:], mode="bilinear", align_corners=False)
         depth_logits = F.interpolate(depth_logits, size=x.shape[-2:], mode="bilinear", align_corners=False)
+        boundary_logits = F.interpolate(boundary_logits, size=x.shape[-2:], mode="bilinear", align_corners=False)
 
-        return segment_logits, depth_logits
+        return segment_logits, depth_logits, boundary_logits
 
 if __name__ == "__main__":
     model = TwinForge(num_labels=41, num_heads=8, tok_dim=256, size=(384, 512), freeze=True)
