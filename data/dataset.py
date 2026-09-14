@@ -10,9 +10,10 @@ from torchvision.transforms import InterpolationMode
 from .augment import NYUv2Augmentation
 
 def get_boundary_map(label: torch.Tensor, kernel_size: int = 3) -> torch.Tensor:
-    if label.dim() == 2:
+    orig_dim = label.dim()
+    if orig_dim == 2:
         label = label.unsqueeze(0).unsqueeze(0)
-    elif label.dim() == 3:
+    elif orig_dim == 3:
         label = label.unsqueeze(1)
 
     label_float = label.float()
@@ -24,16 +25,19 @@ def get_boundary_map(label: torch.Tensor, kernel_size: int = 3) -> torch.Tensor:
 
     # Any patch where max != min contains a boundary
     boundary = (max_label != min_label).float()
+    if orig_dim == 2:
+        boundary = boundary.squeeze(0)
     return boundary
 
 
 class NYUv2Dataset(Dataset):
 
-    def __init__(self, data_path, class_map_path, split, splits_path="data/splits.mat", augment=True, resize=(480, 640), return_raw_depth=False):
+    def __init__(self, data_path, class_map_path, split, splits_path="data/splits.mat", augment=True, resize=(480, 640), return_raw_depth=False, return_boundary=True):
         self.data_path = data_path
         self.class_map_path = class_map_path
         self.splits_path = splits_path
         self.return_raw_depth = return_raw_depth
+        self.return_boundary = return_boundary
         self.data = None
 
         mat = scipy.io.loadmat(self.class_map_path)
@@ -128,6 +132,10 @@ class NYUv2Dataset(Dataset):
 
         image = self.rgb_transform(image)
 
+        if self.return_boundary:
+            boundary = get_boundary_map(label).float()
+            return image, depth, label, boundary
+
         return image, depth, label
     
 if __name__ == "__main__":
@@ -143,9 +151,9 @@ if __name__ == "__main__":
     print("depth[0]:", dataset.depths[0].shape)
     print("label[0]:", dataset.labels[0].shape)
 
-
-    image, depth, label = dataset[0]
+    image, depth, label, boundary = dataset[0]
 
     print("image:", image.shape)
     print("depth:", depth.shape)
     print("label:", label.shape)
+    print("boundary:", boundary.shape)
