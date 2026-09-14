@@ -143,7 +143,7 @@ def save_summary(checkpoint_dir, best_records, current_epoch, total_epochs):
     with open(summary_path, "w", encoding="utf-8") as f:
         f.write("\n".join(lines) + "\n")
 
-def compute_pairwise_grad_cos_sim(losses_dict, param_groups_dict):
+def compute_gradient_metrics(losses_dict, param_groups_dict):
     task_names = list(losses_dict.keys())
     all_params = []
     for params in param_groups_dict.values():
@@ -170,9 +170,31 @@ def compute_pairwise_grad_cos_sim(losses_dict, param_groups_dict):
                     group_grads.append(torch.zeros(p.numel(), device=p.device, dtype=p.dtype))
             grads[group][task] = torch.cat(group_grads) if group_grads else None
 
-    results = {}
+    cossim = {}
+    norms = {}
+    all_group_totals = []
+
     for group, task_grads in grads.items():
-        results[group] = {}
+        cossim[group] = {}
+        norms[group] = {}
+        active_task_grads = []
+
+        for task in task_names:
+            v = task_grads[task]
+            if v is not None:
+                task_norm = torch.norm(v).item()
+                norms[group][task] = task_norm
+                active_task_grads.append(v)
+            else:
+                norms[group][task] = 0.0
+
+        if active_task_grads:
+            v_total = torch.stack(active_task_grads).sum(dim=0)
+            norms[group]["total"] = torch.norm(v_total).item()
+            all_group_totals.append(v_total)
+        else:
+            norms[group]["total"] = 0.0
+
         for i in range(len(task_names)):
             for j in range(i + 1, len(task_names)):
                 t1, t2 = task_names[i], task_names[j]
@@ -182,13 +204,17 @@ def compute_pairwise_grad_cos_sim(losses_dict, param_groups_dict):
                     norm2 = torch.norm(v2)
                     if norm1 > 1e-8 and norm2 > 1e-8:
                         sim = torch.dot(v1, v2) / (norm1 * norm2)
-                        results[group][f"{t1}_{t2}"] = sim.item()
+                        cossim[group][f"{t1}_{t2}"] = sim.item()
                     else:
-                        results[group][f"{t1}_{t2}"] = 0.0
+                        cossim[group][f"{t1}_{t2}"] = 0.0
                 else:
-                    results[group][f"{t1}_{t2}"] = 0.0
+                    cossim[group][f"{t1}_{t2}"] = 0.0
 
-    return results
+    if all_group_totals:
+        v_overall = torch.cat(all_group_totals)
+        norms["overall_total"] = torch.norm(v_overall).item()
+
+    return {"cossim": cossim, "norms": norms}
 
 def train():
     set_seed(args.seed)
@@ -312,7 +338,7 @@ def train():
     for epoch in range(start_epoch, EPOCHS + 1):
         model.train(True)
         running_train_loss = 0.0
-        grad_sim = None
+        grad_metrics = None
 
         # ============== Train loop ==============
         accum_steps = args.grad_accum_steps
@@ -336,14 +362,14 @@ def train():
                 # Scale loss down by accumulation steps
                 loss_to_backward = tol_loss / accum_steps
 
-            # Compute pairwise gradient cosine similarity once per epoch on the first batch
+            # Compute gradient metrics (norms & cosine similarity) once per epoch on the first batch
             if batch_idx == 0:
                 losses_for_sim = {
                     "seg": seg_loss,
-                    "depth": depth_loss,
-                    "bound": bound_loss,
+                    "depth": depth_weight * depth_loss,
+                    "bound": bound_loss * bound_weight,
                 }
-                grad_sim = compute_pairwise_grad_cos_sim(losses_for_sim, grad_param_groups)
+                grad_metrics = compute_gradient_metrics(losses_for_sim, grad_param_groups)
 
             # Backward accumulates gradients into .grad
             scaler.scale(loss_to_backward).backward()
@@ -417,9 +443,29 @@ def train():
 
         print(f"\n === Epoch [{epoch:02d}/{EPOCHS:02d}] | Train Loss: {avg_train_loss:.4f} | Val Loss: {avg_val_loss:.4f} | LR: {scheduler.get_last_lr()[0]:.6f} === ")
         print(f"Validation Task Losses: Seg: {avg_seg_loss:.3f} | Depth: {avg_depth_loss:.3f} (depth_weight: {depth_weight}) | Bound: {avg_bound_loss:.3f} (bound_weight: {bound_weight})" )
-        if grad_sim is not None:
-            enc = grad_sim.get("encoder", {})
-            dec = grad_sim.get("decoder", {})
+        if grad_metrics is not None:
+            norms = grad_metrics.get("norms", {})
+            cossim = grad_metrics.get("cossim", {})
+            enc_norms = norms.get("encoder", {})
+            dec_norms = norms.get("decoder", {})
+
+            print("Grad Norm (Encoder)")
+            print(f"  Seg:    {enc_norms.get('seg', 0.0):.4f}")
+            print(f"  Depth:  {enc_norms.get('depth', 0.0):.4f}")
+            print(f"  Bound:  {enc_norms.get('bound', 0.0):.4f}")
+            print(f"  Total:  {enc_norms.get('total', 0.0):.4f}")
+
+            print("Grad Norm (Decoder)")
+            print(f"  Seg:    {dec_norms.get('seg', 0.0):.4f}")
+            print(f"  Depth:  {dec_norms.get('depth', 0.0):.4f}")
+            print(f"  Bound:  {dec_norms.get('bound', 0.0):.4f}")
+            print(f"  Total:  {dec_norms.get('total', 0.0):.4f}")
+
+            if "overall_total" in norms:
+                print(f"Total Grad Norm (Shared): {norms['overall_total']:.4f}")
+
+            enc = cossim.get("encoder", {})
+            dec = cossim.get("decoder", {})
             print(f"Grad CosSim (Encoder) | Seg↔Depth: {enc.get('seg_depth', 0.0):+.4f} | Seg↔Bound: {enc.get('seg_bound', 0.0):+.4f} | Depth↔Bound: {enc.get('depth_bound', 0.0):+.4f}")
             print(f"Grad CosSim (Decoder) | Seg↔Depth: {dec.get('seg_depth', 0.0):+.4f} | Seg↔Bound: {dec.get('seg_bound', 0.0):+.4f} | Depth↔Bound: {dec.get('depth_bound', 0.0):+.4f}")
 
