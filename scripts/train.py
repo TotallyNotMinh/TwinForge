@@ -143,6 +143,53 @@ def save_summary(checkpoint_dir, best_records, current_epoch, total_epochs):
     with open(summary_path, "w", encoding="utf-8") as f:
         f.write("\n".join(lines) + "\n")
 
+def compute_pairwise_grad_cos_sim(losses_dict, param_groups_dict):
+    task_names = list(losses_dict.keys())
+    all_params = []
+    for params in param_groups_dict.values():
+        all_params.extend(params)
+
+    grads = {group: {task: [] for task in task_names} for group in param_groups_dict}
+
+    for task, loss in losses_dict.items():
+        g_list = torch.autograd.grad(
+            loss,
+            all_params,
+            retain_graph=True,
+            allow_unused=True
+        )
+        idx = 0
+        for group, params in param_groups_dict.items():
+            group_grads = []
+            for p in params:
+                g = g_list[idx]
+                idx += 1
+                if g is not None:
+                    group_grads.append(g.detach().reshape(-1))
+                else:
+                    group_grads.append(torch.zeros(p.numel(), device=p.device, dtype=p.dtype))
+            grads[group][task] = torch.cat(group_grads) if group_grads else None
+
+    results = {}
+    for group, task_grads in grads.items():
+        results[group] = {}
+        for i in range(len(task_names)):
+            for j in range(i + 1, len(task_names)):
+                t1, t2 = task_names[i], task_names[j]
+                v1, v2 = task_grads[t1], task_grads[t2]
+                if v1 is not None and v2 is not None:
+                    norm1 = torch.norm(v1)
+                    norm2 = torch.norm(v2)
+                    if norm1 > 1e-8 and norm2 > 1e-8:
+                        sim = torch.dot(v1, v2) / (norm1 * norm2)
+                        results[group][f"{t1}_{t2}"] = sim.item()
+                    else:
+                        results[group][f"{t1}_{t2}"] = 0.0
+                else:
+                    results[group][f"{t1}_{t2}"] = 0.0
+
+    return results
+
 def train():
     set_seed(args.seed)
 
@@ -230,6 +277,21 @@ def train():
         {"params": model.decoder.parameters(), "lr": decoder_lr},
     ], weight_decay=1e-4)    
 
+    # Shared parameter groups for multi-task gradient cosine similarity
+    task_specific_modules = [
+        model.decoder.fuse_transformer_depth_self,
+        model.decoder.depth_dec,
+        model.decoder.fuse_transformer_segment_self,
+        model.decoder.segment_dec,
+        model.decoder.fuse_transformer_boundary_self,
+        model.decoder.boundary_dec,
+    ]
+    task_specific_param_ids = {id(p) for m in task_specific_modules for p in m.parameters()}
+    shared_decoder = [p for p in model.decoder.parameters() if id(p) not in task_specific_param_ids and p.requires_grad]
+    grad_param_groups = {
+        "encoder": trainable_encoder,
+        "decoder": shared_decoder,
+    }
 
     # Warm up with Linear scheduler then move to Consine Annealing
     linear_scheduler = torch.optim.lr_scheduler.LinearLR(optimizer, start_factor=0.1, end_factor=1.0, total_iters=10)
@@ -250,6 +312,7 @@ def train():
     for epoch in range(start_epoch, EPOCHS + 1):
         model.train(True)
         running_train_loss = 0.0
+        grad_sim = None
 
         # ============== Train loop ==============
         accum_steps = args.grad_accum_steps
@@ -272,6 +335,15 @@ def train():
                 tol_loss = seg_loss + depth_weight * depth_loss + bound_loss * bound_weight
                 # Scale loss down by accumulation steps
                 loss_to_backward = tol_loss / accum_steps
+
+            # Compute pairwise gradient cosine similarity once per epoch on the first batch
+            if batch_idx == 0:
+                losses_for_sim = {
+                    "seg": seg_loss,
+                    "depth": depth_loss,
+                    "bound": bound_loss,
+                }
+                grad_sim = compute_pairwise_grad_cos_sim(losses_for_sim, grad_param_groups)
 
             # Backward accumulates gradients into .grad
             scaler.scale(loss_to_backward).backward()
@@ -345,6 +417,11 @@ def train():
 
         print(f"\n === Epoch [{epoch:02d}/{EPOCHS:02d}] | Train Loss: {avg_train_loss:.4f} | Val Loss: {avg_val_loss:.4f} | LR: {scheduler.get_last_lr()[0]:.6f} === ")
         print(f"Validation Task Losses: Seg: {avg_seg_loss:.3f} | Depth: {avg_depth_loss:.3f} (depth_weight: {depth_weight}) | Bound: {avg_bound_loss:.3f} (bound_weight: {bound_weight})" )
+        if grad_sim is not None:
+            enc = grad_sim.get("encoder", {})
+            dec = grad_sim.get("decoder", {})
+            print(f"Grad CosSim (Encoder) | Seg↔Depth: {enc.get('seg_depth', 0.0):+.4f} | Seg↔Bound: {enc.get('seg_bound', 0.0):+.4f} | Depth↔Bound: {enc.get('depth_bound', 0.0):+.4f}")
+            print(f"Grad CosSim (Decoder) | Seg↔Depth: {dec.get('seg_depth', 0.0):+.4f} | Seg↔Bound: {dec.get('seg_bound', 0.0):+.4f} | Depth↔Bound: {dec.get('depth_bound', 0.0):+.4f}")
 
         print(
             f"Depth | "
