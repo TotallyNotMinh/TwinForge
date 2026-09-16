@@ -9,6 +9,7 @@ data/data.zip
 data/splits.mat
 data/classMapping40.mat
 
+
 # Coding agent preferences
 GEMINI.md
 
@@ -18,3 +19,10 @@ GEMINI.md
 # Checkpoints
 *.pth
 *.zip
+
+# 3d files
+*.ply
+
+# Videos
+*.mp4
+*.mov
