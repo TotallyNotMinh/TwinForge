@@ -6,7 +6,7 @@ import torch
 from torch.utils.data import DataLoader
 from tqdm import tqdm
 import os
-from data import NYUv2Dataset
+from data import ScanNetVideoDataset
 from losses import SegmentLoss, DepthLoss
 from models import TwinForge
 from metrics import MultiTaskMetrics
@@ -16,11 +16,12 @@ import numpy as np
 import torch.nn.functional as F
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--batch-size", type=int, default=8, help="Batch size for training")
+parser.add_argument("--batch-size", type=int, default=2, help="Batch size for training")
 parser.add_argument("--checkpoint-path", type=str, default=None, help="Path to checkpoint")
 parser.add_argument("--checkpoint-dir", type=str, default="checkpoints/", help="Directory to save checkpoints")
 parser.add_argument("--seed", type=int, default=42, help="Random seed for reproducibility")
 parser.add_argument("--grad-accum-steps", type=int, default=1, help="Gradient accumulation steps")
+parser.add_argument("--num-frames", type=int, default=8, help="Number of frames per clip")
 
 args = parser.parse_args()
 
@@ -144,10 +145,12 @@ def train():
     NUM_CLASSES = 41
     NUM_HEADS = 8
     TOKEN_DIM = 256
+    NUM_FRAMES = args.num_frames
+    STRIDE = 1
     patience = 25
     epochs_without_improvement = 0
     resize = (392, 518) # Divisible by 14 as per ViT-S requirement
-    encoder_lr = 1e-4
+    encoder_lr = 1e-5
     decoder_lr = 2e-4
     depth_weight = 1.0
     device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -178,23 +181,37 @@ def train():
 
     # ============== Load dataset ==============
 
-    dataset_path = "data/nyu_depth_v2_labeled.mat"
+    dataset_path = "data/scannet_frames_25k"
     class_map_path = "data/classMapping40.mat"
 
-    train_dataset = NYUv2Dataset(data_path=dataset_path, class_map_path=class_map_path, split="train", resize=resize)
-    val_dataset = NYUv2Dataset(data_path=dataset_path, class_map_path=class_map_path, split="val", resize=resize, return_raw_depth=True)
+    train_dataset = ScanNetVideoDataset(
+        root_dir=dataset_path,
+        split="train",
+        num_frames=NUM_FRAMES,
+        stride=STRIDE,
+        resize=resize,
+        augment=True
+    )    
+
+    val_dataset = ScanNetVideoDataset(
+        root_dir=dataset_path,
+        split="val",
+        num_frames=NUM_FRAMES,
+        stride=STRIDE,
+        resize=resize,
+        augment=False
+    ) 
 
     g = torch.Generator()
     g.manual_seed(args.seed)
     train_loader = DataLoader(
         train_dataset,
-        batch_size=BATCH_SIZE,
+        batch_size=BATCH_SIZE,      # B = 2 clips (total 2 * 4 = 8 frames per step)
         shuffle=True,
         num_workers=4,
-        pin_memory=True,
-        worker_init_fn=seed_worker,
-        generator=g
+        pin_memory=True
     )
+
     val_loader = DataLoader(
         val_dataset,
         batch_size=BATCH_SIZE,
@@ -206,15 +223,18 @@ def train():
 
     # ============== Model ==============
     
-    model = TwinForge(NUM_CLASSES, NUM_HEADS, tok_dim=TOKEN_DIM, size=resize, freeze=True).to(device)
+    model = TwinForge(NUM_CLASSES, NUM_HEADS, tok_dim=TOKEN_DIM, size=resize, freeze=False, freeze_early=True).to(device)
 
     # ============== Optimizer and Schedulers ==============
     
-    trainable_encoder = [layer for layer in model.encoder.parameters() if layer.requires_grad]
+    vit_params = [p for p in model.encoder.vit.parameters() if p.requires_grad]
+    proj_params = [p for name, p in model.encoder.named_parameters() if not name.startswith("vit") and p.requires_grad]
+    decoder_params = [p for p in model.decoder.parameters() if p.requires_grad]
+    
     optimizer = torch.optim.AdamW([
-        {"params": trainable_encoder, "lr": encoder_lr, "weight_decay": 5e-3},
-        {"params": model.decoder.parameters(), "lr": decoder_lr},
-    ], weight_decay=1e-4)    
+        {"params": vit_params, "lr": encoder_lr, "weight_decay": 5e-3},
+        {"params": proj_params + decoder_params, "lr": decoder_lr},
+    ], weight_decay=1e-4)
 
 
     # Warm up with Linear scheduler then move to Consine Annealing
@@ -243,15 +263,18 @@ def train():
 
         train_pbar = tqdm(train_loader, desc=f"Epoch [{epoch:02d}/{EPOCHS:02d}] (Train)", leave=False)
         for batch_idx, (images, depths, labels) in enumerate(train_pbar):
+            B, T = images.shape[0], images.shape[1]
             images = images.to(device, non_blocking=True)
-            depths = depths.unsqueeze(1).float().to(device, non_blocking=True)
-            labels = labels.long().to(device, non_blocking=True)
-
+        
+            # Flatten (B, T, ...) -> (B * T, ...) to match model predictions
+            depths = depths.view(B * T, 1, depths.shape[-2], depths.shape[-1]).float().to(device, non_blocking=True)
+            labels = labels.view(B * T, labels.shape[-2], labels.shape[-1]).long().to(device, non_blocking=True)
+        
             with torch.amp.autocast("cuda", enabled=(device == "cuda")):
                 pred_seg, pred_depth = model(images)
-
+        
                 seg_loss = crit_seg(pred_seg, labels)
-                depth_loss = crit_depth(pred_depth, depths, labels)
+                depth_loss = crit_depth(pred_depth, depths, labels, B=B, T=T) 
 
                 tol_loss = seg_loss + depth_weight * depth_loss
                 # Scale loss down by accumulation steps
@@ -285,16 +308,17 @@ def train():
         val_pbar = tqdm(val_loader, desc=f"Epoch [{epoch:02d}/{EPOCHS:02d}] (Val)  ", leave=False)
         with torch.no_grad():
             for images, depths, labels in val_pbar:
+                B, T = images.shape[0], images.shape[1]
                 images = images.to(device, non_blocking=True)
-                depths = depths.unsqueeze(1).float().to(device, non_blocking=True)
-                labels = labels.long().to(device, non_blocking=True)
+                depths = depths.view(B * T, 1, depths.shape[-2], depths.shape[-1]).float().to(device, non_blocking=True)
+                labels = labels.view(B * T, labels.shape[-2], labels.shape[-1]).long().to(device, non_blocking=True)
 
                 with torch.amp.autocast("cuda", enabled=(device == "cuda")):
                     pred_seg, pred_depth = model(images)
 
                     depths_loss = F.interpolate(depths, size=resize, mode="bilinear", align_corners=False) if depths.shape[-2:] != resize else depths
                     seg_loss = crit_seg(pred_seg, labels)
-                    depth_loss = crit_depth(pred_depth, depths_loss, labels)
+                    depth_loss = crit_depth(pred_depth, depths, labels, B=B, T=T)
 
                     tol_loss = seg_loss + depth_weight * depth_loss
 
