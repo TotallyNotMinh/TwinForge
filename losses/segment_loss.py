@@ -8,12 +8,12 @@ class SegmentLoss(nn.Module):
         self.ignore_index = ignore_index
         self.lovasz_weight = lovasz_weight
 
-        # NYUv2 40-class empirical training frequencies
+        # ScanNet25k 40-class empirical training frequencies
         fg_pcts = torch.tensor([
-            26.17, 11.13,  7.96,  4.26,  4.10,  2.86,  2.45,  2.43,  2.67,  2.33,
-             2.42,  1.62,  1.90,  1.20,  1.50,  1.20,  1.11,  0.97,  1.29,  0.78,
-             1.02,  1.76,  0.65,  0.64,  0.67,  0.45,  0.40,  0.49,  0.50,  0.32,
-             0.37,  0.31,  0.34,  0.29,  0.33,  0.26,  0.25,  2.75,  2.27,  5.60
+            24.51, 19.37,  5.04,  3.60,  6.30,  2.72,  5.11,  4.47,  1.67,  1.31,
+                0.45,  0.83,  0.05,  2.29,  1.68,  1.11,  0.69,  0.56,  0.12,  0.07,
+                0.56,  0.56,  0.63,  0.86,  0.26,  0.03,  0.38,  0.53,  0.59,  0.60,
+                0.04,  0.23,  0.66,  0.48,  0.11,  0.68,  0.13,  2.32,  3.43,  4.94
         ], dtype=torch.float32)
 
         # Smooth median-frequency weighting bounded to [0.25, 3.5]
