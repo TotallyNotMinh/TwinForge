@@ -135,7 +135,7 @@ class DepthAnythingEncoder(nn.Module):
     """
     def __init__(
         self,
-        checkpoint_path: str = "baseline/depth_anything_v2_vits.pth",
+        checkpoint_path: str = "encoder_weights/depth_anything_v2_vits.pth",
         pretrained: bool = True,
         freeze: bool = True,
         freeze_early: bool = False,
