@@ -1,1 +1,1 @@
-from .dataset import NYUv2Dataset
+from .dataset import NYUv2Dataset, ScanNetVideoDataset
