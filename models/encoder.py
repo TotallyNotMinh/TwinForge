@@ -183,7 +183,12 @@ class DepthAnythingEncoder(nn.Module):
         return self
 
     def forward(self, x: torch.Tensor) -> dict:
-        B, C, H, W = x.shape
+        if x.dim() == 5:
+            B, T, C, H, W = x.shape
+            x = x.view(B * T, C, H, W)
+        else:
+            H, W = x.shape[-2:]
+            
         # Pad reflectively if dimensions are not divisible by 14
         pad_h = (14 - H % 14) % 14
         pad_w = (14 - W % 14) % 14
