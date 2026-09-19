@@ -66,40 +66,40 @@ def save_checkpoint(checkpoint_dir, checkpoint_name, epoch, model, optimizer, sc
 def load_checkpoint(checkpoint_path, device, model, optimizer, scheduler, scaler):
     if checkpoint_path is None:
         print("No checkpoint detected")
-        return 0, 0.0, 0.0, 0  # Default values
-    
+        return 0, 0.0, 0.0, 0
+
+    checkpoint = torch.load(checkpoint_path, map_location=device)
+    state_dict = checkpoint["model_state_dict"] if "model_state_dict" in checkpoint else checkpoint
+
+    model_keys = set(model.state_dict().keys())
+    ckpt_keys = set(state_dict.keys())
+    is_warmstart = not model_keys.issubset(ckpt_keys)
+
+    if is_warmstart:
+        missing, unexpected = model.load_state_dict(state_dict, strict=False)
+        print(f"Warm-starting from pretrained checkpoint: {checkpoint_path}")
+        print(f"  Loaded {len(model_keys) - len(missing)}/{len(model_keys)} layers.")
+        print(f"  Newly initialized layers: {len(missing)} (temporal_head)")
+        print(f"  Starting fresh training on ScanNet (Epoch 0)")
+        return 0, 0.0, 0.0, 0
     else:
-        checkpoint = torch.load(
-            checkpoint_path,
-            map_location=device
-        )
-
-        model.load_state_dict(checkpoint["model_state_dict"])
-
-        optimizer.load_state_dict(checkpoint["optimizer_state_dict"])
-
-        scheduler.load_state_dict(checkpoint["scheduler_state_dict"])
-
+        model.load_state_dict(state_dict, strict=True)
+        if "optimizer_state_dict" in checkpoint:
+            optimizer.load_state_dict(checkpoint["optimizer_state_dict"])
+        if "scheduler_state_dict" in checkpoint:
+            scheduler.load_state_dict(checkpoint["scheduler_state_dict"])
         if scaler is not None and "scaler_state_dict" in checkpoint:
-            scaler.load_state_dict(
-                checkpoint["scaler_state_dict"]
-            )
+            scaler.load_state_dict(checkpoint["scaler_state_dict"])
 
-        start_epoch = checkpoint["epoch"] + 1
+        start_epoch = checkpoint.get("epoch", -1) + 1
+        best_depth_delta1 = checkpoint.get("best_depth_delta1", 0.0)
+        best_seg_miou = checkpoint.get("best_seg_miou", 0.0)
+        epochs_without_improvement = checkpoint.get("epochs_without_improvement", 0)
 
-        best_depth_delta1 = checkpoint["best_depth_delta1"]
-        best_seg_miou = checkpoint["best_seg_miou"]
-
-        epochs_without_improvement = checkpoint["epochs_without_improvement"]
-
-        print(f"Resume training:")
-        print(f"  Starting epoch:              {start_epoch}")
+        print(f"Resuming ScanNet training from Epoch {start_epoch}:")
         print(f"  Best depth δ1:               {best_depth_delta1:.4f}")
         print(f"  Best segmentation mIoU:      {best_seg_miou:.4f}")
-        print(f"  Epochs without improvement:   {epochs_without_improvement}")
-        print(f"  Current LR:                   {optimizer.param_groups[0]['lr']:.8f}")
-            
-    return start_epoch, best_depth_delta1, best_seg_miou, epochs_without_improvement
+        return start_epoch, best_depth_delta1, best_seg_miou, epochs_without_improvement
     
 def save_summary(checkpoint_dir, best_records, current_epoch, total_epochs):
     os.makedirs(checkpoint_dir, exist_ok=True)
