@@ -18,6 +18,8 @@ class TwinForge(nn.Module):
         self.decoder = MultiHeadDecoder(num_labels, tok_dim, num_heads, size=size, max_frames=max_frames)
 
     def forward(self, x):
+        if x.dim() == 4:
+            x = x.unsqueeze(0)
         B, T = x.shape[0], x.shape[1]
 
         features = self.encoder(x)
