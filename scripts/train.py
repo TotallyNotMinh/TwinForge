@@ -26,6 +26,7 @@ parser.add_argument("--data-path", type=str, default="data/scannet_frames_25k", 
 parser.add_argument("--class-map-path", type=str, default="data/classMapping40.mat", help="Path to class mapping")
 parser.add_argument("--train-split-path", type=str, default="data/scannetv2_train.txt", help="Train split path")
 parser.add_argument("--val-split-path", type=str, default="data/scannetv2_val.txt", help="Val split path")
+parser.add_argument("--num-epoch", type=int, default=100, help="Number of training epoch")
 
 args = parser.parse_args()
 
@@ -158,7 +159,7 @@ def train():
     set_seed(args.seed)
 
     # ============== Hyperparams ==============
-    EPOCHS = 150
+    EPOCHS = args.num_epoch
     BATCH_SIZE = args.batch_size
     NUM_CLASSES = 41
     NUM_HEADS = 8
