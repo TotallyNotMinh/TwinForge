@@ -85,6 +85,14 @@ class DepthDecoder(nn.Module):
         )
         nn.init.constant_(self.out[3].bias, -1.0986)
 
+        self.refine = nn.Sequential(
+            nn.Conv2d(1 + 64, 32, kernel_size=3, padding=1),
+            nn.ReLU(inplace=True),
+            nn.Conv2d(32, 1, kernel_size=3, padding=1)
+        )
+        nn.init.zeros_(self.refine[2].weight)
+        nn.init.zeros_(self.refine[2].bias)
+
     def forward(self, vit_depth_self, p5, p4, tokens, features):
         target_size = features["f2"].shape[-2:]  # Standard 1/4 resolution
 
@@ -94,8 +102,16 @@ class DepthDecoder(nn.Module):
         fused = self.fuse(torch.cat([p5, p4, p3, p2], dim=1))
         vit_self = F.interpolate(vit_depth_self, size=target_size, mode="bilinear", align_corners=False)
         out = self.out(torch.cat([vit_self, fused], dim=1))
-        return self.min_depth + (self.max_depth - self.min_depth) * torch.sigmoid(out)
 
+        # Use features["f1"] to sharpen boundaries
+        coarse_depth = self.min_depth + (self.max_depth - self.min_depth) * torch.sigmoid(out)
+        f1 = features["f1"]
+        depth_h2 = F.interpolate(coarse_depth, size=f1.shape[-2:], mode="bilinear", align_corners=False)
+
+        edge_residual = self.refine(torch.cat([depth_h2, f1], dim=1))
+        refined_depth = torch.clamp(depth_h2 + edge_residual, self.min_depth, self.max_depth)
+
+        return refined_depth
 
 class MultiHeadDecoder(nn.Module):
     def __init__(self, num_labels, tok_dim, num_heads, max_frames, size=(384, 512), embed_dim=128, freeze=False):
@@ -262,6 +278,7 @@ class MultiHeadDecoder(nn.Module):
 
         depth_logits = self.depth_dec(d1, shared_p5, shared_p4, depth_tokens, features)
         segment_logits = self.segment_dec(s1, shared_p5, shared_p4, segment_tokens, features)
+
 
         return depth_logits, segment_logits
 
