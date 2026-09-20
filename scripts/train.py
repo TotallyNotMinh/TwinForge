@@ -75,6 +75,20 @@ def load_checkpoint(checkpoint_path, device, model, optimizer, scheduler, scaler
     checkpoint = torch.load(checkpoint_path, map_location=device)
     state_dict = checkpoint["model_state_dict"] if "model_state_dict" in checkpoint else checkpoint
 
+    # Adapt positional embeddings if resolution changed (e.g. 392x518 -> 378x504)
+    model_state = model.state_dict()
+    for k in list(state_dict.keys()):
+        if k in model_state and state_dict[k].shape != model_state[k].shape:
+            if "pos_embed" in k and state_dict[k].dim() == 4:
+                state_dict[k] = F.interpolate(
+                    state_dict[k].float(),
+                    size=model_state[k].shape[-2:],
+                    mode="bicubic",
+                    align_corners=False
+                )
+            else:
+                del state_dict[k]
+
     model_keys = set(model.state_dict().keys())
     ckpt_keys = set(state_dict.keys())
     is_warmstart = not model_keys.issubset(ckpt_keys)
