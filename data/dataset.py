@@ -149,6 +149,7 @@ class ScanNetVideoDataset(Dataset):
         self,
         root_dir: str = "data/scannet_frames_25k",
         split: str = "train",
+        split_file: str = None,
         num_frames: int = 4,
         stride: int = 1,
         resize: tuple = (384, 512),
@@ -166,13 +167,27 @@ class ScanNetVideoDataset(Dataset):
             std=[0.229, 0.224, 0.225]
         )
 
-        # Discover scenes and partition train / val
-        all_scenes = sorted(glob.glob(os.path.join(root_dir, "scene*")))
-        if len(all_scenes) == 0:
-            raise RuntimeError(f"No scene directories found in {root_dir}")
+        # 1. Resolve official benchmark split file
+        if split_file is None:
+            candidate = os.path.join(os.path.dirname(root_dir.rstrip("/\\")), f"scannetv2_{split}.txt")
+            if os.path.exists(candidate):
+                split_file = candidate
+            elif os.path.exists(f"data/scannetv2_{split}.txt"):
+                split_file = f"data/scannetv2_{split}.txt"
 
-        split_idx = int(train_ratio * len(all_scenes))
-        self.scenes = all_scenes[:split_idx] if split == "train" else all_scenes[split_idx:]
+        if split_file and os.path.exists(split_file):
+            with open(split_file, "r") as f:
+                valid_names = set(line.strip() for line in f if line.strip())
+            self.scenes = [
+                os.path.join(root_dir, s) for s in sorted(valid_names)
+                if os.path.isdir(os.path.join(root_dir, s))
+            ]
+        else:
+            all_scenes = sorted(glob.glob(os.path.join(root_dir, "scene*")))
+            if len(all_scenes) == 0:
+                raise RuntimeError(f"No scene directories found in {root_dir}")
+            split_idx = int(train_ratio * len(all_scenes))
+            self.scenes = all_scenes[:split_idx] if split == "train" else all_scenes[split_idx:]
 
         # Index all valid consecutive clips
         self.clips = []
@@ -183,10 +198,10 @@ class ScanNetVideoDataset(Dataset):
             frame_stems = sorted([
                 os.path.splitext(f)[0] for f in os.listdir(color_dir) if f.endswith(".jpg")
             ])
-            max_start = len(frame_stems) - (num_frames - 1) * stride
-            clip_step = num_frames * stride
+            max_start = len(frame_stems) - (self.num_frames - 1) * self.stride
+            clip_step = self.num_frames * self.stride
             for i in range(0, max_start, clip_step):
-                clip = [frame_stems[i + j * stride] for j in range(num_frames)]
+                clip = [frame_stems[i + j * self.stride] for j in range(self.num_frames)]
                 self.clips.append((s_dir, clip))
 
     def __len__(self):
