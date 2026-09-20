@@ -135,7 +135,7 @@ class DepthAnythingEncoder(nn.Module):
     """
     def __init__(
         self,
-        checkpoint_path: str = "baseline/depth_anything_v2_vits.pth",
+        checkpoint_path: str = "encoder_weights/depth_anything_v2_vits.pth",
         pretrained: bool = True,
         freeze: bool = True,
         freeze_early: bool = False,
@@ -167,9 +167,11 @@ class DepthAnythingEncoder(nn.Module):
         self.freeze = freeze
 
         if freeze:
+            print("Encoder is completely frozen.")
             for p in self.vit.parameters():
                 p.requires_grad = False
         elif freeze_early:
+            print("Encoder is partially frozen.")
             for p in self.vit.patch_embed.parameters():
                 p.requires_grad = False
             for blk in self.vit.blocks[:6]:
@@ -183,7 +185,12 @@ class DepthAnythingEncoder(nn.Module):
         return self
 
     def forward(self, x: torch.Tensor) -> dict:
-        B, C, H, W = x.shape
+        if x.dim() == 5:
+            B, T, C, H, W = x.shape
+            x = x.view(B * T, C, H, W)
+        else:
+            H, W = x.shape[-2:]
+            
         # Pad reflectively if dimensions are not divisible by 14
         pad_h = (14 - H % 14) % 14
         pad_w = (14 - W % 14) % 14

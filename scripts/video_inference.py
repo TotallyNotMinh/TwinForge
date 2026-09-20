@@ -4,6 +4,12 @@ from pathlib import Path
 import argparse
 import time
 
+# Ensure line-buffered stdout/stderr for immediate progress bar updates
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(line_buffering=True)
+if hasattr(sys.stderr, "reconfigure"):
+    sys.stderr.reconfigure(line_buffering=True)
+
 # Cap CPU threads before importing math/tensor libraries
 os.environ["OMP_NUM_THREADS"] = "4"
 os.environ["MKL_NUM_THREADS"] = "4"
@@ -79,7 +85,7 @@ def load_model(checkpoint_path: str, device: str, model_size=(392, 518)) -> Twin
     print(f"Loading checkpoint: {checkpoint_path}")
     checkpoint = torch.load(checkpoint_path, map_location=device)
     state_dict = checkpoint["model_state_dict"] if "model_state_dict" in checkpoint else checkpoint
-    model.load_state_dict(state_dict)
+    model.load_state_dict(state_dict, strict=False)
     model.eval()
     print(f"Model successfully loaded and set to eval mode on {device}.")
     return model
@@ -94,6 +100,33 @@ COLORMAP_MAP = {
 }
 
 
+def compute_scale_shift(curr_overlap: np.ndarray, ref_overlap: np.ndarray):
+    """
+    Compute closed-form scale (s) and shift (t) minimizing:
+        sum (s * curr_overlap + t - ref_overlap)^2
+    curr_overlap: (O, H, W)
+    ref_overlap:  (O, H, W)
+    """
+    x = curr_overlap.reshape(-1).astype(np.float64)
+    y = ref_overlap.reshape(-1).astype(np.float64)
+
+    x_mean = np.mean(x)
+    y_mean = np.mean(y)
+
+    var_x = np.mean((x - x_mean) ** 2)
+    cov_xy = np.mean((x - x_mean) * (y - y_mean))
+
+    if var_x < 1e-7 or cov_xy <= 0:
+        s = 1.0
+        t = float(y_mean - x_mean)
+    else:
+        s = float(cov_xy / (var_x + 1e-8))
+        s = float(np.clip(s, 0.2, 5.0))
+        t = float(y_mean - s * x_mean)
+
+    return s, t
+
+
 def run_video_inference(
     video_path: str,
     checkpoint_path: str,
@@ -102,6 +135,8 @@ def run_video_inference(
     panel_width: int = 640,
     panel_height: int = 480,
     batch_size: int = 8,
+    future_frames: int = 12,
+    overlap_frames: int = 4,
     fps: float = None,
     stride: int = 1,
     max_frames: int = None,
@@ -144,7 +179,8 @@ def run_video_inference(
     print(f"Output Video:     {output_path} @ {out_fps:.2f} fps")
     print(f"Processing:       {effective_frames} frames (stride={stride}, max_frames={max_frames})")
     print(f"Layout:           {layout} (panel: {panel_width}x{panel_height})")
-    print(f"Batch Size:       {batch_size} | Device: {device}")
+    print(f"Window / Stride:  {future_frames + overlap_frames} frames (future={future_frames}, overlap={overlap_frames})")
+    print(f"Device:           {device}")
     print("=" * 60)
 
     # Model input resolution for ViT patch divisibility (must be multiple of 14)
@@ -170,61 +206,110 @@ def run_video_inference(
     if not writer.isOpened():
         raise RuntimeError(f"Could not open VideoWriter for {output_path}")
 
-    # Normalization transform
-    mean = torch.tensor([0.485, 0.456, 0.406], device=device).view(1, 3, 1, 1)
-    std = torch.tensor([0.229, 0.224, 0.225], device=device).view(1, 3, 1, 1)
+    # Normalization transform (5D compatible)
+    mean = torch.tensor([0.485, 0.456, 0.406], device=device).view(1, 1, 3, 1, 1)
+    std = torch.tensor([0.229, 0.224, 0.225], device=device).view(1, 1, 3, 1, 1)
 
     # Running depth range bounds for flicker-free temporal smoothing
     smooth_dmin = None
     smooth_dmax = None
     smooth_alpha = 0.15
 
+    pbar = tqdm(
+        total=effective_frames,
+        desc="Processing Video",
+        unit="frame",
+        dynamic_ncols=True,
+        mininterval=0.1,
+        file=sys.stdout,
+    )
     frame_idx = 0
-    pbar = tqdm(total=effective_frames, desc="Processing Video", unit="frame")
     start_time = time.time()
 
-    try:
-        while frame_idx < frames_to_process:
-            batch_raw_frames = []
-            batch_model_inputs = []
+    window_size = future_frames + overlap_frames
+    retained_raw_frames = []
+    retained_model_inputs = []
+    ref_depth = None
+    ref_probs = None
 
-            # Collect a batch of frames respecting stride
-            while len(batch_raw_frames) < batch_size and frame_idx < frames_to_process:
+    try:
+        while frame_idx < frames_to_process or retained_raw_frames:
+            needed = window_size - len(retained_raw_frames)
+            new_raw_frames = []
+            new_model_inputs = []
+
+            # Read up to 'needed' new frames respecting stride
+            while len(new_raw_frames) < needed and frame_idx < frames_to_process:
                 ret, frame = cap.read()
                 if not ret:
                     break
 
                 if frame_idx % stride == 0:
-                    batch_raw_frames.append(frame)
+                    new_raw_frames.append(frame)
                     # Prepare model input: BGR -> RGB -> resize -> float tensor [0, 1]
                     rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
                     in_img = cv2.resize(rgb_frame, (model_w, model_h), interpolation=cv2.INTER_LINEAR)
                     t = torch.from_numpy(in_img).permute(2, 0, 1).float() / 255.0
-                    batch_model_inputs.append(t)
+                    new_model_inputs.append(t)
 
                 frame_idx += 1
 
-            if not batch_raw_frames:
+            curr_raw_frames = retained_raw_frames + new_raw_frames
+            curr_model_inputs = retained_model_inputs + new_model_inputs
+
+            if not curr_raw_frames:
                 break
 
-            # Batch tensor: (B, 3, H, W)
-            x = torch.stack(batch_model_inputs).to(device, non_blocking=True)
+            T = len(curr_raw_frames)
+            overlap_len = len(retained_raw_frames)
+
+            # Batch tensor in 5D: (1, T, 3, H, W)
+            x = torch.stack(curr_model_inputs).unsqueeze(0).to(device, non_blocking=True)
             x = (x - mean) / std
 
             with torch.no_grad():
                 with torch.amp.autocast(device_type="cuda" if "cuda" in device else "cpu"):
                     pred_seg, pred_depth = model(x)
 
-            # Process batch outputs
-            pred_labels = torch.argmax(pred_seg, dim=1).cpu().numpy().astype(np.uint8)  # (B, H, W)
-            pred_depths = pred_depth.squeeze(1).cpu().numpy()  # (B, H, W)
+            # Extract predictions
+            curr_depths = pred_depth.squeeze(1).cpu().numpy()
+            curr_probs = torch.softmax(pred_seg, dim=1).cpu().numpy()
 
-            for b in range(len(batch_raw_frames)):
-                orig_frame = batch_raw_frames[b]
+            # Depth scale-shift fitting & stitching on overlapping frames
+            if ref_depth is not None and overlap_len > 0:
+                s, t_shift = compute_scale_shift(curr_depths[:overlap_len], ref_depth[:overlap_len])
+                curr_depths = s * curr_depths + t_shift
+
+                alpha_blend = np.linspace(1.0 / (overlap_len + 1), overlap_len / (overlap_len + 1), overlap_len)[:, None, None]
+                curr_depths[:overlap_len] = (1.0 - alpha_blend) * ref_depth[:overlap_len] + alpha_blend * curr_depths[:overlap_len]
+
+                alpha_seg = alpha_blend[:, :, :, None]
+                curr_probs[:overlap_len] = (1.0 - alpha_seg) * ref_probs[:overlap_len] + alpha_seg * curr_probs[:overlap_len]
+
+            # Check if this is the final window
+            is_final = (frame_idx >= frames_to_process or len(new_raw_frames) < needed)
+
+            if is_final or T <= overlap_frames:
+                num_to_write = T
+                retained_raw_frames = []
+                retained_model_inputs = []
+                ref_depth = None
+                ref_probs = None
+            else:
+                num_to_write = T - overlap_frames
+                retained_raw_frames = curr_raw_frames[num_to_write:]
+                retained_model_inputs = curr_model_inputs[num_to_write:]
+                ref_depth = curr_depths[num_to_write:]
+                ref_probs = curr_probs[num_to_write:]
+
+            pred_labels = np.argmax(curr_probs[:num_to_write], axis=1).astype(np.uint8)
+
+            for b in range(num_to_write):
+                orig_frame = curr_raw_frames[b]
                 rgb_panel = cv2.resize(orig_frame, (pw, ph), interpolation=cv2.INTER_LINEAR)
 
                 # Depth processing with smoothed normalization
-                cur_d = pred_depths[b]
+                cur_d = curr_depths[b]
                 p_min = float(np.percentile(cur_d, 2))
                 p_max = float(np.percentile(cur_d, 98))
 
@@ -274,7 +359,13 @@ def run_video_inference(
                     out_frame = add_banner(seg_colored, "Semantic Segmentation") if add_labels else seg_colored
 
                 writer.write(out_frame)
-                pbar.update(1)
+
+            pbar.update(num_to_write)
+            pbar.refresh()
+            sys.stdout.flush()
+
+            if is_final:
+                break
 
     finally:
         cap.release()
@@ -333,10 +424,22 @@ def main():
         help="Height of each sub-panel (default: 480)",
     )
     parser.add_argument(
+        "--future-frames",
+        type=int,
+        default=12,
+        help="Number of new future frames per window (default: 12)",
+    )
+    parser.add_argument(
+        "--overlap-frames",
+        type=int,
+        default=4,
+        help="Number of overlapping frames for depth stitching (default: 4)",
+    )
+    parser.add_argument(
         "--batch-size",
         type=int,
         default=8,
-        help="Inference batch size (default: 8)",
+        help="Legacy argument; window size is future_frames + overlap_frames",
     )
     parser.add_argument(
         "--fps",
@@ -391,6 +494,8 @@ def main():
         panel_width=args.panel_width,
         panel_height=args.panel_height,
         batch_size=args.batch_size,
+        future_frames=args.future_frames,
+        overlap_frames=args.overlap_frames,
         fps=args.fps,
         stride=args.stride,
         max_frames=args.max_frames,

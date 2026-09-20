@@ -9,6 +9,7 @@ from torch import nn
 from models.transformer_block import TransformerBlock
 from models.encoder import ResNetEncoder
 import torch.nn.functional as F
+from models.temporal_head import TemporalHead
 
 class PatchEmbeder(nn.Module):
     def __init__(self, c_in, tok_dim, patch_size):
@@ -84,6 +85,14 @@ class DepthDecoder(nn.Module):
         )
         nn.init.constant_(self.out[3].bias, -1.0986)
 
+        self.refine = nn.Sequential(
+            nn.Conv2d(1 + 64, 32, kernel_size=3, padding=1),
+            nn.ReLU(inplace=True),
+            nn.Conv2d(32, 1, kernel_size=3, padding=1)
+        )
+        nn.init.zeros_(self.refine[2].weight)
+        nn.init.zeros_(self.refine[2].bias)
+
     def forward(self, vit_depth_self, p5, p4, tokens, features):
         target_size = features["f2"].shape[-2:]  # Standard 1/4 resolution
 
@@ -93,11 +102,19 @@ class DepthDecoder(nn.Module):
         fused = self.fuse(torch.cat([p5, p4, p3, p2], dim=1))
         vit_self = F.interpolate(vit_depth_self, size=target_size, mode="bilinear", align_corners=False)
         out = self.out(torch.cat([vit_self, fused], dim=1))
-        return self.min_depth + (self.max_depth - self.min_depth) * torch.sigmoid(out)
 
+        # Use features["f1"] to sharpen boundaries
+        coarse_depth = self.min_depth + (self.max_depth - self.min_depth) * torch.sigmoid(out)
+        f1 = features["f1"]
+        depth_h2 = F.interpolate(coarse_depth, size=f1.shape[-2:], mode="bilinear", align_corners=False)
+
+        edge_residual = self.refine(torch.cat([depth_h2, f1], dim=1))
+        refined_depth = torch.clamp(depth_h2 + edge_residual, self.min_depth, self.max_depth)
+
+        return refined_depth
 
 class MultiHeadDecoder(nn.Module):
-    def __init__(self, num_labels, tok_dim, num_heads, size=(384, 512), embed_dim=128, freeze=False):
+    def __init__(self, num_labels, tok_dim, num_heads, max_frames, size=(384, 512), embed_dim=128, freeze=False):
         super().__init__()
         (H, W) = size
 
@@ -150,6 +167,7 @@ class MultiHeadDecoder(nn.Module):
 
         self.positional_dropout = nn.Dropout(0.1)
 
+        self.temporal_head = TemporalHead(num_heads, max_frames, size, embed_dim)
         self.segment_dec = SegmentDecoder(tok_dim, num_labels, embed_dim=embed_dim)
         self.depth_dec = DepthDecoder(tok_dim, embed_dim=embed_dim)
 
@@ -158,8 +176,11 @@ class MultiHeadDecoder(nn.Module):
             return pos_param
         return F.interpolate(pos_param, size=(h, w), mode="bicubic", align_corners=False)
 
-    def forward(self, features):
-        B = features["f1"].shape[0]
+    def forward(self, features, B=None, T=None):
+        BT = features["f1"].shape[0]
+        if B is None or T is None:
+            B = BT
+            T = 1
 
         patch1 = self.patch_embedder1(features["f1"])
         h1, w1 = patch1.shape[-2:]
@@ -217,21 +238,21 @@ class MultiHeadDecoder(nn.Module):
         s5_idx = s4_idx + l4
 
         # Scale 1 from Self-Attention
-        d1 = depth_token_self[:, s1_idx : s1_idx + l1, :].transpose(1, 2).contiguous().view(B, self.tok_dim, h1, w1)
-        s1 = segment_token_self[:, s1_idx : s1_idx + l1, :].transpose(1, 2).contiguous().view(B, self.tok_dim, h1, w1)
+        d1 = depth_token_self[:, s1_idx : s1_idx + l1, :].transpose(1, 2).contiguous().view(BT, self.tok_dim, h1, w1)
+        s1 = segment_token_self[:, s1_idx : s1_idx + l1, :].transpose(1, 2).contiguous().view(BT, self.tok_dim, h1, w1)
 
         # Scales 5 down to 2 from Cross-Attention
-        d5 = depth_token_cross[:, s5_idx : s5_idx + l5, :].transpose(1, 2).contiguous().view(B, self.tok_dim, h5, w5)
-        s5 = segment_token_cross[:, s5_idx : s5_idx + l5, :].transpose(1, 2).contiguous().view(B, self.tok_dim, h5, w5)
+        d5 = depth_token_cross[:, s5_idx : s5_idx + l5, :].transpose(1, 2).contiguous().view(BT, self.tok_dim, h5, w5)
+        s5 = segment_token_cross[:, s5_idx : s5_idx + l5, :].transpose(1, 2).contiguous().view(BT, self.tok_dim, h5, w5)
 
-        d4 = depth_token_cross[:, s4_idx : s4_idx + l4, :].transpose(1, 2).contiguous().view(B, self.tok_dim, h4, w4)
-        s4 = segment_token_cross[:, s4_idx : s4_idx + l4, :].transpose(1, 2).contiguous().view(B, self.tok_dim, h4, w4)
+        d4 = depth_token_cross[:, s4_idx : s4_idx + l4, :].transpose(1, 2).contiguous().view(BT, self.tok_dim, h4, w4)
+        s4 = segment_token_cross[:, s4_idx : s4_idx + l4, :].transpose(1, 2).contiguous().view(BT, self.tok_dim, h4, w4)
 
-        d3 = depth_token_cross[:, s3_idx : s3_idx + l3, :].transpose(1, 2).contiguous().view(B, self.tok_dim, h3, w3)
-        s3 = segment_token_cross[:, s3_idx : s3_idx + l3, :].transpose(1, 2).contiguous().view(B, self.tok_dim, h3, w3)
+        d3 = depth_token_cross[:, s3_idx : s3_idx + l3, :].transpose(1, 2).contiguous().view(BT, self.tok_dim, h3, w3)
+        s3 = segment_token_cross[:, s3_idx : s3_idx + l3, :].transpose(1, 2).contiguous().view(BT, self.tok_dim, h3, w3)
 
-        d2 = depth_token_cross[:, s2_idx : s2_idx + l2, :].transpose(1, 2).contiguous().view(B, self.tok_dim, h2, w2)
-        s2 = segment_token_cross[:, s2_idx : s2_idx + l2, :].transpose(1, 2).contiguous().view(B, self.tok_dim, h2, w2)
+        d2 = depth_token_cross[:, s2_idx : s2_idx + l2, :].transpose(1, 2).contiguous().view(BT, self.tok_dim, h2, w2)
+        s2 = segment_token_cross[:, s2_idx : s2_idx + l2, :].transpose(1, 2).contiguous().view(BT, self.tok_dim, h2, w2)
 
         # Single direct interpolation to match feature maps
         d5 = F.interpolate(d5, size=features["f5"].shape[-2:], mode="bilinear", align_corners=False)
@@ -246,9 +267,11 @@ class MultiHeadDecoder(nn.Module):
         d2 = F.interpolate(d2, size=features["f2"].shape[-2:], mode="bilinear", align_corners=False)
         s2 = F.interpolate(s2, size=features["f2"].shape[-2:], mode="bilinear", align_corners=False)
 
+        temp_f4, temp_f5 = self.temporal_head(features, B, T)
+
         target_size = features["f2"].shape[-2:]  # Standard 1/4 resolution
-        shared_p5 = F.interpolate(self.shared_proj5(torch.cat([d5, s5, features["f5"]], dim=1)), size=target_size, mode="bilinear", align_corners=False)
-        shared_p4 = F.interpolate(self.shared_proj4(torch.cat([d4, s4, features["f4"]], dim=1)), size=target_size, mode="bilinear", align_corners=False)
+        shared_p5 = F.interpolate(self.shared_proj5(torch.cat([d5, s5, features["f5"]], dim=1)), size=target_size, mode="bilinear", align_corners=False) + temp_f5
+        shared_p4 = F.interpolate(self.shared_proj4(torch.cat([d4, s4, features["f4"]], dim=1)), size=target_size, mode="bilinear", align_corners=False) + temp_f4
 
         depth_tokens = {"d3": d3, "d2": d2}
         segment_tokens = {"s3": s3, "s2": s2}
@@ -256,10 +279,11 @@ class MultiHeadDecoder(nn.Module):
         depth_logits = self.depth_dec(d1, shared_p5, shared_p4, depth_tokens, features)
         segment_logits = self.segment_dec(s1, shared_p5, shared_p4, segment_tokens, features)
 
+
         return depth_logits, segment_logits
 
 if __name__ == "__main__":
-    model = MultiHeadDecoder(tok_dim=128, num_heads=4, num_labels=40)
+    model = MultiHeadDecoder(tok_dim=128, num_heads=4, num_labels=40, max_frames=32)
     im = torch.randn([1, 3, 288, 384])
     encoder = ResNetEncoder()
     features = encoder(im)

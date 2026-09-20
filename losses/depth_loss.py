@@ -1,5 +1,6 @@
 from torch import nn
 import torch
+import torch.nn.functional as F
 
 def berhu_loss(pred, target):
     mask = target > 0
@@ -54,11 +55,6 @@ def boundary_guided_depth_grad_loss(pred_depth, gt_depth, boundary_pred, mask=No
 
 
 class SILogLoss(nn.Module):
-    """
-    Scale-Invariant Logarithmic (SILog) loss (Eigen et al., DPT, AdaBins).
-    L_silog = alpha * sqrt( 1/N sum(g_i^2) - lambda/N^2 (sum g_i)^2 )
-    where g_i = ln(pred_i) - ln(target_i).
-    """
     def __init__(self, alpha=10.0, lambda_param=0.85):
         super().__init__()
         self.alpha = alpha
@@ -84,7 +80,35 @@ class SILogLoss(nn.Module):
         return self.alpha * torch.sqrt(torch.clamp(variance, min=1e-8))
 
 
-import torch.nn.functional as F
+def temporal_depth_grad_loss(pred, target, B=None, T=None):
+    """
+    Computes temporal gradient matching loss across consecutive video frames.
+    Accepts 4D (B*T, 1, H, W) or 5D (B, T, 1, H, W) tensors.
+    """
+    if pred.dim() == 4:
+        if B is None or T is None or T <= 1:
+            return torch.tensor(0.0, device=pred.device, requires_grad=True)
+        pred = pred.view(B, T, 1, pred.shape[-2], pred.shape[-1])
+        target = target.view(B, T, 1, target.shape[-2], target.shape[-1])
+    elif pred.dim() == 5:
+        if pred.shape[1] <= 1:
+            return torch.tensor(0.0, device=pred.device, requires_grad=True)
+
+    # 1. Compute frame-to-frame temporal differences
+    delta_pred = pred[:, 1:] - pred[:, :-1]        # (B, T-1, 1, H, W)
+    delta_target = target[:, 1:] - target[:, :-1]  # (B, T-1, 1, H, W)
+
+    # 2. Both current and next frame must have valid depth (> 0)
+    mask_curr = target[:, :-1] > 0
+    mask_next = target[:, 1:] > 0
+    valid_mask = mask_curr & mask_next
+
+    if not valid_mask.any():
+        return torch.tensor(0.0, device=pred.device, requires_grad=True)
+
+    # 3. Smooth L1 between predicted and ground truth temporal transitions
+    return F.smooth_l1_loss(delta_pred[valid_mask], delta_target[valid_mask])
+
 
 def get_gpu_boundary_map(label: torch.Tensor, kernel_size: int = 3) -> torch.Tensor:
     if label.dim() == 2:
@@ -100,18 +124,19 @@ def get_gpu_boundary_map(label: torch.Tensor, kernel_size: int = 3) -> torch.Ten
     min_label = -F.max_pool2d(-label_float, kernel_size=kernel_size, stride=1, padding=padding)
     return (max_label != min_label).float()
 
-
 class DepthLoss(nn.Module):
-    def __init__(self, alpha=10.0, lambda_param=0.85, l1_weight=0.5):
+    def __init__(self, alpha=10.0, lambda_param=0.85, l1_weight=0.5, temporal_weight=1.0):
         super().__init__()
         self.silog = SILogLoss(alpha=alpha, lambda_param=lambda_param)
         self.l1_weight = l1_weight
+        self.temporal_weight = temporal_weight
 
-    def forward(self, pred, target, label_or_boundary):
+    def forward(self, pred, target, label_or_boundary, B=None, T=None):
         mask = target > 0
+        if not mask.any():
+            return torch.tensor(0.0, device=pred.device, requires_grad=True)
         silog = self.silog(pred, target, mask=mask)
-
-        # If integer class labels are passed, extract boundaries rapidly in batch on GPU
+    
         if label_or_boundary.dtype in (torch.int32, torch.int64):
             boundary = get_gpu_boundary_map(label_or_boundary)
         else:
@@ -119,6 +144,12 @@ class DepthLoss(nn.Module):
 
         grad = boundary_guided_depth_grad_loss(pred, target, boundary, mask=mask.float())
         l1 = F.smooth_l1_loss(pred[mask], target[mask])
+        spatial_loss = silog + 0.5 * grad + self.l1_weight * l1
 
-        return silog + 0.5 * grad + self.l1_weight * l1
+        # Compute temporal loss if video frames are present
+        if T is not None and T > 1:
+            temp_loss = temporal_depth_grad_loss(pred, target, B=B, T=T)
+            return spatial_loss + self.temporal_weight * temp_loss
+
+        return spatial_loss
     

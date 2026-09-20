@@ -8,8 +8,7 @@ data/toolbox_nyu_depth_v2
 data/data.zip
 data/splits.mat
 data/classMapping40.mat
-
-
+data/scannet_frames_25k
 # Coding agent preferences
 GEMINI.md
 
