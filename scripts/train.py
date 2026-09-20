@@ -168,7 +168,7 @@ def train():
     STRIDE = 1
     patience = 25
     epochs_without_improvement = 0
-    resize = (378, 504) # Divisible by 14 as per ViT-S requirement 
+    resize = (392, 518) # Divisible by 14 as per ViT-S requirement 
     encoder_lr = 1e-5
     decoder_lr = 2e-4
     depth_weight = 1.4
