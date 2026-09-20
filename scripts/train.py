@@ -22,6 +22,10 @@ parser.add_argument("--checkpoint-dir", type=str, default="checkpoints/", help="
 parser.add_argument("--seed", type=int, default=42, help="Random seed for reproducibility")
 parser.add_argument("--grad-accum-steps", type=int, default=1, help="Gradient accumulation steps")
 parser.add_argument("--num-frames", type=int, default=8, help="Number of frames per clip")
+parser.add_argument("--data-path", type=str, default="data/scannet_frames_25k", help="Path to dataset")
+parser.add_argument("--class-map-path", type=str, default="data/classMapping40.mat", help="Path to class mapping")
+parser.add_argument("--train-split-path", type=str, default="data/scannetv2_train.txt", help="Train split path")
+parser.add_argument("--val-split-path", type=str, default="data/scannetv2_val.txt", help="Val split path")
 
 args = parser.parse_args()
 
@@ -149,10 +153,10 @@ def train():
     STRIDE = 1
     patience = 25
     epochs_without_improvement = 0
-    resize = (392, 518) # Divisible by 14 as per ViT-S requirement
+    resize = (378, 504) # Divisible by 14 as per ViT-S requirement 
     encoder_lr = 1e-5
     decoder_lr = 2e-4
-    depth_weight = 1.0
+    depth_weight = 1.4
     device = "cuda" if torch.cuda.is_available() else "cpu"
     checkpoint_path = args.checkpoint_path
     checkpoint_dir = args.checkpoint_dir
@@ -181,8 +185,7 @@ def train():
 
     # ============== Load dataset ==============
 
-    dataset_path = "data/scannet_frames_25k"
-    class_map_path = "data/classMapping40.mat"
+    dataset_path = args.data_path
 
     train_dataset = ScanNetVideoDataset(
         root_dir=dataset_path,
@@ -190,7 +193,8 @@ def train():
         num_frames=NUM_FRAMES,
         stride=STRIDE,
         resize=resize,
-        augment=True
+        augment=True,
+        split_file=args.train_split_path
     )    
 
     val_dataset = ScanNetVideoDataset(
@@ -199,7 +203,8 @@ def train():
         num_frames=NUM_FRAMES,
         stride=STRIDE,
         resize=resize,
-        augment=False
+        augment=False,
+        split_file=args.val_split_path
     ) 
 
     g = torch.Generator()
@@ -209,7 +214,9 @@ def train():
         batch_size=BATCH_SIZE,      # B = 2 clips (total 2 * 4 = 8 frames per step)
         shuffle=True,
         num_workers=4,
-        pin_memory=True
+        pin_memory=True,
+        persistent_workers=True,
+        prefetch_factor=2
     )
 
     val_loader = DataLoader(
@@ -219,6 +226,7 @@ def train():
         num_workers=4,
         pin_memory=True,
         worker_init_fn=seed_worker
+        
     )
 
     # ============== Model ==============
@@ -259,7 +267,7 @@ def train():
 
         # ============== Train loop ==============
         accum_steps = args.grad_accum_steps
-        optimizer.zero_grad()  # Reset before loop
+        optimizer.zero_grad(set_to_none=True)  # Reset before loop
 
         train_pbar = tqdm(train_loader, desc=f"Epoch [{epoch:02d}/{EPOCHS:02d}] (Train)", leave=False)
         for batch_idx, (images, depths, labels) in enumerate(train_pbar):
@@ -289,7 +297,7 @@ def train():
                 torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
                 scaler.step(optimizer)
                 scaler.update()
-                optimizer.zero_grad()
+                optimizer.zero_grad(set_to_none=True)
 
             # Track full loss for logging (not the divided loss)
             running_train_loss += tol_loss.item()
@@ -299,113 +307,114 @@ def train():
         avg_train_loss = running_train_loss / len(train_loader)
 
         # ============== Validation loop ==============
-        running_val_loss = 0.0
-        running_seg_loss = 0.0
-        running_depth_loss = 0.0
+        if epoch % 2 == 0 or epoch == EPOCHS:
+            running_val_loss = 0.0
+            running_seg_loss = 0.0
+            running_depth_loss = 0.0
 
-        metrics.reset()
-        model.eval()
-        val_pbar = tqdm(val_loader, desc=f"Epoch [{epoch:02d}/{EPOCHS:02d}] (Val)  ", leave=False)
-        with torch.no_grad():
-            for images, depths, labels in val_pbar:
-                B, T = images.shape[0], images.shape[1]
-                images = images.to(device, non_blocking=True)
-                depths = depths.view(B * T, 1, depths.shape[-2], depths.shape[-1]).float().to(device, non_blocking=True)
-                labels = labels.view(B * T, labels.shape[-2], labels.shape[-1]).long().to(device, non_blocking=True)
+            metrics.reset()
+            model.eval()
+            val_pbar = tqdm(val_loader, desc=f"Epoch [{epoch:02d}/{EPOCHS:02d}] (Val)  ", leave=False)
+            with torch.no_grad():
+                for images, depths, labels in val_pbar:
+                    B, T = images.shape[0], images.shape[1]
+                    images = images.to(device, non_blocking=True)
+                    depths = depths.view(B * T, 1, depths.shape[-2], depths.shape[-1]).float().to(device, non_blocking=True)
+                    labels = labels.view(B * T, labels.shape[-2], labels.shape[-1]).long().to(device, non_blocking=True)
 
-                with torch.amp.autocast("cuda", enabled=(device == "cuda")):
-                    pred_seg, pred_depth = model(images)
+                    with torch.amp.autocast("cuda", enabled=(device == "cuda")):
+                        pred_seg, pred_depth = model(images)
 
-                    depths_loss = F.interpolate(depths, size=resize, mode="bilinear", align_corners=False) if depths.shape[-2:] != resize else depths
-                    seg_loss = crit_seg(pred_seg, labels)
-                    depth_loss = crit_depth(pred_depth, depths, labels, B=B, T=T)
+                        depths_loss = F.interpolate(depths, size=resize, mode="bilinear", align_corners=False) if depths.shape[-2:] != resize else depths
+                        seg_loss = crit_seg(pred_seg, labels)
+                        depth_loss = crit_depth(pred_depth, depths, labels, B=B, T=T)
 
-                    tol_loss = seg_loss + depth_weight * depth_loss
+                        tol_loss = seg_loss + depth_weight * depth_loss
 
-                metrics.update(
-                    pred_seg,
-                    pred_depth,
-                    labels,
-                    depths,
-                )
+                    metrics.update(
+                        pred_seg,
+                        pred_depth,
+                        labels,
+                        depths,
+                    )
 
-                running_val_loss += tol_loss.item()
-                running_depth_loss += depth_loss.item()
-                running_seg_loss += seg_loss.item()
-                val_pbar.set_postfix({"val_loss": f"{tol_loss.item():.4f}"})
+                    running_val_loss += tol_loss.item()
+                    running_depth_loss += depth_loss.item()
+                    running_seg_loss += seg_loss.item()
+                    val_pbar.set_postfix({"val_loss": f"{tol_loss.item():.4f}"})
 
-            avg_val_loss = running_val_loss / len(val_loader)
-            avg_seg_loss = running_seg_loss / len(val_loader)
-            avg_depth_loss = running_depth_loss / len(val_loader)
+                avg_val_loss = running_val_loss / len(val_loader)
+                avg_seg_loss = running_seg_loss / len(val_loader)
+                avg_depth_loss = running_depth_loss / len(val_loader)
 
-        # ============== Log ==============
-        val_results = metrics.compute()
-        total_depth = val_results["depth"]
-        total_seg = val_results["segmentation"]
+            # ============== Log ==============
+            val_results = metrics.compute()
+            total_depth = val_results["depth"]
+            total_seg = val_results["segmentation"]
 
-        print(f"\n === Epoch [{epoch:02d}/{EPOCHS:02d}] | Train Loss: {avg_train_loss:.4f} | Val Loss: {avg_val_loss:.4f} | LR: {scheduler.get_last_lr()[0]:.6f} === ")
-        print(f"Validation Task Losses: Seg: {avg_seg_loss:.3f} | Depth: {avg_depth_loss:.3f} (depth_weight: {depth_weight})")
+            print(f"\n === Epoch [{epoch:02d}/{EPOCHS:02d}] | Train Loss: {avg_train_loss:.4f} | Val Loss: {avg_val_loss:.4f} | LR: {scheduler.get_last_lr()[0]:.6f} === ")
+            print(f"Validation Task Losses: Seg: {avg_seg_loss:.3f} | Depth: {avg_depth_loss:.3f} (depth_weight: {depth_weight})")
 
-        print(
-            f"Depth | "
-            f"RMSE: {total_depth['rmse']:.4f} | "
-            f"AbsRel: {total_depth['abs_rel']:.4f} | "
-            f"δ1: {total_depth['delta1']:.4f} | "
-            f"δ2: {total_depth['delta2']:.4f} | "
-            f"δ3: {total_depth['delta3']:.4f} | "
-            f"SqRel: {total_depth['sq_rel']:.4f} | "
-            f"RMSElog: {total_depth['rmse_log']:.4f} | "
-            f"log10: {total_depth['log10']:.4f}"
-        )
+            print(
+                f"Depth | "
+                f"RMSE: {total_depth['rmse']:.4f} | "
+                f"AbsRel: {total_depth['abs_rel']:.4f} | "
+                f"δ1: {total_depth['delta1']:.4f} | "
+                f"δ2: {total_depth['delta2']:.4f} | "
+                f"δ3: {total_depth['delta3']:.4f} | "
+                f"SqRel: {total_depth['sq_rel']:.4f} | "
+                f"RMSElog: {total_depth['rmse_log']:.4f} | "
+                f"log10: {total_depth['log10']:.4f}"
+            )
 
-        print(
-            f"Seg   | "
-            f"mIoU: {total_seg['miou']:.4f} | "
-            f"Dice: {total_seg['dice']:.4f} | "
-            f"Pixel Acc: {total_seg['pixel_acc']:.4f}"
-        )
+            print(
+                f"Seg   | "
+                f"mIoU: {total_seg['miou']:.4f} | "
+                f"Dice: {total_seg['dice']:.4f} | "
+                f"Pixel Acc: {total_seg['pixel_acc']:.4f}"
+            )
 
-        # ============== Save current checkpoint ============== 
-        save_checkpoint(checkpoint_dir, "checkpoint.pth", epoch, model, optimizer, scheduler, best_depth_delta1, best_seg_miou, epochs_without_improvement, scaler)
+            # ============== Save current checkpoint ============== 
+            save_checkpoint(checkpoint_dir, "checkpoint.pth", epoch, model, optimizer, scheduler, best_depth_delta1, best_seg_miou, epochs_without_improvement, scaler)
 
-        # ============== Save best checkpoint for each task ==============
-        improved = False
+            # ============== Save best checkpoint for each task ==============
+            improved = False
 
-        if total_depth['delta1'] > best_depth_delta1:
-            best_depth_delta1 = total_depth['delta1']
-            best_records["depth_delta1"] = (total_depth['delta1'], epoch)
-            best_records["depth_delta2"] = (total_depth['delta2'], epoch)
-            best_records["depth_delta3"] = (total_depth['delta3'], epoch)
-            best_records["depth_absrel"] = (total_depth['abs_rel'], epoch)
-            best_records["depth_sqrel"] = (total_depth['sq_rel'], epoch)
-            best_records["depth_rmse"] = (total_depth['rmse'], epoch)
-            best_records["depth_rmselog"] = (total_depth['rmse_log'], epoch)
-            best_records["depth_log10"] = (total_depth['log10'], epoch)
-            save_checkpoint(checkpoint_dir, "best_depth.pth", epoch, model, optimizer, scheduler, best_depth_delta1, best_seg_miou, epochs_without_improvement, scaler)
-            print(f"--> Saved new best DEPTH checkpoint.")
-            improved = True
+            if total_depth['delta1'] > best_depth_delta1:
+                best_depth_delta1 = total_depth['delta1']
+                best_records["depth_delta1"] = (total_depth['delta1'], epoch)
+                best_records["depth_delta2"] = (total_depth['delta2'], epoch)
+                best_records["depth_delta3"] = (total_depth['delta3'], epoch)
+                best_records["depth_absrel"] = (total_depth['abs_rel'], epoch)
+                best_records["depth_sqrel"] = (total_depth['sq_rel'], epoch)
+                best_records["depth_rmse"] = (total_depth['rmse'], epoch)
+                best_records["depth_rmselog"] = (total_depth['rmse_log'], epoch)
+                best_records["depth_log10"] = (total_depth['log10'], epoch)
+                save_checkpoint(checkpoint_dir, "best_depth.pth", epoch, model, optimizer, scheduler, best_depth_delta1, best_seg_miou, epochs_without_improvement, scaler)
+                print(f"--> Saved new best DEPTH checkpoint.")
+                improved = True
 
-        if total_seg['miou'] > best_seg_miou:
-            best_seg_miou = total_seg['miou'] 
-            best_records["seg_miou"] = (total_seg['miou'], epoch)
-            best_records["seg_dice"] = (total_seg['dice'], epoch)
-            best_records["seg_pixel_acc"] = (total_seg['pixel_acc'], epoch)
-            save_checkpoint(checkpoint_dir, "best_seg.pth", epoch, model, optimizer, scheduler, best_depth_delta1, best_seg_miou, epochs_without_improvement, scaler)
-            print(f"--> Saved new best SEG checkpoint.")
-            improved = True
+            if total_seg['miou'] > best_seg_miou:
+                best_seg_miou = total_seg['miou'] 
+                best_records["seg_miou"] = (total_seg['miou'], epoch)
+                best_records["seg_dice"] = (total_seg['dice'], epoch)
+                best_records["seg_pixel_acc"] = (total_seg['pixel_acc'], epoch)
+                save_checkpoint(checkpoint_dir, "best_seg.pth", epoch, model, optimizer, scheduler, best_depth_delta1, best_seg_miou, epochs_without_improvement, scaler)
+                print(f"--> Saved new best SEG checkpoint.")
+                improved = True
 
-        if avg_val_loss < best_records["min_val_loss"][0]:
-            best_records["min_val_loss"] = (avg_val_loss, epoch)
+            if avg_val_loss < best_records["min_val_loss"][0]:
+                best_records["min_val_loss"] = (avg_val_loss, epoch)
 
-        save_summary(checkpoint_dir, best_records, epoch, EPOCHS)
+            save_summary(checkpoint_dir, best_records, epoch, EPOCHS)
 
-        if improved:
-            epochs_without_improvement = 0
-        else: 
-            epochs_without_improvement += 1
-            if epochs_without_improvement >= patience: 
-                print("Early stop triggered.")
-                break
+            if improved:
+                epochs_without_improvement = 0
+            else: 
+                epochs_without_improvement += 1
+                if epochs_without_improvement >= patience: 
+                    print("Early stop triggered.")
+                    break
         
     print(best_records)
 
