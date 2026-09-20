@@ -125,7 +125,7 @@ def get_gpu_boundary_map(label: torch.Tensor, kernel_size: int = 3) -> torch.Ten
     return (max_label != min_label).float()
 
 class DepthLoss(nn.Module):
-    def __init__(self, alpha=10.0, lambda_param=0.85, l1_weight=0.5, temporal_weight=0.3):
+    def __init__(self, alpha=10.0, lambda_param=0.85, l1_weight=0.5, temporal_weight=1.0):
         super().__init__()
         self.silog = SILogLoss(alpha=alpha, lambda_param=lambda_param)
         self.l1_weight = l1_weight
