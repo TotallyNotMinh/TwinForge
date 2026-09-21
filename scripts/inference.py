@@ -225,7 +225,14 @@ axes[1, 1].axis("off")
 axes[1, 2].axis("off")
 
 plt.tight_layout()
-output_path = args.output
+output_p = Path(args.output)
+if output_p.is_dir() or str(args.output).endswith(("/", "\\")) or output_p.suffix == "":
+    output_p.mkdir(parents=True, exist_ok=True)
+    output_path = str(output_p / f"inference_sample_{args.idx}_{args.classes}cls.png")
+else:
+    output_p.parent.mkdir(parents=True, exist_ok=True)
+    output_path = str(output_p)
+
 plt.savefig(output_path, dpi=150)
 print(f"Inference visualization saved to {output_path}")
 if os.environ.get("DISPLAY"):

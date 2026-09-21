@@ -210,12 +210,19 @@ def run_video_inference(
     if not os.path.exists(video_path):
         raise FileNotFoundError(f"Input video not found: {video_path}")
 
-    # Determine output path if not specified
-    if output_path is None:
-        in_p = Path(video_path)
-        output_path = str(in_p.parent / f"{in_p.stem}_pred_{layout}.mp4")
+    # Determine output path if not specified or if directory
+    in_p = Path(video_path)
+    default_filename = f"{in_p.stem}_pred_{layout}.mp4"
 
-    os.makedirs(Path(output_path).parent, exist_ok=True)
+    if output_path is None:
+        output_path = str(in_p.parent / default_filename)
+    else:
+        out_p = Path(output_path)
+        if out_p.is_dir() or str(output_path).endswith(("/", "\\")) or out_p.suffix == "":
+            out_p.mkdir(parents=True, exist_ok=True)
+            output_path = str(out_p / default_filename)
+        else:
+            out_p.parent.mkdir(parents=True, exist_ok=True)
 
     # Initialize video capture
     cap = cv2.VideoCapture(video_path)
