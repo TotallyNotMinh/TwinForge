@@ -86,7 +86,7 @@ class DepthDecoder(nn.Module):
         nn.init.constant_(self.out[3].bias, -1.0986)
 
         self.refine = nn.Sequential(
-            nn.Conv2d(1 + 64, 32, kernel_size=3, padding=1),
+            nn.Conv2d(68, 32, kernel_size=3, padding=1),
             nn.ReLU(inplace=True),
             nn.Conv2d(32, 1, kernel_size=3, padding=1)
         )
@@ -108,10 +108,10 @@ class DepthDecoder(nn.Module):
         f1 = features["f1"]
         depth_h2 = F.interpolate(coarse_depth, size=f1.shape[-2:], mode="bilinear", align_corners=False)
 
-        edge_residual = self.refine(torch.cat([depth_h2, f1], dim=1))
+        edge_residual = self.refine(torch.cat([depth_h2, features["rgb"], f1], dim=1))
         refined_depth = torch.clamp(depth_h2 + edge_residual, self.min_depth, self.max_depth)
 
-        return refined_depth
+        return refined_depth, depth_h2
 
 class MultiHeadDecoder(nn.Module):
     def __init__(self, num_labels, tok_dim, num_heads, max_frames, size=(384, 512), embed_dim=128, freeze=False):
@@ -276,11 +276,10 @@ class MultiHeadDecoder(nn.Module):
         depth_tokens = {"d3": d3, "d2": d2}
         segment_tokens = {"s3": s3, "s2": s2}
 
-        depth_logits = self.depth_dec(d1, shared_p5, shared_p4, depth_tokens, features)
+        refined_depth, coarse_depth = self.depth_dec(d1, shared_p5, shared_p4, depth_tokens, features)
         segment_logits = self.segment_dec(s1, shared_p5, shared_p4, segment_tokens, features)
-
-
-        return depth_logits, segment_logits
+    
+        return refined_depth, segment_logits, coarse_depth
 
 if __name__ == "__main__":
     model = MultiHeadDecoder(tok_dim=128, num_heads=4, num_labels=40, max_frames=32)
