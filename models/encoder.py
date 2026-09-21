@@ -209,8 +209,9 @@ class DepthAnythingEncoder(nn.Module):
         f3 = F.interpolate(self.proj3(feats[1]), size=(H // 8, W // 8), mode="bilinear", align_corners=False)
         f4 = F.interpolate(self.proj4(feats[2]), size=(H // 16, W // 16), mode="bilinear", align_corners=False)
         f5 = F.interpolate(self.proj5(feats[3]), size=(H // 32, W // 32), mode="bilinear", align_corners=False)
+        rgb = F.interpolate(x, size=(H//2, W//2), mode="area")
 
-        return {"f1": f1, "f2": f2, "f3": f3, "f4": f4, "f5": f5}
+        return {"f1": f1, "f2": f2, "f3": f3, "f4": f4, "f5": f5, "rgb": rgb}
 
 
 # Backward-compatible alias
