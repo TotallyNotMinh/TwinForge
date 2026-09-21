@@ -294,12 +294,21 @@ def train():
             labels = labels.view(B * T, labels.shape[-2], labels.shape[-1]).long().to(device, non_blocking=True)
         
             with torch.amp.autocast("cuda", enabled=(device == "cuda")):
-                pred_seg, pred_depth = model(images)
+                pred_seg, pred_full, pred_half, pred_quarter = model(images)
         
                 seg_loss = crit_seg(pred_seg, labels)
-                depth_loss = crit_depth(pred_depth, depths, labels, B=B, T=T) 
 
-                tol_loss = seg_loss + depth_weight * depth_loss
+                # Full-resolution loss (SILog + gm_loss + smooth L1 + temporal)
+                loss_full = crit_depth(pred_full, depths, labels, B=B, T=T)
+
+                # Multi-scale intermediate supervision on downsampled ground truth
+                depths_half = F.interpolate(depths, scale_factor=0.5, mode="nearest")
+                depths_quarter = F.interpolate(depths, scale_factor=0.25, mode="nearest")
+                loss_half = crit_depth.silog(pred_half, depths_half)
+                loss_quarter = crit_depth.silog(pred_quarter, depths_quarter)
+
+                depth_total_loss = loss_full + 0.5 * loss_half + 0.25 * loss_quarter
+                tol_loss = seg_loss + depth_weight * depth_total_loss
                 # Scale loss down by accumulation steps
                 loss_to_backward = tol_loss / accum_steps
 

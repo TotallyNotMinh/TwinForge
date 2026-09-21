@@ -197,7 +197,7 @@ def train():
     resize = (392, 518)
     encoder_lr = 1e-5
     decoder_lr = 2e-4
-    depth_weight = 1.4
+    depth_weight = 1.0
     checkpoint_path = args.checkpoint_path
     checkpoint_dir = args.checkpoint_dir
     start_epoch = 0
@@ -326,11 +326,20 @@ def train():
             labels = labels.view(B * T, labels.shape[-2], labels.shape[-1]).long().to(device, non_blocking=True)
 
             with torch.amp.autocast("cuda", enabled=(device.type == "cuda")):
-                segment_logits, depth_logits, coarse_depth_logits = model(images)
+                segment_logits, pred_full, pred_half, pred_quarter = model(images)
                 seg_loss = crit_seg(segment_logits, labels)
-                depth_refined_loss = crit_depth(depth_logits, depths, labels, B=B, T=T)
-                depth_coarse_loss = crit_depth.silog(coarse_depth_logits, depths)
-                tol_loss = seg_loss + (depth_refined_loss + 0.3 * depth_coarse_loss) * depth_weight
+
+                # Full resolution loss (SILog + gm_loss + L1 + temporal)
+                loss_full = crit_depth(pred_full, depths, labels, B=B, T=T)
+
+                # Intermediate supervision on downsampled ground truth
+                depths_half = F.interpolate(depths, size=pred_half.shape[-2:], mode="nearest")
+                depths_quarter = F.interpolate(depths, size=pred_quarter.shape[-2:], mode="nearest")
+                loss_half = crit_depth.silog(pred_half, depths_half)
+                loss_quarter = crit_depth.silog(pred_quarter, depths_quarter)
+
+                depth_total_loss = loss_full + 0.5 * loss_half + 0.25 * loss_quarter
+                tol_loss = seg_loss + depth_total_loss * depth_weight
                 loss_to_backward = tol_loss / accum_steps
 
             scaler.scale(loss_to_backward).backward()
