@@ -30,6 +30,25 @@ class CrossTaskRefinementBlock(nn.Module):
         s_out = self.segment_cross(segment_token, context=depth_token)
         return d_out, s_out
 
+class ConvexUp(nn.Module):
+    def __init__(self, channels, factor=2):
+        super().__init__()
+        self.up_fac = factor
+        self.mask = nn.Sequential(
+            nn.Conv2d(channels, 128, kernel_size=3, padding=1),
+            nn.ReLU(inplace=True),
+            nn.Conv2d(128, factor * factor * 9, kernel_size=1)
+        )
+
+    def forward(self, depth, feature):
+        B, _, H, W = depth.shape
+        f = self.up_fac
+        if feature.shape[-2:] != (H, W):
+            feature = F.interpolate(feature, size=(H, W), mode="bilinear", align_corners=False)
+        m = self.mask(feature).view(B, 1, 9, f, f, H, W).softmax(2)
+        d = F.unfold(depth, 3, padding=1).view(B, 1, 9, 1, 1, H, W)
+        return (m * d).sum(2).permute(0, 1, 4, 2, 5, 3).reshape(B, 1, H * f, W * f)
+
 class SegmentDecoder(nn.Module):
     def __init__(self, tok_dim, num_labels, embed_dim=128):
         super().__init__()
@@ -85,16 +104,11 @@ class DepthDecoder(nn.Module):
         )
         nn.init.constant_(self.out[3].bias, -1.0986)
 
-        self.refine = nn.Sequential(
-            nn.Conv2d(1 + 64, 32, kernel_size=3, padding=1),
-            nn.ReLU(inplace=True),
-            nn.Conv2d(32, 1, kernel_size=3, padding=1)
-        )
-        nn.init.zeros_(self.refine[2].weight)
-        nn.init.zeros_(self.refine[2].bias)
+        self.up_half = ConvexUp(channels=64, factor=2)
+        self.up_full = ConvexUp(channels=32, factor=2)
 
     def forward(self, vit_depth_self, p5, p4, tokens, features):
-        target_size = features["f2"].shape[-2:]  # Standard 1/4 resolution
+        target_size = features["f2"].shape[-2:]
 
         p3 = F.interpolate(self.proj3(torch.cat([tokens["d3"], features["f3"]], dim=1)), size=target_size, mode="bilinear", align_corners=False)
         p2 = self.proj2(torch.cat([tokens["d2"], features["f2"]], dim=1))
@@ -103,15 +117,14 @@ class DepthDecoder(nn.Module):
         vit_self = F.interpolate(vit_depth_self, size=target_size, mode="bilinear", align_corners=False)
         out = self.out(torch.cat([vit_self, fused], dim=1))
 
-        # Use features["f1"] to sharpen boundaries
-        coarse_depth = self.min_depth + (self.max_depth - self.min_depth) * torch.sigmoid(out)
-        f1 = features["f1"]
-        depth_h2 = F.interpolate(coarse_depth, size=f1.shape[-2:], mode="bilinear", align_corners=False)
+        # 1/4 resolution base depth
+        depth_quarter = self.min_depth + (self.max_depth - self.min_depth) * torch.sigmoid(out)
 
-        edge_residual = self.refine(torch.cat([depth_h2, f1], dim=1))
-        refined_depth = torch.clamp(depth_h2 + edge_residual, self.min_depth, self.max_depth)
+        # Convex upsampling stages
+        depth_half = self.up_half(depth_quarter, features["stem_quarter"])
+        depth_full = self.up_full(depth_half, features["stem_half"])
 
-        return refined_depth
+        return depth_full, depth_half, depth_quarter
 
 class MultiHeadDecoder(nn.Module):
     def __init__(self, num_labels, tok_dim, num_heads, max_frames, size=(384, 512), embed_dim=128, freeze=False):
@@ -276,11 +289,10 @@ class MultiHeadDecoder(nn.Module):
         depth_tokens = {"d3": d3, "d2": d2}
         segment_tokens = {"s3": s3, "s2": s2}
 
-        depth_logits = self.depth_dec(d1, shared_p5, shared_p4, depth_tokens, features)
+        refined_depth, depth_half, depth_quarter = self.depth_dec(d1, shared_p5, shared_p4, depth_tokens, features)
         segment_logits = self.segment_dec(s1, shared_p5, shared_p4, segment_tokens, features)
-
-
-        return depth_logits, segment_logits
+    
+        return refined_depth, segment_logits, depth_half, depth_quarter
 
 if __name__ == "__main__":
     model = MultiHeadDecoder(tok_dim=128, num_heads=4, num_labels=40, max_frames=32)

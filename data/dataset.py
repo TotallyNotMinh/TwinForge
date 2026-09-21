@@ -13,6 +13,51 @@ import glob
 import random
 from PIL import Image
 
+NYU40_TO_SCANNET20 = torch.tensor([
+    0,   # 0: unlabeled
+    1,   # 1: wall
+    2,   # 2: floor
+    3,   # 3: cabinet
+    4,   # 4: bed
+    5,   # 5: chair
+    6,   # 6: sofa
+    7,   # 7: table
+    8,   # 8: door
+    9,   # 9: window
+    10,  # 10: bookshelf
+    11,  # 11: picture
+    12,  # 12: counter
+    0,   # 13: blinds -> ignore
+    13,  # 14: desk
+    0,   # 15: shelves -> ignore
+    14,  # 16: curtain
+    0,   # 17: dresser -> ignore
+    0,   # 18: pillow -> ignore
+    0,   # 19: mirror -> ignore
+    0,   # 20: floor mat -> ignore
+    0,   # 21: clothes -> ignore
+    0,   # 22: ceiling -> ignore
+    0,   # 23: books -> ignore
+    15,  # 24: refrigerator
+    0,   # 25: television -> ignore
+    0,   # 26: paper -> ignore
+    0,   # 27: towel -> ignore
+    16,  # 28: shower curtain
+    0,   # 29: box -> ignore
+    0,   # 30: whiteboard -> ignore
+    0,   # 31: person -> ignore
+    0,   # 32: nightstand -> ignore
+    17,  # 33: toilet
+    18,  # 34: sink
+    0,   # 35: lamp -> ignore
+    19,  # 36: bathtub
+    0,   # 37: bag -> ignore
+    0,   # 38: otherstructure -> ignore
+    20,  # 39: otherfurniture
+    0    # 40: otherprop -> ignore
+], dtype=torch.int64)
+
+
 def get_boundary_map(label: torch.Tensor, kernel_size: int = 3) -> torch.Tensor:
     if label.dim() == 2:
         label = label.unsqueeze(0).unsqueeze(0)

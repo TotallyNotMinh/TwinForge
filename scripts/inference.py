@@ -1,3 +1,5 @@
+import argparse
+import os
 import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
 import torch
@@ -14,23 +16,84 @@ from models import TwinForge
 
 
 # ============================================================
-# Configuration
+# CLI Arguments
 # ============================================================
 
-num_classes = 41
+parser = argparse.ArgumentParser(description="TwinForge Single Image Inference")
+parser.add_argument("--checkpoint", type=str, default="checkpoints/best_depth.pth", help="Path to model checkpoint")
+parser.add_argument("--classes", type=int, choices=[20, 40], default=40, help="Number of segmentation classes to visualize: 40 (NYU40) or 20 (ScanNet20) (default: 40)")
+parser.add_argument("--idx", type=int, default=7, help="Sample index in NYUv2 validation split (default: 7)")
+parser.add_argument("--output", type=str, default="inference_result.png", help="Output visualization path (default: inference_result.png)")
+args, unknown = parser.parse_known_args()
 
-# 40 distinct categorical colors
-colors1 = plt.colormaps["tab20"].colors
-colors2 = plt.colormaps["tab20b"].colors
+# Backwards compatibility: allow positional checkpoint path
+if len(sys.argv) > 1 and not sys.argv[1].startswith("-"):
+    checkpoint_path = sys.argv[1]
+else:
+    checkpoint_path = args.checkpoint
 
-colors = list(colors1) + list(colors2)
 
-cmap = mcolors.ListedColormap(colors[:num_classes])
+# ============================================================
+# Class Mapping & Colormap Configuration
+# ============================================================
 
-norm = mcolors.Normalize(
-    vmin=0,
-    vmax=num_classes - 1
-)
+# Canonical ScanNet 20 benchmark subset mapping from NYU40 IDs
+NYU40_TO_SCANNET20 = torch.tensor([
+    0,   # 0: unlabeled
+    1,   # 1: wall
+    2,   # 2: floor
+    3,   # 3: cabinet
+    4,   # 4: bed
+    5,   # 5: chair
+    6,   # 6: sofa
+    7,   # 7: table
+    8,   # 8: door
+    9,   # 9: window
+    10,  # 10: bookshelf
+    11,  # 11: picture
+    12,  # 12: counter
+    0,   # 13: blinds -> ignore
+    13,  # 14: desk
+    0,   # 15: shelves -> ignore
+    14,  # 16: curtain
+    0,   # 17: dresser -> ignore
+    0,   # 18: pillow -> ignore
+    0,   # 19: mirror -> ignore
+    0,   # 20: floor mat -> ignore
+    0,   # 21: clothes -> ignore
+    0,   # 22: ceiling -> ignore
+    0,   # 23: books -> ignore
+    15,  # 24: refrigerator
+    0,   # 25: television -> ignore
+    0,   # 26: paper -> ignore
+    0,   # 27: towel -> ignore
+    16,  # 28: shower curtain
+    0,   # 29: box -> ignore
+    0,   # 30: whiteboard -> ignore
+    0,   # 31: person -> ignore
+    0,   # 32: nightstand -> ignore
+    17,  # 33: toilet
+    18,  # 34: sink
+    0,   # 35: lamp -> ignore
+    19,  # 36: bathtub
+    0,   # 37: bag -> ignore
+    0,   # 38: otherstructure -> ignore
+    20,  # 39: otherfurniture
+    0    # 40: otherprop -> ignore
+], dtype=torch.int64)
+
+if args.classes == 20:
+    # 21 distinct colors: class 0 (unlabeled) as black, 1-20 from tab20
+    colors = [(0.0, 0.0, 0.0)] + list(plt.colormaps["tab20"].colors)
+    cmap = mcolors.ListedColormap(colors[:21])
+    norm = mcolors.Normalize(vmin=0, vmax=20)
+else:
+    colors1 = plt.colormaps["tab20"].colors
+    colors2 = plt.colormaps["tab20b"].colors
+    colors = [(0.0, 0.0, 0.0)] + list(colors1) + list(colors2)[:20]
+    cmap = mcolors.ListedColormap(colors[:41])
+    norm = mcolors.Normalize(vmin=0, vmax=40)
+
 
 # ============================================================
 # Load dataset
@@ -42,12 +105,12 @@ dataset = NYUv2Dataset(
     split="val"
 )
 
-image, depth, label = dataset[7]
+image, depth, label = dataset[args.idx]
 
 print("Image shape:", image.shape)
 print("Depth shape:", depth.shape)
 print("Label shape:", label.shape)
-print("Classes present:", label.unique())
+print(f"Classes present (NYU40): {label.unique().tolist()}")
 
 
 # ============================================================
@@ -56,10 +119,7 @@ print("Classes present:", label.unique())
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
-model = TwinForge(num_labels=num_classes, num_heads=8, tok_dim=256, freeze=False).to(device)
-
-import os
-checkpoint_path = sys.argv[1] if len(sys.argv) > 1 else "checkpoints/best_depth.pth"
+model = TwinForge(num_labels=41, num_heads=8, tok_dim=256, freeze=False).to(device)
 
 if os.path.exists(checkpoint_path):
     checkpoint = torch.load(checkpoint_path, map_location=device)
@@ -90,6 +150,10 @@ with torch.no_grad():
 
 # Segmentation: [1, 41, H, W] -> [H, W]
 pred_label = torch.argmax(pred_seg, dim=1).squeeze(0).cpu()
+
+if args.classes == 20:
+    pred_label = NYU40_TO_SCANNET20[pred_label]
+    label = NYU40_TO_SCANNET20[label]
 
 # Depth: [1, 1, H, W] -> [H, W]
 pred_depth = pred_depth.squeeze().cpu()
@@ -147,20 +211,28 @@ axes[0, 2].set_title("Predicted Depth")
 axes[0, 2].axis("off")
 
 # 4. GT Segmentation
+seg_suffix = " (ScanNet 20)" if args.classes == 20 else " (NYU 40)"
 axes[1, 0].imshow(label_map, cmap=cmap, norm=norm, interpolation="nearest")
-axes[1, 0].set_title("GT Segmentation")
+axes[1, 0].set_title("GT Segmentation" + seg_suffix)
 axes[1, 0].axis("off")
 
 # 5. Predicted Segmentation
 axes[1, 1].imshow(pred_label_map, cmap=cmap, norm=norm, interpolation="nearest")
-axes[1, 1].set_title("Predicted Segmentation")
+axes[1, 1].set_title("Predicted Segmentation" + seg_suffix)
 axes[1, 1].axis("off")
 
 # 6. Blank / Info
 axes[1, 2].axis("off")
 
 plt.tight_layout()
-output_path = "inference_result.png"
+output_p = Path(args.output)
+if output_p.is_dir() or str(args.output).endswith(("/", "\\")) or output_p.suffix == "":
+    output_p.mkdir(parents=True, exist_ok=True)
+    output_path = str(output_p / f"inference_sample_{args.idx}_{args.classes}cls.png")
+else:
+    output_p.parent.mkdir(parents=True, exist_ok=True)
+    output_path = str(output_p)
+
 plt.savefig(output_path, dpi=150)
 print(f"Inference visualization saved to {output_path}")
 if os.environ.get("DISPLAY"):

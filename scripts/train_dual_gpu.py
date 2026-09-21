@@ -326,10 +326,20 @@ def train():
             labels = labels.view(B * T, labels.shape[-2], labels.shape[-1]).long().to(device, non_blocking=True)
 
             with torch.amp.autocast("cuda", enabled=(device.type == "cuda")):
-                pred_seg, pred_depth = model(images)
-                seg_loss = crit_seg(pred_seg, labels)
-                depth_loss = crit_depth(pred_depth, depths, labels, B=B, T=T)
-                tol_loss = seg_loss + depth_weight * depth_loss
+                segment_logits, pred_full, pred_half, pred_quarter = model(images)
+                seg_loss = crit_seg(segment_logits, labels)
+
+                # Full resolution loss (SILog + gm_loss + L1 + temporal)
+                loss_full = crit_depth(pred_full, depths, labels, B=B, T=T)
+
+                # Intermediate supervision on downsampled ground truth
+                depths_half = F.interpolate(depths, size=pred_half.shape[-2:], mode="nearest")
+                depths_quarter = F.interpolate(depths, size=pred_quarter.shape[-2:], mode="nearest")
+                loss_half = crit_depth.silog(pred_half, depths_half)
+                loss_quarter = crit_depth.silog(pred_quarter, depths_quarter)
+
+                depth_total_loss = loss_full + 0.5 * loss_half + 0.25 * loss_quarter
+                tol_loss = seg_loss + depth_total_loss * depth_weight
                 loss_to_backward = tol_loss / accum_steps
 
             scaler.scale(loss_to_backward).backward()
@@ -449,6 +459,10 @@ def train():
                 epochs_without_improvement = 0
             else:
                 epochs_without_improvement += 1
+
+            del val_pbar, val_results
+            if torch.cuda.is_available():
+                torch.cuda.empty_cache()
 
         # Synchronize early stopping decision across all ranks
         should_stop = torch.tensor([1.0 if epochs_without_improvement >= patience else 0.0], device=device)

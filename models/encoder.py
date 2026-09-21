@@ -127,6 +127,53 @@ class DinoVisionTransformer(nn.Module):
                 features.append(x[:, 1:, :].permute(0, 2, 1).reshape(B, self.embed_dim, h0, w0))
         return features
 
+class ResidualConvUnit(nn.Module):
+    def __init__(self, channels):
+        super().__init__()
+        self.block = nn.Sequential(
+            nn.ReLU(inplace=False),
+            nn.Conv2d(channels, channels, 3, padding=1, bias=False),
+            nn.BatchNorm2d(channels),
+            nn.ReLU(inplace=True),
+            nn.Conv2d(channels, channels, 3, padding=1, bias=False),
+            nn.BatchNorm2d(channels)
+        )
+    def forward(self, x):
+        return x + self.block(x)
+
+class RGBStem(nn.Module):
+    def __init__(self, c_full: int = 16, c_half: int = 32, c_quarter: int = 64):
+        super().__init__()
+        self.stem_full = nn.Sequential(
+            nn.Conv2d(3, c_full, kernel_size=3, padding=1, bias=False),
+            nn.BatchNorm2d(c_full),
+            nn.ReLU(inplace=True),
+            nn.Conv2d(c_full, c_full, kernel_size=3, padding=1, bias=False),
+            nn.BatchNorm2d(c_full),
+            nn.ReLU(inplace=True),
+        )
+        self.stem_half = nn.Sequential(
+            nn.Conv2d(c_full, c_half, kernel_size=3, stride=2, padding=1, bias=False),
+            nn.BatchNorm2d(c_half),
+            nn.ReLU(inplace=True),
+            nn.Conv2d(c_half, c_half, kernel_size=3, padding=1, bias=False),
+            nn.BatchNorm2d(c_half),
+            nn.ReLU(inplace=True),
+        )
+        self.stem_quarter = nn.Sequential(
+            nn.Conv2d(c_half, c_quarter, kernel_size=3, stride=2, padding=1, bias=False),
+            nn.BatchNorm2d(c_quarter),
+            nn.ReLU(inplace=True),
+            nn.Conv2d(c_quarter, c_quarter, kernel_size=3, padding=1, bias=False),
+            nn.BatchNorm2d(c_quarter),
+            nn.ReLU(inplace=True),
+        )
+
+    def forward(self, x: torch.Tensor):
+        feat_full = self.stem_full(x)
+        feat_half = self.stem_half(feat_full)
+        feat_quarter = self.stem_quarter(feat_half)
+        return feat_full, feat_half, feat_quarter
 
 class DepthAnythingEncoder(nn.Module):
     """
@@ -156,15 +203,37 @@ class DepthAnythingEncoder(nn.Module):
             else:
                 print(f"Warning: Checkpoint not found at {ckpt_path}, initializing randomly.")
 
-        # Multi-scale feature adaptation layers (emulating f1..f5 for compatibility)
-        self.proj1 = nn.Sequential(nn.Conv2d(384, 64, 1, bias=False), nn.BatchNorm2d(64), nn.ReLU(inplace=True))
-        self.proj2 = nn.Sequential(nn.Conv2d(384, 256, 1, bias=False), nn.BatchNorm2d(256), nn.ReLU(inplace=True))
-        self.proj3 = nn.Sequential(nn.Conv2d(384, 512, 1, bias=False), nn.BatchNorm2d(512), nn.ReLU(inplace=True))
-        self.proj4 = nn.Sequential(nn.Conv2d(384, 1024, 1, bias=False), nn.BatchNorm2d(1024), nn.ReLU(inplace=True))
-        self.proj5 = nn.Sequential(nn.Conv2d(384, 2048, 1, bias=False), nn.BatchNorm2d(2048), nn.ReLU(inplace=True))
+        # RGB Stem
+        self.rgb_stem = RGBStem(c_full=16, c_half=32)
+
+        # Learned Reassembly Branches for taps [2, 5, 8, 11] (input dim = 384)
+        out_c = 256
+        self.resample_l2 = nn.ConvTranspose2d(384, out_c, kernel_size=4, stride=4)
+        self.resample_l5 = nn.ConvTranspose2d(384, out_c, kernel_size=2, stride=2)
+        self.resample_l8 = nn.Conv2d(384, out_c, kernel_size=1)
+        self.resample_l11 = nn.Conv2d(384, out_c, kernel_size=3, stride=2, padding=1)
+
+        # Post-resampling RCUs
+        self.rcu_l2 = ResidualConvUnit(out_c)
+        self.rcu_l5 = ResidualConvUnit(out_c)
+        self.rcu_l8 = ResidualConvUnit(out_c)
+        self.rcu_l11 = ResidualConvUnit(out_c)
+
+        # Coarse-to-fine fusion RCUs
+        self.fuse_rcu8 = ResidualConvUnit(out_c)
+        self.fuse_rcu5 = ResidualConvUnit(out_c)
+        self.fuse_rcu2 = ResidualConvUnit(out_c)
+
+        # Channel projections matching MultiHeadDecoder expectations (256, 512, 1024, 2048)
+        self.head_f2 = nn.Sequential(nn.Conv2d(out_c, 256, 1, bias=False), nn.BatchNorm2d(256), nn.ReLU(inplace=True))
+        self.head_f3 = nn.Sequential(nn.Conv2d(out_c, 512, 1, bias=False), nn.BatchNorm2d(512), nn.ReLU(inplace=True))
+        self.head_f4 = nn.Sequential(nn.Conv2d(out_c, 1024, 1, bias=False), nn.BatchNorm2d(1024), nn.ReLU(inplace=True))
+        self.head_f5 = nn.Sequential(nn.Conv2d(out_c, 2048, 1, bias=False), nn.BatchNorm2d(2048), nn.ReLU(inplace=True))        
 
         self.out_indices = out_indices
         self.freeze = freeze
+
+        self.head_f1 = nn.Sequential(nn.Conv2d(32, 64, 1, bias=False), nn.BatchNorm2d(64), nn.ReLU(inplace=True))
 
         if freeze:
             print("Encoder is completely frozen.")
@@ -178,6 +247,7 @@ class DepthAnythingEncoder(nn.Module):
                 for p in blk.parameters():
                     p.requires_grad = False
 
+
     def train(self, mode: bool = True):
         super().train(mode)
         if self.freeze:
@@ -190,6 +260,9 @@ class DepthAnythingEncoder(nn.Module):
             x = x.view(B * T, C, H, W)
         else:
             H, W = x.shape[-2:]
+
+        # 1. RGB Stem features for edge preservation
+        stem_full, stem_half, stem_quarter = self.rgb_stem(x)
             
         # Pad reflectively if dimensions are not divisible by 14
         pad_h = (14 - H % 14) % 14
@@ -197,21 +270,42 @@ class DepthAnythingEncoder(nn.Module):
         if pad_h > 0 or pad_w > 0:
             x = F.pad(x, (0, pad_w, 0, pad_h), mode="reflect")
 
+        # 2. Extract ViT tap features
         if self.freeze:
             with torch.no_grad():
                 feats = self.vit.forward_features(x, out_indices=self.out_indices)
         else:
             feats = self.vit.forward_features(x, out_indices=self.out_indices)
 
-        # Map tapped stages [2, 5, 8, 11] to standard hierarchical feature levels
-        f1 = F.interpolate(self.proj1(feats[0]), size=(H // 2, W // 2), mode="bilinear", align_corners=False)
-        f2 = F.interpolate(self.proj2(feats[0]), size=(H // 4, W // 4), mode="bilinear", align_corners=False)
-        f3 = F.interpolate(self.proj3(feats[1]), size=(H // 8, W // 8), mode="bilinear", align_corners=False)
-        f4 = F.interpolate(self.proj4(feats[2]), size=(H // 16, W // 16), mode="bilinear", align_corners=False)
-        f5 = F.interpolate(self.proj5(feats[3]), size=(H // 32, W // 32), mode="bilinear", align_corners=False)
+        # 3. Learned Resampling + RCUs
+        r2 = self.rcu_l2(self.resample_l2(feats[0]))
+        r5 = self.rcu_l5(self.resample_l5(feats[1]))
+        r8 = self.rcu_l8(self.resample_l8(feats[2]))
+        r11 = self.rcu_l11(self.resample_l11(feats[3]))
 
-        return {"f1": f1, "f2": f2, "f3": f3, "f4": f4, "f5": f5}
+        # 4. Top-Down Coarse-to-Fine Fusion
+        p11 = r11
+        p8 = self.fuse_rcu8(r8 + F.interpolate(p11, size=r8.shape[-2:], mode="bilinear", align_corners=False))
+        p5 = self.fuse_rcu5(r5 + F.interpolate(p8, size=r5.shape[-2:], mode="bilinear", align_corners=False))
+        p2 = self.fuse_rcu2(r2 + F.interpolate(p5, size=r2.shape[-2:], mode="bilinear", align_corners=False))
 
+        # 5. Map to standard pyramid resolutions
+        f5 = F.interpolate(self.head_f5(p11), size=(H // 32, W // 32), mode="bilinear", align_corners=False)
+        f4 = F.interpolate(self.head_f4(p8), size=(H // 16, W // 16), mode="bilinear", align_corners=False)
+        f3 = F.interpolate(self.head_f3(p5), size=(H // 8, W // 8), mode="bilinear", align_corners=False)
+        f2 = F.interpolate(self.head_f2(p2), size=(H // 4, W // 4), mode="bilinear", align_corners=False)
+        f1 = self.head_f1(stem_half)
+
+        return {
+            "f1": f1,
+            "f2": f2,
+            "f3": f3,
+            "f4": f4,
+            "f5": f5,
+            "stem_half": stem_half,
+            "stem_full": stem_full,
+            "stem_quarter": stem_quarter
+        }
 
 # Backward-compatible alias
 ResNetEncoder = DepthAnythingEncoder
