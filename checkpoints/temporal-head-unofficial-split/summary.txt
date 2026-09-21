@@ -1,0 +1,16 @@
+=================================================================
+       TwinForge Training Summary: checkpoints (Epoch 20/150)
+=================================================================
+  • Best Depth δ1:       0.9173 (Epoch 15)
+  • Best Depth δ2:       0.9896 (Epoch 15)
+  • Best Depth δ3:       0.9986 (Epoch 15)
+  • Best Depth AbsRel:   0.0992 (Epoch 15)
+  • Best Depth SqRel:    0.0299 (Epoch 15)
+  • Best Depth RMSE:     0.2042 (Epoch 15)
+  • Best Depth RMSElog:  0.1156 (Epoch 15)
+  • Best Depth log10:    0.0414 (Epoch 15)
+  • Best Seg mIoU:       0.5357 (Epoch 19)
+  • Best Seg Dice:       0.6720 (Epoch 19)
+  • Best Seg Pixel Acc:  0.7944 (Epoch 19)
+  • Min Val Loss:        3.2413 (Epoch 17)
+=================================================================

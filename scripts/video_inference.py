@@ -47,6 +47,64 @@ def get_nyuv2_palette(num_classes: int = 41) -> np.ndarray:
     return palette
 
 
+# Canonical ScanNet 20 benchmark subset mapping from NYU40 IDs
+# (Index: NYU40 ID [0..40], Value: ScanNet20 ID [1..20], with 0 as ignore/unlabeled)
+NYU40_TO_SCANNET20 = np.array([
+    0,   # 0: unlabeled
+    1,   # 1: wall
+    2,   # 2: floor
+    3,   # 3: cabinet
+    4,   # 4: bed
+    5,   # 5: chair
+    6,   # 6: sofa
+    7,   # 7: table
+    8,   # 8: door
+    9,   # 9: window
+    10,  # 10: bookshelf
+    11,  # 11: picture
+    12,  # 12: counter
+    0,   # 13: blinds -> ignore
+    13,  # 14: desk
+    0,   # 15: shelves -> ignore
+    14,  # 16: curtain
+    0,   # 17: dresser -> ignore
+    0,   # 18: pillow -> ignore
+    0,   # 19: mirror -> ignore
+    0,   # 20: floor mat -> ignore
+    0,   # 21: clothes -> ignore
+    0,   # 22: ceiling -> ignore
+    0,   # 23: books -> ignore
+    15,  # 24: refrigerator
+    0,   # 25: television -> ignore
+    0,   # 26: paper -> ignore
+    0,   # 27: towel -> ignore
+    16,  # 28: shower curtain
+    0,   # 29: box -> ignore
+    0,   # 30: whiteboard -> ignore
+    0,   # 31: person -> ignore
+    0,   # 32: nightstand -> ignore
+    17,  # 33: toilet
+    18,  # 34: sink
+    0,   # 35: lamp -> ignore
+    19,  # 36: bathtub
+    0,   # 37: bag -> ignore
+    0,   # 38: otherstructure -> ignore
+    20,  # 39: otherfurniture
+    0    # 40: otherprop -> ignore
+], dtype=np.uint8)
+
+
+def get_scannet20_palette() -> np.ndarray:
+    """Build a distinct (21, 3) BGR color lookup table for ScanNet 20 benchmark classes."""
+    colors = plt.colormaps["tab20"].colors
+    palette = np.zeros((21, 3), dtype=np.uint8)
+    palette[0] = [0, 0, 0]  # Unlabeled/ignore as black
+    for i in range(20):
+        r, g, b = colors[i]
+        palette[i + 1] = [int(b * 255), int(g * 255), int(r * 255)]  # BGR order for OpenCV
+    return palette
+
+
 def add_banner(img: np.ndarray, text: str, banner_height: int = 36) -> np.ndarray:
     """Draw a clean semi-transparent header bar with title text."""
     h, w = img.shape[:2]
@@ -132,6 +190,7 @@ def run_video_inference(
     checkpoint_path: str,
     output_path: str = None,
     layout: str = "side-by-side",
+    classes: int = 40,
     panel_width: int = 640,
     panel_height: int = 480,
     batch_size: int = 8,
@@ -180,6 +239,7 @@ def run_video_inference(
     print(f"Processing:       {effective_frames} frames (stride={stride}, max_frames={max_frames})")
     print(f"Layout:           {layout} (panel: {panel_width}x{panel_height})")
     print(f"Window / Stride:  {future_frames + overlap_frames} frames (future={future_frames}, overlap={overlap_frames})")
+    print(f"Classes:          {classes} ({'ScanNet 20 benchmark' if classes == 20 else 'NYU 40'})")
     print(f"Device:           {device}")
     print("=" * 60)
 
@@ -188,7 +248,10 @@ def run_video_inference(
     model = load_model(checkpoint_path, device, model_size=(model_h, model_w))
 
     # Color palette and colormap
-    palette = get_nyuv2_palette(num_classes=41)
+    if classes == 20:
+        palette = get_scannet20_palette()
+    else:
+        palette = get_nyuv2_palette(num_classes=41)
     cv_cmap = COLORMAP_MAP.get(depth_colormap.lower(), cv2.COLORMAP_INFERNO)
 
     # Output dimensions based on layout
@@ -303,6 +366,10 @@ def run_video_inference(
                 ref_probs = curr_probs[num_to_write:]
 
             pred_labels = np.argmax(curr_probs[:num_to_write], axis=1).astype(np.uint8)
+            if classes == 20:
+                pred_labels = NYU40_TO_SCANNET20[pred_labels]
+
+            seg_title = "Semantic Segmentation (ScanNet 20)" if classes == 20 else "Semantic Segmentation"
 
             for b in range(num_to_write):
                 orig_frame = curr_raw_frames[b]
@@ -335,14 +402,14 @@ def run_video_inference(
                 if layout == "side-by-side":
                     p1 = add_banner(rgb_panel, "Input Video") if add_labels else rgb_panel
                     p2 = add_banner(depth_colored, "Predicted Depth") if add_labels else depth_colored
-                    p3 = add_banner(seg_colored, "Semantic Segmentation") if add_labels else seg_colored
+                    p3 = add_banner(seg_colored, seg_title) if add_labels else seg_colored
                     out_frame = np.hstack([p1, p2, p3])
 
                 elif layout == "grid":
                     overlay = cv2.addWeighted(seg_colored, alpha, rgb_panel, 1.0 - alpha, 0)
                     p1 = add_banner(rgb_panel, "Input Video") if add_labels else rgb_panel
                     p2 = add_banner(depth_colored, "Predicted Depth") if add_labels else depth_colored
-                    p3 = add_banner(seg_colored, "Semantic Segmentation") if add_labels else seg_colored
+                    p3 = add_banner(seg_colored, seg_title) if add_labels else seg_colored
                     p4 = add_banner(overlay, "RGB + Seg Overlay") if add_labels else overlay
                     top_row = np.hstack([p1, p2])
                     bot_row = np.hstack([p3, p4])
@@ -356,7 +423,7 @@ def run_video_inference(
                     out_frame = add_banner(depth_colored, "Predicted Depth") if add_labels else depth_colored
 
                 elif layout == "seg":
-                    out_frame = add_banner(seg_colored, "Semantic Segmentation") if add_labels else seg_colored
+                    out_frame = add_banner(seg_colored, seg_title) if add_labels else seg_colored
 
                 writer.write(out_frame)
 
@@ -478,6 +545,13 @@ def main():
         help="Disable title labels on panels",
     )
     parser.add_argument(
+        "--classes",
+        type=int,
+        choices=[20, 40],
+        default=40,
+        help="Number of segmentation classes to output: 40 (NYU40) or 20 (ScanNet20 benchmark subset) (default: 40)",
+    )
+    parser.add_argument(
         "--device",
         type=str,
         default=None,
@@ -491,6 +565,7 @@ def main():
         checkpoint_path=args.checkpoint,
         output_path=args.output_path,
         layout=args.layout,
+        classes=args.classes,
         panel_width=args.panel_width,
         panel_height=args.panel_height,
         batch_size=args.batch_size,
