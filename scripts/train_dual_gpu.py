@@ -329,7 +329,7 @@ def train():
                 segment_logits, depth_logits, coarse_depth_logits = model(images)
                 seg_loss = crit_seg(segment_logits, labels)
                 depth_refined_loss = crit_depth(depth_logits, depths, labels, B=B, T=T)
-                depth_coarse_loss = crit_depth(coarse_depth_logits, depths, labels, B=B, T=T)
+                depth_coarse_loss = crit_depth.silog(coarse_depth_logits, depths)
                 tol_loss = seg_loss + (depth_refined_loss + 0.3 * depth_coarse_loss) * depth_weight
                 loss_to_backward = tol_loss / accum_steps
 
@@ -450,6 +450,10 @@ def train():
                 epochs_without_improvement = 0
             else:
                 epochs_without_improvement += 1
+
+            del val_pbar, val_results
+            if torch.cuda.is_available():
+                torch.cuda.empty_cache()
 
         # Synchronize early stopping decision across all ranks
         should_stop = torch.tensor([1.0 if epochs_without_improvement >= patience else 0.0], device=device)
