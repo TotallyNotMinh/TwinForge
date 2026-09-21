@@ -19,39 +19,27 @@ def berhu_loss(pred, target):
 
     return loss.mean()
 
-def boundary_guided_depth_grad_loss(pred_depth, gt_depth, boundary_pred, mask=None):
-    """
-    boundary_pred: [B, 1, H, W] sigmoid output from your BoundaryHead (0=flat region, 1=edge)
-    """
-    pred_dx = pred_depth[:, :, :, 1:] - pred_depth[:, :, :, :-1]
-    pred_dy = pred_depth[:, :, 1:, :] - pred_depth[:, :, :-1, :]
-    gt_dx = gt_depth[:, :, :, 1:] - gt_depth[:, :, :, :-1]
-    gt_dy = gt_depth[:, :, 1:, :] - gt_depth[:, :, :-1, :]
+def gm_loss(pred, gt, mask, boundary=None, scales=4, lambda_boundary=2.0):
+    R = (torch.log(pred.clamp_min(1e-3)) - torch.log(gt.clamp_min(1e-3))) * mask
+    total = 0.0
+    for s in range(scales):
+        k = 2 ** s
+        r, m = R[..., ::k, ::k], mask[..., ::k, ::k].float()
+        mx = m[..., :, 1:] * m[..., :, :-1]
+        my = m[..., 1:, :] * m[..., :-1, :]
 
-    # Ground truth boundaries are binary [0.0, 1.0] (or predicted logits if passed)
-    if boundary_pred.dtype in (torch.float16, torch.float32, torch.float64):
-        if (boundary_pred < 0.0).any() or (boundary_pred > 1.0).any():
-            b = torch.sigmoid(boundary_pred).detach()
-        else:
-            b = boundary_pred.detach()
-    else:
-        b = boundary_pred.float().detach()
+        # Weight edges with (1 + λ * boundary) instead of suppressing them with (1 - boundary)
+        if boundary is not None:
+            b_s = boundary[..., ::k, ::k].float()
+            wx = 1.0 + lambda_boundary * b_s[..., :, 1:]
+            wy = 1.0 + lambda_boundary * b_s[..., 1:, :]
+            mx = mx * wx
+            my = my * wy
 
-    weight_x = (1.0 - b[:, :, :, 1:])
-    weight_y = (1.0 - b[:, :, 1:, :])
-
-    loss_x = torch.abs(pred_dx - gt_dx) * weight_x
-    loss_y = torch.abs(pred_dy - gt_dy) * weight_y
-
-    if mask is not None:
-        mask_bool = mask > 0
-        mask_x = (mask_bool[:, :, :, 1:] & mask_bool[:, :, :, :-1]).float()
-        mask_y = (mask_bool[:, :, 1:, :] & mask_bool[:, :, :-1, :]).float()
-        loss_x = loss_x * mask_x
-        loss_y = loss_y * mask_y
-        return (loss_x.sum() + loss_y.sum()) / (mask_x.sum() + mask_y.sum() + 1e-8)
-
-    return loss_x.mean() + loss_y.mean()
+        dx = (r[..., :, 1:] - r[..., :, :-1]).abs() * mx
+        dy = (r[..., 1:, :] - r[..., :-1, :]).abs() * my
+        total += (dx.sum() + dy.sum()) / (mx.sum() + my.sum() + 1e-8)
+    return total / scales
 
 
 class SILogLoss(nn.Module):
@@ -125,7 +113,7 @@ def get_gpu_boundary_map(label: torch.Tensor, kernel_size: int = 3) -> torch.Ten
     return (max_label != min_label).float()
 
 class DepthLoss(nn.Module):
-    def __init__(self, alpha=10.0, lambda_param=0.85, l1_weight=0.5, temporal_weight=1.0):
+    def __init__(self, alpha=10.0, lambda_param=0.85, l1_weight=0.5, temporal_weight=10.0):
         super().__init__()
         self.silog = SILogLoss(alpha=alpha, lambda_param=lambda_param)
         self.l1_weight = l1_weight
@@ -142,7 +130,7 @@ class DepthLoss(nn.Module):
         else:
             boundary = label_or_boundary
 
-        grad = boundary_guided_depth_grad_loss(pred, target, boundary, mask=mask.float())
+        grad = gm_loss(pred, target, boundary=boundary, mask=mask.float(), scales=4)
         l1 = F.smooth_l1_loss(pred[mask], target[mask])
         spatial_loss = silog + 0.5 * grad + self.l1_weight * l1
 
