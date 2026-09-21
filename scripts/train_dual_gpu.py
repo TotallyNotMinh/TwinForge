@@ -197,7 +197,7 @@ def train():
     resize = (392, 518)
     encoder_lr = 1e-5
     decoder_lr = 2e-4
-    depth_weight = 1.0
+    depth_weight = 1.4
     checkpoint_path = args.checkpoint_path
     checkpoint_dir = args.checkpoint_dir
     start_epoch = 0
