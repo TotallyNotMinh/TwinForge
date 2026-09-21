@@ -23,11 +23,15 @@ class TwinForge(nn.Module):
         B, T = x.shape[0], x.shape[1]
 
         features = self.encoder(x)
-        depth_logits, segment_logits = self.decoder(features, B, T)
+        depth_logits, segment_logits, coarse_depth = self.decoder(features, B, T)
 
         # Upsample by 2x back to input image resolution 
         segment_logits = F.interpolate(segment_logits, size=x.shape[-2:], mode="bilinear", align_corners=False)
         depth_logits = F.interpolate(depth_logits, size=x.shape[-2:], mode="bilinear", align_corners=False)
+        coarse_depth_logits = F.interpolate(coarse_depth, size=x.shape[-2:], mode="bilinear", align_corners=False)
+
+        if self.training:
+            return segment_logits, depth_logits, coarse_depth_logits
 
         return segment_logits, depth_logits
 
