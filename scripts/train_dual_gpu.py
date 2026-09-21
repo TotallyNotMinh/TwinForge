@@ -326,10 +326,11 @@ def train():
             labels = labels.view(B * T, labels.shape[-2], labels.shape[-1]).long().to(device, non_blocking=True)
 
             with torch.amp.autocast("cuda", enabled=(device.type == "cuda")):
-                pred_seg, pred_depth = model(images)
-                seg_loss = crit_seg(pred_seg, labels)
-                depth_loss = crit_depth(pred_depth, depths, labels, B=B, T=T)
-                tol_loss = seg_loss + depth_weight * depth_loss
+                segment_logits, depth_logits, coarse_depth_logits = model(images)
+                seg_loss = crit_seg(segment_logits, labels)
+                depth_refined_loss = crit_depth(depth_logits, depths, labels, B=B, T=T)
+                depth_coarse_loss = crit_depth(coarse_depth_logits, depths, labels, B=B, T=T)
+                tol_loss = seg_loss + (depth_refined_loss + 0.3 * depth_coarse_loss) * depth_weight
                 loss_to_backward = tol_loss / accum_steps
 
             scaler.scale(loss_to_backward).backward()
