@@ -10,6 +10,7 @@ from torch.utils.data import DataLoader
 from tqdm import tqdm
 
 from data import NYUv2Dataset
+from data.dataset import NYU40_TO_SCANNET20
 from models import TwinForge
 from metrics import MultiTaskMetrics
 
@@ -18,6 +19,7 @@ def parse_args():
     parser = argparse.ArgumentParser(description="Evaluate TwinForge checkpoints using the Eigen protocol on NYUv2")
     parser.add_argument("--checkpoint-path", type=str, default="checkpoints/vit-orientation-fixed/best_depth.zip", help="Path to checkpoint (.pth or .zip)")
     parser.add_argument("--split", type=str, default="val", choices=["val", "test", "train"], help="Dataset split to evaluate")
+    parser.add_argument("--classes", type=int, choices=[20, 40], default=40, help="Number of segmentation classes to evaluate: 40 (NYU40) or 20 (ScanNet20) (default: 40)")
     parser.add_argument("--batch-size", type=int, default=8, help="Batch size for evaluation")
     parser.add_argument("--raw-depth", action="store_true", default=True, help="Evaluate against raw 480x640 depth without interpolation (Eigen protocol)")
     parser.add_argument("--no-raw-depth", action="store_false", dest="raw_depth", help="Evaluate against downsampled depth")
@@ -63,6 +65,7 @@ def evaluate():
     print("=" * 70)
     print(f"  • Checkpoint:     {args.checkpoint_path}")
     print(f"  • Split:          {args.split} (654 images)")
+    print(f"  • Classes:        {args.classes} ({'ScanNet 20 benchmark' if args.classes == 20 else 'NYU 40'})")
     print(f"  • Input Size:     {resize}")
     print(f"  • Raw 480x640 GT: {args.raw_depth} (Eigen Protocol compliant)")
     print(f"  • Device:         {device}")
@@ -86,9 +89,16 @@ def evaluate():
         pin_memory=(device.type == "cuda")
     )
 
-    # 2. Model
+    # 2. Model (detect num_labels from checkpoint if available)
+    model_num_labels = 41
+    if os.path.exists(args.checkpoint_path):
+        ckpt_head = torch.load(args.checkpoint_path, map_location="cpu")
+        sd = ckpt_head.get("model_state_dict", ckpt_head)
+        if "decoder.segment_dec.out.3.weight" in sd:
+            model_num_labels = sd["decoder.segment_dec.out.3.weight"].shape[0]
+
     model = TwinForge(
-        num_labels=41,
+        num_labels=model_num_labels,
         num_heads=8,
         tok_dim=256,
         size=resize,
@@ -98,13 +108,17 @@ def evaluate():
     load_model_checkpoint(model, args.checkpoint_path, device)
     model.eval()
 
-    # 3. Metrics
-    metrics = MultiTaskMetrics(num_classes=41)
+    # 3. Metrics (21 classes for ScanNet20 benchmark, 41 for NYU40)
+    eval_num_classes = 21 if args.classes == 20 else 41
+    metrics = MultiTaskMetrics(num_classes=eval_num_classes)
     metrics.reset()
 
+    mapping = NYU40_TO_SCANNET20.to(device) if args.classes == 20 else None
+
     # 4. Evaluation Loop
+    desc_str = f"Evaluating (Eigen Protocol - {args.classes} classes)"
     with torch.no_grad():
-        for images, depths, labels in tqdm(data_loader, desc="Evaluating (Eigen Protocol)"):
+        for images, depths, labels in tqdm(data_loader, desc=desc_str):
             images = images.to(device, non_blocking=True)
             depths = depths.to(device, non_blocking=True)
             labels = labels.to(device, non_blocking=True)
@@ -112,8 +126,16 @@ def evaluate():
             with torch.amp.autocast("cuda", enabled=(device.type == "cuda")):
                 pred_seg, pred_depth = model(images)
 
+            if args.classes == 20:
+                pred_label = torch.argmax(pred_seg, dim=1)
+                pred_seg_eval = mapping[pred_label] if model_num_labels == 41 else pred_label
+                labels_eval = mapping[labels]
+            else:
+                pred_seg_eval = pred_seg
+                labels_eval = labels
+
             # Pred depth is automatically interpolated by DepthMetrics if target has different shape (480, 640)
-            metrics.update(pred_seg, pred_depth, labels, depths)
+            metrics.update(pred_seg_eval, pred_depth, labels_eval, depths)
 
     results = metrics.compute()
     depth_res = results["depth"]
@@ -133,7 +155,8 @@ def evaluate():
     print(f"  log10               (↓):  {depth_res['log10']:.4f}")
     print("=" * 70)
 
-    print("               SEMANTIC SEGMENTATION METRICS")
+    seg_header = "SEMANTIC SEGMENTATION METRICS (ScanNet 20)" if args.classes == 20 else "SEMANTIC SEGMENTATION METRICS (NYU 40)"
+    print(f"               {seg_header}")
     print("=" * 70)
     print(f"  Mean IoU            (↑):  {seg_res['miou']:.4f}")
     print(f"  Dice Coefficient    (↑):  {seg_res['dice']:.4f}")
