@@ -194,7 +194,7 @@ def train():
     STRIDE = 1
     patience = 25
     epochs_without_improvement = 0
-    resize = (392, 518)
+    resize = (378, 504)
     encoder_lr = 1e-5
     decoder_lr = 2e-4
     depth_weight = 1.4
