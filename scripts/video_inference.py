@@ -126,7 +126,7 @@ def add_banner(img: np.ndarray, text: str, banner_height: int = 36) -> np.ndarra
     return out
 
 
-def load_model(checkpoint_path: str, device: str, model_size=(392, 518)) -> TwinForge:
+def load_model(checkpoint_path: str, device: str, model_size=(378, 504)) -> TwinForge:
     """Load TwinForge model with weights from checkpoint."""
     model = TwinForge(
         num_labels=41,
@@ -250,8 +250,8 @@ def run_video_inference(
     print(f"Device:           {device}")
     print("=" * 60)
 
-    # Model input resolution for ViT patch divisibility (must be multiple of 14)
-    model_h, model_w = 392, 518
+    # Model input resolution for ViT patch divisibility (must be multiple of 14: 27x36)
+    model_h, model_w = 378, 504
     model = load_model(checkpoint_path, device, model_size=(model_h, model_w))
 
     # Color palette and colormap

@@ -197,7 +197,7 @@ class ScanNetVideoDataset(Dataset):
         split_file: str = None,
         num_frames: int = 4,
         stride: int = 1,
-        resize: tuple = (384, 512),
+        resize: tuple = (378, 504),
         augment: bool = True,
         train_ratio: float = 0.85
     ):

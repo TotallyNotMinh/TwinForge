@@ -7,7 +7,7 @@ sys.path.append(str(Path(__file__).resolve().parent.parent))
 import torch
 from torch import nn
 from models.transformer_block import TransformerBlock
-from models.encoder import ResNetEncoder
+from models.encoder import ResidualConvUnit
 import torch.nn.functional as F
 from models.temporal_head import TemporalHead
 
@@ -107,6 +107,15 @@ class DepthDecoder(nn.Module):
         self.up_half = ConvexUp(channels=64, factor=2)
         self.up_full = ConvexUp(channels=32, factor=2)
 
+        self.res_block = nn.Sequential(
+            nn.Conv2d(1 + 16, 32, kernel_size=3, padding=1, bias=False),
+            nn.BatchNorm2d(32),
+            nn.ReLU(inplace=True),
+            nn.Conv2d(32, 1, kernel_size=3, padding=1, bias=True)
+        )
+        nn.init.zeros_(self.res_block[3].weight)
+        nn.init.zeros_(self.res_block[3].bias)
+
     def forward(self, vit_depth_self, p5, p4, tokens, features):
         target_size = features["f2"].shape[-2:]
 
@@ -124,10 +133,22 @@ class DepthDecoder(nn.Module):
         depth_half = self.up_half(depth_quarter, features["stem_quarter"])
         depth_full = self.up_full(depth_half, features["stem_half"])
 
-        return depth_full, depth_half, depth_quarter
+        # High-frequency residual refinement using full-res RGB stem features
+        stem_full = features["stem_full"]
+        if depth_full.shape[-2:] != stem_full.shape[-2:]:
+            pad_h = stem_full.shape[-2] - depth_full.shape[-2]
+            pad_w = stem_full.shape[-1] - depth_full.shape[-1]
+            if 0 <= pad_h <= 4 and 0 <= pad_w <= 4: # Use replicate padding instead of stretching the entire image if the difference is <= 4px
+                depth_full = F.pad(depth_full, (0, pad_w, 0, pad_h), mode="replicate")
+            else:
+                depth_full = F.interpolate(depth_full, size=stem_full.shape[-2:], mode="bilinear", align_corners=False)
+        delta = self.res_block(torch.cat([depth_full, stem_full], dim=1))
+        refined_depth = torch.clamp(depth_full + delta, min=self.min_depth, max=self.max_depth)
+
+        return refined_depth, depth_half, depth_quarter
 
 class MultiHeadDecoder(nn.Module):
-    def __init__(self, num_labels, tok_dim, num_heads, max_frames, size=(384, 512), embed_dim=128, freeze=False):
+    def __init__(self, num_labels, tok_dim, num_heads, max_frames, size=(378, 504), embed_dim=128, freeze=False):
         super().__init__()
         (H, W) = size
 
@@ -294,9 +315,4 @@ class MultiHeadDecoder(nn.Module):
     
         return refined_depth, segment_logits, depth_half, depth_quarter
 
-if __name__ == "__main__":
-    model = MultiHeadDecoder(tok_dim=128, num_heads=4, num_labels=40, max_frames=32)
-    im = torch.randn([1, 3, 288, 384])
-    encoder = ResNetEncoder()
-    features = encoder(im)
-    model(features)
+

@@ -168,7 +168,7 @@ def train():
     STRIDE = 1
     patience = 25
     epochs_without_improvement = 0
-    resize = (392, 518) # Divisible by 14 as per ViT-S requirement 
+    resize = (378, 504) # 4:3 native aspect ratio, divisible by 14 (27x36 patches)
     encoder_lr = 1e-5
     decoder_lr = 2e-4
     depth_weight = 1.4
@@ -302,8 +302,8 @@ def train():
                 loss_full = crit_depth(pred_full, depths, labels, B=B, T=T)
 
                 # Multi-scale intermediate supervision on downsampled ground truth
-                depths_half = F.interpolate(depths, scale_factor=0.5, mode="nearest")
-                depths_quarter = F.interpolate(depths, scale_factor=0.25, mode="nearest")
+                depths_half = F.interpolate(depths, size=pred_half.shape[-2:], mode="nearest")
+                depths_quarter = F.interpolate(depths, size=pred_quarter.shape[-2:], mode="nearest")
                 loss_half = crit_depth.silog(pred_half, depths_half)
                 loss_quarter = crit_depth.silog(pred_quarter, depths_quarter)
 

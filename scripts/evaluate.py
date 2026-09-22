@@ -23,8 +23,8 @@ def parse_args():
     parser.add_argument("--batch-size", type=int, default=8, help="Batch size for evaluation")
     parser.add_argument("--raw-depth", action="store_true", default=True, help="Evaluate against raw 480x640 depth without interpolation (Eigen protocol)")
     parser.add_argument("--no-raw-depth", action="store_false", dest="raw_depth", help="Evaluate against downsampled depth")
-    parser.add_argument("--input-h", type=int, default=384, help="Model input height")
-    parser.add_argument("--input-w", type=int, default=512, help="Model input width")
+    parser.add_argument("--input-h", type=int, default=378, help="Model input height")
+    parser.add_argument("--input-w", type=int, default=504, help="Model input width")
     parser.add_argument("--device", type=str, default="cuda" if torch.cuda.is_available() else "cpu", help="Computation device")
     return parser.parse_args()
 

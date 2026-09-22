@@ -19,7 +19,7 @@ def berhu_loss(pred, target):
 
     return loss.mean()
 
-def gm_loss(pred, gt, mask, boundary=None, scales=4, lambda_boundary=2.0):
+def gm_loss(pred, gt, mask, boundary=None, scales=4, lambda_boundary=3.0):
     R = (torch.log(pred.clamp_min(1e-3)) - torch.log(gt.clamp_min(1e-3))) * mask
     total = 0.0
     for s in range(scales):
@@ -113,10 +113,11 @@ def get_gpu_boundary_map(label: torch.Tensor, kernel_size: int = 3) -> torch.Ten
     return (max_label != min_label).float()
 
 class DepthLoss(nn.Module):
-    def __init__(self, alpha=10.0, lambda_param=0.85, l1_weight=0.5, temporal_weight=10.0):
+    def __init__(self, alpha=10.0, lambda_param=0.85, l1_weight=0.5, grad_weight=1.5, temporal_weight=10.0):
         super().__init__()
         self.silog = SILogLoss(alpha=alpha, lambda_param=lambda_param)
         self.l1_weight = l1_weight
+        self.grad_weight = grad_weight
         self.temporal_weight = temporal_weight
 
     def forward(self, pred, target, label_or_boundary, B=None, T=None):
@@ -130,9 +131,9 @@ class DepthLoss(nn.Module):
         else:
             boundary = label_or_boundary
 
-        grad = gm_loss(pred, target, boundary=boundary, mask=mask.float(), scales=4)
-        l1 = F.smooth_l1_loss(pred[mask], target[mask])
-        spatial_loss = silog + 0.5 * grad + self.l1_weight * l1
+        grad = gm_loss(pred, target, boundary=boundary, mask=mask.float(), scales=4, lambda_boundary=3.0)
+        l1 = torch.abs(pred[mask] - target[mask]).mean()
+        spatial_loss = silog + self.grad_weight * grad + self.l1_weight * l1
 
         # Compute temporal loss if video frames are present
         if T is not None and T > 1:

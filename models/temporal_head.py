@@ -4,7 +4,7 @@ from models.transformer_block import TransformerBlock
 import torch.nn.functional as F
 
 class TemporalHead(nn.Module):
-    def __init__(self, num_heads, max_frames, size=(392, 518), embed_dim=128):
+    def __init__(self, num_heads, max_frames, size=(378, 504), embed_dim=128):
         super().__init__()
         self.size = size
         self.num_heads = num_heads
