@@ -143,6 +143,20 @@ def load_model(checkpoint_path: str, device: str, model_size=(378, 504)) -> Twin
     print(f"Loading checkpoint: {checkpoint_path}")
     checkpoint = torch.load(checkpoint_path, map_location=device)
     state_dict = checkpoint["model_state_dict"] if "model_state_dict" in checkpoint else checkpoint
+
+    # Adapt positional embeddings if resolution/patch sizes changed across runs
+    model_state = model.state_dict()
+    for key in ["decoder.pos_embed1", "decoder.pos_embed2", "decoder.pos_embed3", "decoder.pos_embed4", "decoder.pos_embed5"]:
+        if key in state_dict and key in model_state:
+            if state_dict[key].shape != model_state[key].shape:
+                target_hw = model_state[key].shape[-2:]
+                state_dict[key] = F.interpolate(
+                    state_dict[key],
+                    size=target_hw,
+                    mode="bicubic",
+                    align_corners=False
+                )
+
     model.load_state_dict(state_dict, strict=False)
     model.eval()
     print(f"Model successfully loaded and set to eval mode on {device}.")
@@ -193,6 +207,8 @@ def run_video_inference(
     classes: int = 40,
     panel_width: int = 640,
     panel_height: int = 480,
+    input_h: int = 378,
+    input_w: int = 504,
     batch_size: int = 8,
     future_frames: int = 12,
     overlap_frames: int = 4,
@@ -238,10 +254,14 @@ def run_video_inference(
     frames_to_process = total_frames if max_frames is None else min(total_frames, max_frames)
     effective_frames = (frames_to_process + stride - 1) // stride
 
+    if input_h % 14 != 0 or input_w % 14 != 0:
+        raise ValueError(f"Input dimensions must be multiples of 14, got input_h={input_h}, input_w={input_w}")
+
     print("=" * 60)
     print("TwinForge Video Inference")
     print(f"Input Video:      {video_path}")
     print(f"Resolution:       {src_w}x{src_h} @ {src_fps:.2f} fps ({total_frames} total frames)")
+    print(f"Model Input:      {input_w}x{input_h}")
     print(f"Output Video:     {output_path} @ {out_fps:.2f} fps")
     print(f"Processing:       {effective_frames} frames (stride={stride}, max_frames={max_frames})")
     print(f"Layout:           {layout} (panel: {panel_width}x{panel_height})")
@@ -250,8 +270,8 @@ def run_video_inference(
     print(f"Device:           {device}")
     print("=" * 60)
 
-    # Model input resolution for ViT patch divisibility (must be multiple of 14: 27x36)
-    model_h, model_w = 378, 504
+    # Model input resolution for ViT patch divisibility
+    model_h, model_w = input_h, input_w
     model = load_model(checkpoint_path, device, model_size=(model_h, model_w))
 
     # Color palette and colormap
@@ -559,6 +579,18 @@ def main():
         help="Number of segmentation classes to output: 40 (NYU40) or 20 (ScanNet20 benchmark subset) (default: 40)",
     )
     parser.add_argument(
+        "--input-h",
+        type=int,
+        default=378,
+        help="Model input height (must be multiple of 14, default: 378)",
+    )
+    parser.add_argument(
+        "--input-w",
+        type=int,
+        default=504,
+        help="Model input width (must be multiple of 14, default: 504)",
+    )
+    parser.add_argument(
         "--device",
         type=str,
         default=None,
@@ -575,6 +607,8 @@ def main():
         classes=args.classes,
         panel_width=args.panel_width,
         panel_height=args.panel_height,
+        input_h=args.input_h,
+        input_w=args.input_w,
         batch_size=args.batch_size,
         future_frames=args.future_frames,
         overlap_frames=args.overlap_frames,
